@@ -89,5 +89,3 @@ public function up(): void
 
 
 */
-
- este es mi index.ts  que esta en types
