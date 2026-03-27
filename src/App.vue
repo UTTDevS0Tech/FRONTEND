@@ -3,11 +3,5 @@
 </template>
 
 <script setup>
+import { RouterView } from 'vue-router'
 </script>
-
-<style>
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-}
-</style>
