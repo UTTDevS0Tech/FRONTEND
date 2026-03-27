@@ -1,0 +1,93 @@
+export interface Personal {
+    id?: number
+    nombre: string
+    descripcion: string
+    user_id: number
+}
+
+
+export interface ServicioSeleccionado {
+   
+    nombre: string;
+    precio_capturado: number;
+}
+
+export interface User {
+        id?: number
+        email: string
+        password: string
+        activo?: boolean
+        rol_id?: number
+    }
+    //tiene que quedar alodo de credenciales.password en v-model 
+
+export interface Rol {
+    id?: number
+    nombre: string
+    descripcion: string
+}
+/*
+    public function up(): void
+    {
+            Schema::create('citas', function (Blueprint $table) {
+            $table->id();
+            $table->decimal('apartado', 10, 2)->default(0.00);
+            $table->decimal('total', 10, 2)->nullable();
+            $table->foreignId('personal_id')->constrained('personales')->onDelete('cascade');
+            $table->time('hora_c');
+            $table->date('fecha_c');
+            $table->enum('estado', ['pendiente', 'confirmada', 'cancelada'])->default('pendiente');
+            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+*/
+
+export interface Cita {
+    id?: number;
+    apartado?: number;
+    total?: number;
+    personal_id: number;
+    hora_c: string;
+    fecha_c: string;
+    estado: 'pendiente' | 'confirmada' | 'cancelada';
+    cliente_id?: number;
+    detalle_cita: DetalleCita[];
+
+}
+
+export interface DetalleCita{
+    id?: number;
+    cita_id: number;
+    tipo_servicio_id: number;
+    precio_capturado: number;
+
+}
+
+
+
+/*
+
+public function up(): void
+    {
+        Schema::create('detalle_citas', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cita_id')->constrained('citas')->onDelete('cascade');
+            $table->foreignId('tipo_servicio_id')->constrained('tipo_servicios')->onDelete('cascade');
+            $table->decimal('precio_capturado' , 10, 2)->default(0);
+            $table->timestamps();
+        });
+    }
+
+   
+    public function down(): void
+    {
+        Schema::dropIfExists('detalle_citas');
+
+    }
+};
+
+
+*/
+
+ este es mi index.ts  que esta en types
