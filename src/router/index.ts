@@ -1,7 +1,7 @@
 //import PersonalView from '@/views/PersonalView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginForm from '@/components/LoginForm.vue'
-//import DashboardView from '@/views/DashboardView.vue'
+import DashboardView from '@/views/DashboardView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -20,12 +20,12 @@ const router = createRouter({
       name: 'login',
       component: LoginForm
     },
-    /*{
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
       meta: { requiresAuth: true }
-    }*/
+    }
 
   ],
 })
