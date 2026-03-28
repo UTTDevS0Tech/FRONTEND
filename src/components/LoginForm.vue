@@ -15,7 +15,7 @@ const credenciales = ref<User>({
     password: ''
 })
 
-
+/*
 function login() {
     const { data, onFetchResponse, onFetchError} = useFetch('http://localhost:9000/api/login', {
     method: 'POST',
@@ -42,6 +42,47 @@ function login() {
         
     })
 }
+*/
+
+
+
+function login() {
+  const { data, error, onFetchResponse, onFetchError } = useFetch('http://localhost:9000/api/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  }).post(credenciales.value).json()
+
+  onFetchResponse(() => {
+    console.log('Respuesta recibida:', data.value)
+
+    const token = data.value?.data?.token
+    const informacionUsuario = data.value?.data?.user
+
+    if (!token) {
+      console.error('No llegó token')
+      return
+    }
+
+    authStore.setLogin(token)
+
+    if (informacionUsuario) {
+      authStore.setUsuario(informacionUsuario)
+    }
+
+    router.push('/dashboard')
+  })
+
+  onFetchError(() => {
+    console.error('Error en login:', error.value)
+  })
+}
+
+
+
+
 
 </script>
 <template>
