@@ -98,8 +98,8 @@ router.beforeEach((to,from, next ) => {
 
 //para que no batallen en entender el undefined es para cuando no se tenga un rol es como el compare de seguridad: eh compare ponte al tiro esto no trae basicamente
 function redirigir(role_id: number |undefined, next: any) {
-  if (role_id === 1) return next({ name: 'dashboard/admin' })
-  if (role_id === 2) return next({ name: 'dashboard/personal' })
+  if (role_id === 2) return next({ name: 'dashboard/admin' })
+  if (role_id === 1) return next({ name: 'dashboard/personal' })
   if (role_id === 3) return next({ name: 'dashboard/cliente' })
   next('/login')
 }
