@@ -17,12 +17,12 @@ export interface User {
         email: string
         password: string
         activo?: boolean
-        role_id?: number
+        rol_id?: number
     }
     //tiene que quedar alodo de credenciales.password en v-model 
 
 export interface Rol {
-    rol_id?: number
+    id?: number
     nombre: string
     descripcion: string
 }
