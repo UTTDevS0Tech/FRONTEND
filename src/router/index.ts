@@ -78,7 +78,7 @@ next()
 router.beforeEach((to,from, next ) => {
   const useAuthStore1 = useAuthStore()
   const tavalidado = !!useAuthStore1.token
-  const user_role = useAuthStore1.user?.rol_id
+  const user_role = useAuthStore1.user?.role_id
 
   if( to.matched.some(record => record.meta.requiresAuth)) {
     if(!tavalidado){
