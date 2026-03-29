@@ -5,7 +5,7 @@ const authStore = useAuthStore()
 
 <template>
   <div style="padding: 20px; text-align: center;">
-    <h2> Bienvenido de nuevo</h2>
+    <h2> Bienvenido de nuevom CLIETNTEW CLIENTE CLIENTEW </h2>
    
     <p>Ya estás dentro del sistema de la estética.</p>
   </div>
