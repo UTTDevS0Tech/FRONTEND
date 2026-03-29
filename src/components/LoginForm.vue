@@ -26,20 +26,38 @@ function login() {
       
 
     onFetchResponse(() => {
+      const respuestadentrodedata = data.value.data
       console.log('Respuesta recibida para ver si entro el token:', data.value)
         if (data.value) {
-            const token = data.value.token
-            const informacionUsuario = data.value.user
+          //aqui como ya creamos nuetra variable q accede a la informacion data(del fetch) y luego la del trait pues ya accedemos a nuesta ingo
+            const token = respuestadentrodedata.token
+            const informacionUsuario = respuestadentrodedata.user
+            console.log("tengo el token? nomas pa probar al rato la borramos", token)
+            console.log("tengo el usuario? nomas pa probar al rato la borramos", informacionUsuario?.rol_id)
             if (token ) {
                 authStore.setLogin(token) 
 
             } 
             if (informacionUsuario) {
                 authStore.setUsuario(informacionUsuario)
+
+                const sacamosroldeusuario = informacionUsuario.rol_id
+
+                if (sacamosroldeusuario === 1) {
+                  router.push({ name: 'dashboard/personal' })
+            } 
+            if(sacamosroldeusuario === 2){
+              router.push({name: 'dashboard/admin'})
+
             }
-            router.push('/dashboard')
+            if(sacamosroldeusuario === 3) {
+              router.push({name: 'dashboard/cliente'})
+            }
+
+
+            
         }
-        
+      }
     })
 }
 
