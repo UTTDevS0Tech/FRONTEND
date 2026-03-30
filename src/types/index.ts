@@ -64,6 +64,16 @@ export interface DetalleCita{
 
 }
 
+export interface Cliente {
+    id?: number;
+    nombre: string;
+    telefono: string;
+    email: string;
+    user_id: number;
+}
+
+
+
 
 
 /*
