@@ -77,41 +77,52 @@ const authStore = useAuthStore()
   min-height: 100vh;
   background: #FEFAE0;
   color: #5f4b3a;
+  animation: pageFade 0.8s ease;
 }
 
 .top-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem 2rem;
-  background: rgba(254, 250, 224, 0.95);
+  padding: 1.2rem 3.2rem;
+  background: rgba(254, 250, 224, 0.96);
   border-bottom: 1px solid rgba(212, 163, 115, 0.15);
   position: sticky;
   top: 0;
   z-index: 20;
+  backdrop-filter: blur(12px);
 }
 
 .brand {
-  font-size: 1.35rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 900;
   color: #D4A373;
+  letter-spacing: 0.02em;
 }
 
 .nav-links {
   display: flex;
-  gap: 1.2rem;
+  gap: 1.4rem;
   flex-wrap: wrap;
 }
 
 .nav-links a {
   color: #5f4b3a;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 800;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  transition: 0.25s ease;
+}
+
+.nav-links a:hover {
+  background: rgba(212, 163, 115, 0.14);
+  transform: translateY(-2px);
 }
 
 .hero {
   position: relative;
-  min-height: 72vh;
+  min-height: 82vh;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -126,6 +137,7 @@ const authStore = useAuthStore()
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: zoomSlow 12s ease-in-out infinite alternate;
 }
 
 .hero-overlay {
@@ -133,86 +145,102 @@ const authStore = useAuthStore()
   inset: 0;
   background: linear-gradient(
     90deg,
-    rgba(95, 75, 58, 0.58),
-    rgba(95, 75, 58, 0.22)
+    rgba(95, 75, 58, 0.60),
+    rgba(95, 75, 58, 0.26)
   );
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  width: min(900px, 100%);
+  width: min(1100px, 100%);
   padding: 2rem;
   text-align: center;
   color: white;
+  animation: riseIn 1s ease;
 }
 
 .hero-badge {
   display: inline-block;
-  margin-bottom: 1rem;
-  padding: 0.45rem 0.9rem;
+  margin-bottom: 1.1rem;
+  padding: 0.55rem 0.95rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .hero-content h1 {
   margin: 0 auto 1rem;
-  max-width: 760px;
-  font-size: clamp(2.2rem, 5vw, 4rem);
-  line-height: 1.08;
+  max-width: 860px;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 1.05;
 }
 
 .hero-content p {
-  max-width: 680px;
-  margin: 0 auto 1.5rem;
-  line-height: 1.8;
-  font-size: 1rem;
+  max-width: 760px;
+  margin: 0 auto 1.6rem;
+  line-height: 1.9;
+  font-size: 1.08rem;
 }
 
 .hero-btn {
   border: none;
-  border-radius: 16px;
-  padding: 1rem 1.5rem;
+  border-radius: 18px;
+  padding: 1.05rem 1.7rem;
   background: #D4A373;
   color: white;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
+  font-size: 1rem;
   box-shadow: 0 16px 30px rgba(212, 163, 115, 0.28);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 36px rgba(212, 163, 115, 0.34);
 }
 
 .gallery {
-  padding: 4rem 2rem;
+  padding: 5rem 3rem;
   background: #FEFAE0;
 }
 
 .section-head {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.6rem;
 }
 
 .section-head span {
   color: #D4A373;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .section-head h2 {
-  margin: 0.5rem 0 0;
-  font-size: 2rem;
+  margin: 0.55rem 0 0;
+  font-size: 2.6rem;
 }
 
 .gallery-grid {
+  width: min(1320px, 100%);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.4rem;
 }
 
 .gallery-card {
-  border-radius: 24px;
+  border-radius: 26px;
   overflow: hidden;
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
-  min-height: 280px;
+  min-height: 340px;
   background: #FAEDCD;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 26px 42px rgba(92, 75, 59, 0.18);
 }
 
 .gallery-card img {
@@ -225,7 +253,7 @@ const authStore = useAuthStore()
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
   gap: 2rem;
-  padding: 2rem;
+  padding: 2.5rem 3rem;
   background: #CCD5AE;
   color: #5f4b3a;
 }
@@ -237,22 +265,35 @@ const authStore = useAuthStore()
 
 .about-bar p {
   margin: 0.35rem 0;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-@media (max-width: 900px) {
-  .top-nav {
-    flex-direction: column;
-    gap: 1rem;
+@keyframes pageFade {
+  from {
+    opacity: 0;
   }
-
-  .gallery-grid,
-  .about-bar {
-    grid-template-columns: 1fr;
+  to {
+    opacity: 1;
   }
+}
 
-  .hero {
-    min-height: 60vh;
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomSlow {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
   }
 }
 </style>
