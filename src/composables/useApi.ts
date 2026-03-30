@@ -2,7 +2,7 @@ import { createFetch } from "@vueuse/core";
 import { useAuthStore } from "../stores/auth";
 
 export const useApiFetchDiego = createFetch({
-    baseUrl: 'http://localhost:9000/api',
+    baseUrl: 'https://flamelike-unplunderously-tamekia.ngrok-free.dev/api',
     options: {
         async beforeFetch({ options }) {
             const authStore = useAuthStore()
