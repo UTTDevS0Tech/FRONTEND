@@ -32,7 +32,8 @@ const router = createRouter({
     {
       path: '/dashboard/admin',
       name: 'dashboard/admin',
-      component: DashboardAdmin
+      component: DashboardAdmin,
+      meta: { requiresAuth: true, role: 2 }
     },
     {
       path: '/dashboard/personal',
