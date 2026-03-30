@@ -1,6 +1,6 @@
 <script setup lang = "ts">
 import { useApiFetchDiego} from '@/composables/useApi'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth.ts'
 import type { User } from '@/types'
 import { ref } from 'vue'
 import { useFetch } from '@vueuse/core'
