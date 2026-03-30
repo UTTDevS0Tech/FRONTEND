@@ -2,7 +2,7 @@ import { createFetch } from "@vueuse/core";
 import { useAuthStore } from "../stores/auth";
 
 export const useApiFetchDiego = createFetch({
-    baseUrl: 'http://localhost:8000/api',
+    baseUrl: 'https://flamelike-unplunderously-tamekia.ngrok-free.dev/api',
     options: {
         async beforeFetch({ options }) {
             const authStore = useAuthStore()
@@ -10,6 +10,7 @@ export const useApiFetchDiego = createFetch({
             if (authStore.token) {
                 options.headers = {
                     ...options.headers,
+                    'ngrok-skip-browser-warning': 'true',
                     Authorization: `Bearer ${authStore.token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
