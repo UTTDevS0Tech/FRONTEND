@@ -25,19 +25,16 @@ const authStore = useAuthStore()
             <h2>Accesos rápidos</h2>
             <span>Gestiona el sistema con facilidad</span>
           </div>
-
-          <div class="actions-grid">
-            <button class="action-card">
-              <strong>Crear Servicio</strong>
-              <span>Agrega nuevos servicios al catálogo de la estética.</span>
-            </button>
-
-            <button class="action-card secondary">
-              <strong>Crear Estilista</strong>
-              <span>Registra personal nuevo y amplía tu equipo de trabajo.</span>
-            </button>
-          </div>
+          <button class="action-card" @click="$router.push('/dashboard/admin/servicios')">
+            <strong>Crear Servicio</strong>
+            <span>Agrega nuevos servicios al catálogo de la estética.</span>
+          </button>
+          <button class="action-card secondary">
+            <strong>Crear Estilista</strong>
+            <span>Registra personal nuevo y amplía tu equipo de trabajo.</span>
+          </button>
         </div>
+        
       </div>
     </section>
   </main>
