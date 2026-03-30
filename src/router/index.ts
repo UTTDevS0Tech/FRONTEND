@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import DashboardClienteView from '@/views/DashboardClienteView.vue'
 import DashboardAdmin from '@/views/DashboardAdminView.vue'
 import DashboardPersonal from '@/views/DashboardPersonal.vue'
+import AdminServiciosView from '@/views/AdminServiciosView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,14 +32,19 @@ const router = createRouter({
     {
       path: '/dashboard/admin',
       name: 'dashboard/admin',
-      component: DashboardAdmin,
-      meta: { requiresAuth: true, role: 2 },
+      component: DashboardAdmin
     },
     {
       path: '/dashboard/personal',
       name: 'dashboard/personal',
       component: DashboardPersonal,
       meta: { requiresAuth: true, role: 1 }
+    },
+    {
+      path: '/dashboard/admin/servicios',
+      name: 'dashboard/admin/servicios',
+      component: AdminServiciosView,
+      meta: { requiresAuth: true, role: 2 }
     }
   ],
 })
