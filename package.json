@@ -17,7 +17,11 @@
   },
   "dependencies": {
     "@vueuse/core": "^14.2.1",
+    "git": "^0.1.5",
+    "main": "^1000.0.1",
+    "origin": "^0.5.8",
     "pinia": "^3.0.4",
+    "pull": "^2.1.1",
     "vue": "^3.5.30",
     "vue-router": "^5.0.3"
   },
@@ -29,7 +33,7 @@
     "@vitest/eslint-plugin": "^1.6.10",
     "@vue/eslint-config-typescript": "^14.7.0",
     "@vue/test-utils": "^2.2.7",
-    "@vue/tsconfig": "^0.9.1",  
+    "@vue/tsconfig": "^0.9.1",
     "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-oxlint": "~1.51.0",
