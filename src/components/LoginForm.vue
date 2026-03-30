@@ -114,8 +114,7 @@ function login() {
           <span class="hero-tag">Belleza & Bienestar</span>
           <h1>Bienvenido a tu espacio</h1>
           <p>
-            Ingresa para administrar citas, servicios y perfiles dentro del sistema
-            de la estética con una experiencia cálida, limpia y moderna.
+            Estética Nova es tu refugio de cuidado personal. Inicia sesión para descubrir un mundo de servicios diseñados para realzar tu belleza y bienestar.
           </p>
         </div>
 
