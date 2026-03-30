@@ -10,6 +10,7 @@ export const useApiFetchDiego = createFetch({
             if (authStore.token) {
                 options.headers = {
                     ...options.headers,
+                    'ngrok-skip-browser-warning': 'true',
                     Authorization: `Bearer ${authStore.token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
