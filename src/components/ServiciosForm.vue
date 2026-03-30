@@ -31,7 +31,7 @@ function obtenerServicios() {
   error.value = ''
   mensaje.value = ''
 
-  const { data, onFetchResponse, onFetchError } = useApiFetchDiego('/servicios')
+  const { data, onFetchResponse, onFetchError } = useFetch('https://api.carlosd-dev.me/api/servicios')
     .get()
     .json()
 
