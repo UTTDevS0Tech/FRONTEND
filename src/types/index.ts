@@ -89,3 +89,18 @@ public function up(): void
 
 
 */
+
+export interface Servicio {
+  id?: number
+  nombre: string
+  activo: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface ApiResponse<T> {
+  status: string
+  error: any
+  data: T
+  message: string | null
+}
