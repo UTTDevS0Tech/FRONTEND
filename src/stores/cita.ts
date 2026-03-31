@@ -15,7 +15,7 @@ const { data:personalData, isFetching: cargandoPersonal } = useApiFetchDiego('pe
 //luego pues obviamente creamos la cita pero para eso ya hice el type(interface pa q no batallen y poder tipear todo)
 
 const nuevaCita = ref<Cita>({
-    personal_id: 0,
+    personal_id: null as any,
     fecha_c: '',
     hora_c: '',
     total: 0,
@@ -27,7 +27,7 @@ const nuevaCita = ref<Cita>({
 //no se necesita explicar vdd? es pa cuando se quiten los vlares por x o y razon
 const limpiarCita = () => {
     nuevaCita.value = {
-    personal_id: 0,
+    personal_id: null as any,
     fecha_c: '',
     hora_c: '',
     total: 0,
