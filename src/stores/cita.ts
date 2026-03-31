@@ -62,7 +62,7 @@ const gestionarServicio =
 //eh coimpare de todos los valores que agarraste, sumamelos paro y asi jala, basicamente jalan igua la difernecia es q el map te los deja en el arrayt, el .reduce te los suma
 //y la suma si lo quieren ver asi es una variuab le temporal que se va a ir sumando dependiendo 
 // y el + NUmber es para converitr ejemplo "200" a 200   
-const totalCita = computed(() => {
+ const totalCita = computed(() => {
         return nuevaCita.value.detalle_cita.reduce((suma, servicio)=> {
             return suma + Number(servicio.precio_capturado)
         }, 0)
