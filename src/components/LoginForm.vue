@@ -110,6 +110,7 @@ function login() {
 
     <section class="login-shell">
       <div class="login-hero">
+        <img src="@/assets/logolargo.png" class="hero-logo" alt="Logo Nova" />
         <div class="hero-content">
           <span class="hero-tag">Belleza & Bienestar</span>
           <h1>Bienvenido a tu espacio</h1>
@@ -167,6 +168,17 @@ function login() {
   box-sizing: border-box;
 }
 
+.hero-logo {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+  width: 180px;
+  height: auto;
+  z-index: 3;
+  opacity: 0.95;
+  animation: fadeUp 1s ease;
+}
+
 .login-page {
   width: 100%;
   min-height: 100vh;
@@ -205,7 +217,7 @@ function login() {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 70px;
+  padding: 90px 70px 70px;
   background: linear-gradient(
     145deg,
     rgba(204, 213, 174, 0.94),
@@ -219,6 +231,7 @@ function login() {
   z-index: 2;
   max-width: 620px;
   animation: slideLeft 1s ease;
+  margin-top: 60px; 
 }
 
 .hero-tag {
