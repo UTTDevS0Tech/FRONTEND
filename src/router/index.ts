@@ -6,7 +6,7 @@ import DashboardClienteView from '@/views/DashboardClienteView.vue'
 import DashboardAdmin from '@/views/DashboardAdminView.vue'
 import DashboardPersonal from '@/views/DashboardPersonal.vue'
 import AdminServiciosView from '@/views/AdminServiciosView.vue'
-import AgendarCita from '@/components/CitaForm.vue'
+import AgendarCita from '@/components/CitasForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
