@@ -9,6 +9,11 @@ function cerrarSesion() {
   authStore.logout()
   router.push('/login')
 }
+
+function irCrearCitaEscritorio() {
+  router.push('/dashboard/personal/citas-escritorio')
+}
+
 </script>
 
 <template>
@@ -40,7 +45,7 @@ function cerrarSesion() {
           </div>
 
           <div class="actions-grid">
-            <button class="action-card">
+            <button class="action-card" @click="irCrearCitaEscritorio">
               <strong>Crear Cita de Escritorio</strong>
               <span>Registra nuevas citas para clientes directamente desde recepción.</span>
             </button>

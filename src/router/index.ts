@@ -7,6 +7,7 @@ import DashboardAdmin from '@/views/DashboardAdminView.vue'
 import DashboardPersonal from '@/views/DashboardPersonal.vue'
 import AdminServiciosView from '@/views/AdminServiciosView.vue'
 import AgendarCita from '@/components/CitasForm.vue'
+import CitaEscritorioView from '@/views/CitaEscritorioView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +46,12 @@ const router = createRouter({
       path: '/dashboard/personal',
       name: 'dashboard/personal',
       component: DashboardPersonal,
+      meta: { requiresAuth: true, role: 1 }
+    },
+    {
+      path: '/dashboard/personal/citas-escrirtorio',
+      name: 'dashboard/personal/citas-escritorio',
+      component: CitaEscritorioView,
       meta: { requiresAuth: true, role: 1 }
     },
     {
