@@ -171,94 +171,143 @@ onMounted(() => {
 <template>
   <main class="servicios-page">
     <section class="servicios-shell">
-      <div class="servicios-header">
-        <h1>Módulo de Servicios</h1>
-        <p>Administra los servicios generales de la estética.</p>
-      </div>
+      <div class="servicios-layout">
+        <aside class="servicios-sidebar">
+          <span class="panel-tag">Administración</span>
+          <h1>Módulo de Servicios</h1>
+          <p>
+            Administra los servicios generales de la estética. Desde aquí puedes
+            crear, actualizar, activar o eliminar los servicios disponibles.
+          </p>
 
-      <div v-if="mensaje" class="mensaje-exito">
-        {{ mensaje }}
-      </div>
-
-      <div v-if="error" class="mensaje-error">
-        {{ error }}
-      </div>
-
-      <div class="servicios-grid">
-        <div class="servicios-panel">
-          <h2>{{ editando ? 'Editar servicio' : 'Crear servicio' }}</h2>
-
-          <form class="servicio-form">
-            <div class="form-group">
-              <label>Nombre del servicio</label>
-              <input
-                v-model="formulario.nombre"
-                type="text"
-                placeholder="Ej. Cabello"
-              />
+          <div class="sidebar-stats">
+            <div class="stat-card">
+              <strong>{{ servicios.length }}</strong>
+              <span>Total de servicios</span>
             </div>
 
-            <div class="form-group check-group">
-              <label>Activo</label>
-              <input
-                v-model="formulario.activo"
-                type="checkbox"
-              />
+            <div class="stat-card">
+              <strong>{{ servicios.filter(servicio => servicio.activo).length }}</strong>
+              <span>Servicios activos</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="servicios-content">
+          <div class="servicios-header">
+            <div>
+              <h2>{{ editando ? 'Editar servicio' : 'Crear servicio' }}</h2>
+              <p>Gestiona aquí el catálogo general de la estética.</p>
+            </div>
+          </div>
+
+          <div v-if="mensaje" class="mensaje-exito">
+            {{ mensaje }}
+          </div>
+
+          <div v-if="error" class="mensaje-error">
+            {{ error }}
+          </div>
+
+          <div class="servicios-grid">
+            <div class="servicios-panel formulario-panel">
+              <h3>{{ editando ? 'Formulario de edición' : 'Nuevo servicio' }}</h3>
+
+              <form class="servicio-form">
+                <div class="form-group">
+                  <label>Nombre del servicio</label>
+                  <input
+                    v-model="formulario.nombre"
+                    type="text"
+                    placeholder="Ej. Cabello"
+                  />
+                </div>
+
+                <div class="form-group check-group">
+                  <label class="checkbox-wrap">
+                    <input
+                      v-model="formulario.activo"
+                      type="checkbox"
+                    />
+                    <span>Servicio activo</span>
+                  </label>
+                </div>
+
+                <div class="acciones-formulario">
+                  <button type="button" @click="guardarServicio">
+                    {{ editando ? 'Actualizar servicio' : 'Crear servicio' }}
+                  </button>
+
+                  <button type="button" class="secondary" @click="limpiarFormulario">
+                    Limpiar
+                  </button>
+                </div>
+              </form>
             </div>
 
-            <div class="acciones-formulario">
-              <button type="button" @click="guardarServicio">
-                {{ editando ? 'Actualizar' : 'Crear' }}
-              </button>
+            <div class="servicios-panel tabla-panel">
+              <div class="tabla-header">
+                <h3>Lista de servicios</h3>
+                <span>{{ cargando ? 'Cargando...' : `${servicios.length} registrados` }}</span>
+              </div>
 
-              <button type="button" class="secondary" @click="limpiarFormulario">
-                Limpiar
-              </button>
+              <div v-if="cargando" class="loading-state">
+                <div class="loader"></div>
+                <p>Cargando servicios...</p>
+              </div>
+
+              <div v-else class="tabla-wrapper">
+                <table class="tabla-servicios">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr v-for="servicio in servicios" :key="servicio.id">
+                      <td>#{{ servicio.id }}</td>
+                      <td class="service-name">{{ servicio.nombre }}</td>
+                      <td>
+                        <span
+                          class="status-badge"
+                          :class="servicio.activo ? 'activo' : 'inactivo'"
+                        >
+                          {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                      </td>
+                      <td class="acciones-tabla">
+                        <button type="button" class="table-btn edit" @click="cargarServicioParaEditar(servicio)">
+                          Editar
+                        </button>
+
+                        <button type="button" class="table-btn toggle" @click="toggleServicio(servicio.id)">
+                          {{ servicio.activo ? 'Desactivar' : 'Activar' }}
+                        </button>
+
+                        <button type="button" class="table-btn danger" @click="eliminarServicio(servicio.id)">
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+
+                    <tr v-if="!servicios.length">
+                      <td colspan="4">
+                        <div class="empty-state">
+                          <h4>No hay servicios registrados</h4>
+                          <p>Crea tu primer servicio usando el formulario.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </form>
-        </div>
-
-        <div class="servicios-panel">
-          <h2>Lista de servicios</h2>
-
-          <div v-if="cargando">Cargando servicios...</div>
-
-          <table v-else class="tabla-servicios">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Activo</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr v-for="servicio in servicios" :key="servicio.id">
-                <td>{{ servicio.id }}</td>
-                <td>{{ servicio.nombre }}</td>
-                <td>{{ servicio.activo ? 'Sí' : 'No' }}</td>
-                <td class="acciones-tabla">
-                  <button type="button" @click="cargarServicioParaEditar(servicio)">
-                    Editar
-                  </button>
-
-                  <button type="button" @click="toggleServicio(servicio.id)">
-                    {{ servicio.activo ? 'Desactivar' : 'Activar' }}
-                  </button>
-
-                  <button type="button" class="danger" @click="eliminarServicio(servicio.id)">
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-
-              <tr v-if="!servicios.length">
-                <td colspan="4">No hay servicios registrados.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          </div>
+        </section>
       </div>
     </section>
   </main>
@@ -272,53 +321,185 @@ onMounted(() => {
 .servicios-page {
   width: 100%;
   min-height: 100vh;
-  padding: 32px;
-  background: #f8f6f2;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  background: linear-gradient(135deg, #FEFAE0 0%, #FAEDCD 58%, #E9EDC9 100%);
 }
 
 .servicios-shell {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: min(1440px, 100%);
+  animation: pageEnter 0.8s ease;
 }
 
-.servicios-header {
+.servicios-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  min-height: 840px;
+  border-radius: 34px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 26px 70px rgba(92, 75, 59, 0.16);
+  backdrop-filter: blur(16px);
+}
+
+.servicios-sidebar {
+  padding: 50px 36px;
+  background: linear-gradient(180deg, #CCD5AE 0%, #E9EDC9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.panel-tag {
+  display: inline-block;
+  width: fit-content;
   margin-bottom: 24px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d5844;
+  font-weight: 800;
+  font-size: 0.95rem;
 }
 
-.servicios-header h1 {
+.servicios-sidebar h1 {
+  margin: 0 0 18px;
+  font-size: 3rem;
+  line-height: 1.05;
+  color: #5f4b3a;
+}
+
+.servicios-sidebar p {
+  margin: 0 0 28px;
+  color: #7b6a58;
+  line-height: 1.9;
+  font-size: 1.03rem;
+  max-width: 290px;
+}
+
+.sidebar-stats {
+  display: grid;
+  gap: 16px;
+}
+
+.stat-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+  transition: transform 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 2rem;
+  color: #5f4b3a;
+}
+
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
+}
+
+.servicios-content {
+  padding: 42px;
+  background: rgba(254, 250, 224, 0.88);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.servicios-header h2 {
   margin: 0 0 8px;
+  font-size: 2.5rem;
   color: #5f4b3a;
 }
 
 .servicios-header p {
   margin: 0;
-  color: #7b6a58;
+  color: #8a7764;
+  font-size: 1rem;
+}
+
+.mensaje-exito,
+.mensaje-error {
+  margin-bottom: 4px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease;
+}
+
+.mensaje-exito {
+  background: rgba(204, 213, 174, 0.4);
+  color: #4f5e33;
+  border: 1px solid rgba(107, 130, 69, 0.18);
+}
+
+.mensaje-error {
+  background: rgba(255, 228, 228, 0.9);
+  color: #a14444;
+  border: 1px solid rgba(161, 68, 68, 0.14);
 }
 
 .servicios-grid {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 24px;
+  grid-template-columns: 390px 1fr;
+  gap: 22px;
 }
 
 .servicios-panel {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+}
+
+.servicios-panel h3 {
+  margin: 0 0 18px;
+  font-size: 1.6rem;
+  color: #5f4b3a;
 }
 
 .servicio-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+
+.form-group label {
+  color: #5f4b3a;
+  font-weight: 800;
+}
+
+input[type="text"] {
+  padding: 14px 15px;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 163, 115, 0.22);
+  background: rgba(255, 255, 255, 0.92);
+  color: #5f4b3a;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+input[type="text"]:focus {
+  border-color: #D4A373;
+  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
+  transform: translateY(-1px);
 }
 
 .check-group {
@@ -326,10 +507,18 @@ onMounted(() => {
   align-items: center;
 }
 
-input[type="text"] {
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #d8d2c8;
+.checkbox-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #5f4b3a;
+}
+
+.checkbox-wrap input {
+  width: 18px;
+  height: 18px;
+  accent-color: #D4A373;
 }
 
 .acciones-formulario,
@@ -340,49 +529,167 @@ input[type="text"] {
 }
 
 button {
-  padding: 10px 14px;
+  padding: 12px 16px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  background: #d4a373;
+  font-weight: 800;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+.acciones-formulario button {
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
   color: white;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
+}
+
+.acciones-formulario button.secondary {
+  background: linear-gradient(135deg, #CCD5AE, #b8c493);
+  color: #5f4b3a;
+  box-shadow: 0 14px 24px rgba(179, 192, 136, 0.22);
+}
+
+.tabla-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tabla-header span {
+  color: #8a7764;
   font-weight: 700;
 }
 
-button.secondary {
-  background: #a8a29e;
-}
-
-button.danger {
-  background: #c0392b;
+.tabla-wrapper {
+  overflow-x: auto;
 }
 
 .tabla-servicios {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 12px;
 }
 
 .tabla-servicios th,
 .tabla-servicios td {
   text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #eee;
+  padding: 16px 12px;
+  border-bottom: 1px solid rgba(92, 75, 59, 0.08);
+  vertical-align: middle;
 }
 
-.mensaje-exito {
-  margin-bottom: 16px;
-  padding: 12px;
-  border-radius: 12px;
-  background: #e8f7e8;
-  color: #1f7a1f;
+.tabla-servicios th {
+  color: #6c5743;
+  font-size: 0.95rem;
+  font-weight: 900;
 }
 
-.mensaje-error {
-  margin-bottom: 16px;
-  padding: 12px;
+.tabla-servicios td {
+  color: #5f4b3a;
+  font-weight: 600;
+}
+
+.service-name {
+  font-weight: 800;
+}
+
+.status-badge {
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.status-badge.activo {
+  background: rgba(204, 213, 174, 0.45);
+  color: #536437;
+}
+
+.status-badge.inactivo {
+  background: rgba(250, 237, 205, 0.95);
+  color: #9b6a3b;
+}
+
+.table-btn {
+  padding: 10px 14px;
   border-radius: 12px;
-  background: #fdeaea;
-  color: #b42318;
+  box-shadow: none;
+}
+
+.table-btn.edit {
+  background: rgba(212, 163, 115, 0.18);
+  color: #8d633c;
+}
+
+.table-btn.toggle {
+  background: rgba(204, 213, 174, 0.44);
+  color: #55653a;
+}
+
+.table-btn.danger {
+  background: rgba(255, 226, 226, 0.95);
+  color: #ae4d4d;
+}
+
+.loading-state,
+.empty-state {
+  padding: 34px 18px;
+  text-align: center;
+}
+
+.loading-state p,
+.empty-state p {
+  color: #8a7764;
+  margin: 12px 0 0;
+}
+
+.empty-state h4 {
+  margin: 0 0 8px;
+  color: #5f4b3a;
+  font-size: 1.25rem;
+}
+
+.loader {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto;
+  border: 4px solid rgba(212, 163, 115, 0.2);
+  border-top-color: #D4A373;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
