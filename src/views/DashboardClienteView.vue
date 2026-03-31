@@ -41,7 +41,7 @@ function cerrarSesion() {
           Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
           en un ambiente pensado para tu bienestar.
         </p>
-        <button class="hero-btn">Agendar cita</button>
+        <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">Agendar cita</button>
       </div>
     </section>
 
