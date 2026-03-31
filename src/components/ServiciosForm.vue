@@ -174,10 +174,9 @@ onMounted(() => {
       <div class="servicios-layout">
         <aside class="servicios-sidebar">
           <span class="panel-tag">Administración</span>
-          <h1>Módulo de Servicios</h1>
+          <h1>Servicios</h1>
           <p>
-            Administra los servicios generales de la estética. Desde aquí puedes
-            crear, actualizar, activar o eliminar los servicios disponibles.
+            Administra los servicios de la estética.
           </p>
 
           <div class="sidebar-stats">
