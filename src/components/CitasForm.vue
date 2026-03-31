@@ -64,8 +64,8 @@ const submitiarlacita = async () => {
           v-for="s in citaStore.serviciosData" 
           :key="s.id"
           @click="citaStore.gestionarServicio(s)"
-        
           type="button"
+          :class="{ 'seleccionado': citaStore.nuevaCita.detalle_cita.some(item => item.tipo_servicio_id === s.id) }"
         >
           {{ s.nombre }} <span>(${{ s.precio }})</span>
         </button>
