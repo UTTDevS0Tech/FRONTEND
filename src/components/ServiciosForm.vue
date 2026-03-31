@@ -193,6 +193,9 @@ onMounted(() => {
         </aside>
 
         <section class="servicios-content">
+          <router-link to="/dashboard/admin" class="back-btn"> 
+            ← Volver al dashboard
+          </router-link>
           <div class="servicios-header">
             <div>
               <h2>{{ editando ? 'Editar servicio' : 'Crear servicio' }}</h2>
@@ -315,6 +318,27 @@ onMounted(() => {
 <style scoped>
 :global(*) {
   box-sizing: border-box;
+}
+
+.back-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
 }
 
 .servicios-page {

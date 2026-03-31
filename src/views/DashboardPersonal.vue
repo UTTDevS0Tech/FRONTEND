@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+
 const authStore = useAuthStore()
+const router = useRouter()
+
+function cerrarSesion() {
+  authStore.logout()
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -21,6 +29,11 @@ const authStore = useAuthStore()
         </div>
 
         <div class="profile-right">
+           <div class="top-actions">
+    <button class="logout-btn" @click="cerrarSesion">
+      Cerrar sesión
+    </button>
+  </div>
           <div class="right-header">
             <h2>Acciones disponibles</h2>
             <span>Organiza tu día de trabajo con accesos rápidos</span>
@@ -185,6 +198,30 @@ const authStore = useAuthStore()
 .action-card span {
   line-height: 1.8;
   font-size: 1rem;
+}
+
+ .top-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.logout-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  background: rgba(255, 226, 226, 0.95);
+  color: #a14444;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.10);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 214, 214, 1);
+  box-shadow: 0 14px 24px rgba(161, 68, 68, 0.14);
 }
 
 @keyframes riseIn {

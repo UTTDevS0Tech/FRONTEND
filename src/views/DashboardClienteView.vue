@@ -1,20 +1,32 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+
 const authStore = useAuthStore()
+const router = useRouter()
+
+function cerrarSesion() {
+  authStore.logout()
+  router.push('/login')
+}
 </script>
 
 <template>
   <main class="client-home">
     <header class="top-nav">
-      <div class="brand">Estética Nova</div>
+  <div class="brand">Estética Nova</div>
 
-      <nav class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">Estilistas</a>
-        <a href="#">Servicios</a>
-        <a href="#">Perfil</a>
-      </nav>
-    </header>
+  <nav class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Estilistas</a>
+    <a href="#">Servicios</a>
+    <a href="#">Perfil</a>
+  </nav>
+
+  <button class="logout-btn" @click="cerrarSesion">
+    Cerrar sesión
+  </button>
+</header>
 
     <section class="hero">
       <div class="hero-image">
@@ -286,6 +298,24 @@ const authStore = useAuthStore()
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.logout-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+  background: rgba(255, 226, 226, 0.96);
+  color: #a14444;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.10);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 214, 214, 1);
+  box-shadow: 0 14px 24px rgba(161, 68, 68, 0.14);
 }
 
 @keyframes zoomSlow {
