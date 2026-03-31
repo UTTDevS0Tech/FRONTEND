@@ -117,6 +117,9 @@ onMounted(() => {
         </aside>
 
         <section class="tipos-content">
+              <router-link to="/dashboard/admin" class="back-btn">
+            ← Volver al dashboard
+            </router-link>
           <div class="page-header">
             <div>
               <h2>{{ seleccionado?.id ? 'Editar tipo de servicio' : 'Crear tipo de servicio' }}</h2>
@@ -524,5 +527,25 @@ onMounted(() => {
   .content-grid {
     grid-template-columns: 1fr;
   }
+}
+.back-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
 }
 </style>
