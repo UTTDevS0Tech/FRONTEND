@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
+import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import type {
   ClienteOption,
