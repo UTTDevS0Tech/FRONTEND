@@ -8,7 +8,7 @@ export const useCitaStore = defineStore('citas', () =>  {
 
 //nos traermos del bakend a los servicios y al peronal por q tenemos que hacer la cita, acuerdense
 const {data:serviciosData, isFetching: cargandoServicios} = useApiFetchDiego('servicios').get().json()
-const { data:personalData, isFetching: cargandoPersonal } = useApiFetchDiego('personales').get().json()
+const { data:personalData, isFetching: cargandoPersonal } = useApiFetchDiego('estilistas').get().json()
 // aqui lke decimos a nuestro bakend con nuestro useFetch propio "compare traime esa informacion"
 
 
