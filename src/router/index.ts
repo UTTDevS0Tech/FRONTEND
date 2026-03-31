@@ -6,7 +6,8 @@ import DashboardClienteView from '@/views/DashboardClienteView.vue'
 import DashboardAdmin from '@/views/DashboardAdminView.vue'
 import DashboardPersonal from '@/views/DashboardPersonal.vue'
 import AdminServiciosView from '@/views/AdminServiciosView.vue'
-import AgendarCita from '@/components/CitasForm.vue'
+import AgendarCita from '@/components/CitaForm.vue'
+import AdminTipoServiciosView from '@/views/AdminTipoServiciosView.vue'
 import CitaEscritorioView from '@/views/CitaEscritorioView.vue'
 
 const router = createRouter({
@@ -59,7 +60,13 @@ const router = createRouter({
       name: 'dashboard/admin/servicios',
       component: AdminServiciosView,
       meta: { requiresAuth: true, role: 2 }
-    }
+    }, 
+    {
+    path: '/dashboard/admin/tipos-servicio',
+    name: 'dashboard/admin/tipos-servicio',
+    component: AdminTipoServiciosView,
+    meta: { requiresAuth: true, role: 2 }
+  }
   ],
 })
 /*

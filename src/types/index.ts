@@ -114,3 +114,14 @@ export interface ApiResponse<T> {
   data: T
   message: string | null
 }
+
+export interface TipoServicio {
+  id?: number
+  nombre: string
+  descripcion?: string | null
+  precio: number
+  tiempo_estimado: number
+  activo: boolean
+  servicio_id: number
+  imagen?: string | File | null
+}

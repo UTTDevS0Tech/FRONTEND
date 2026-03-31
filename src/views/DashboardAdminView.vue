@@ -42,13 +42,18 @@ function cerrarSesion() {
 
           <div class="actions-grid">
             <button class="action-card" @click="$router.push('/dashboard/admin/servicios')">
-              <strong>Crear Servicio</strong>
+              <strong>Administrar Servicios</strong>
               <span>Agrega nuevos servicios al catálogo de la estética.</span>
             </button>
 
+              <button class="action-card" @click="$router.push('/dashboard/admin/tipos-servicio')">
+              <strong>Administrar Tipos de servicio</strong>
+                <span>Administra los tipos de servicio disponibles.</span>
+              </button>
+
             <button class="action-card secondary">
-              <strong>Crear Estilista</strong>
-              <span>Registra personal nuevo y amplía tu equipo de trabajo.</span>
+              <strong>Administrar Personal</strong>
+              <span>Administra personal nuevo y amplía tu equipo de trabajo.</span>
             </button>
           </div>
         </div>
