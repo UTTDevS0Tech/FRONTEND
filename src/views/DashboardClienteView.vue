@@ -14,7 +14,9 @@ function cerrarSesion() {
 <template>
   <main class="client-home">
     <header class="top-nav">
-  <div class="brand">Estética Nova</div>
+  <div class="brand">
+    <img src="@/assets/logolargo.png" alt="Estética Nova" />
+  </div>
 
   <nav class="nav-links">
     <a href="#">Home</a>
@@ -106,10 +108,19 @@ function cerrarSesion() {
 }
 
 .brand {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #D4A373;
-  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+}
+
+.brand img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.brand img:hover {
+  transform: scale(1.06);
 }
 
 .nav-links {
