@@ -75,18 +75,24 @@ const totalCita = computed(() => {
         nuevaCita.value.total = totalCita.value;
         nuevaCita.value.apartado = totalCita.value * 0.20;
         
-        const {data, error} = useApiFetchDiego('citas').post(nuevaCita.value).json()
+        const {data, error} = await useApiFetchDiego('citas').post(nuevaCita.value).json()
 
         if(!error.value) {
             console.log("SI JALO FELICIDADES SI GUARDO", data.value)
+            alert('cita agendada con exito')
+            limpiarCita()
+            return true;
 
 
         } else{
             console.log("no jalo ", error.value)
+            alert(' no se pudo agendar su cita porfavor intentelo mas tarde')
+            return false;
         }
     }
 
     return {
+        limpiarCita,
         serviciosData,
         personalData,
         cargandoServicios,
