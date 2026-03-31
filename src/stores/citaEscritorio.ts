@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useApiFetchDiego } from '@/composables/useApiFetchDiego'
+import { useApiFetchDiego } from '@/composables/useApi'
 import type {
   CitaEscritorioPayload,
   CitaEscritorioResponse,
