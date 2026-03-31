@@ -146,7 +146,7 @@ function toggleServicio(id?: number) {
   error.value = ''
   mensaje.value = ''
 
-  const { data, onFetchResponse, onFetchError } = useApiFetchDiego(`/servicio/${id}/toggle`)
+  const { data, onFetchResponse, onFetchError } = useApiFetchDiego(`/servicios/${id}/toggle`)
     .patch({})
     .json()
 
