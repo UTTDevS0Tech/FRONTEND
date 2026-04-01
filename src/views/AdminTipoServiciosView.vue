@@ -385,13 +385,14 @@ onMounted(() => {
 .tabla-panel {
   background: rgba(255, 255, 255, 0.62);
   border-radius: 28px;
-  padding: 22px 24px;
+  padding: 24px 30px 24px 24px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
   min-width: 0;
-  min-height: 620px;
-  max-height: 620px;
+  min-height: 640px;
+  max-height: 640px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .tabla-header {
@@ -416,15 +417,16 @@ onMounted(() => {
 .tabla-wrapper {
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 10px;
-  padding-bottom: 6px;
+  overflow-x: auto;
+  padding-right: 12px;
+  padding-bottom: 8px;
 }
 
 .tabla-tipos {
   width: 100%;
+  min-width: 980px;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 .tabla-tipos th,
@@ -443,6 +445,7 @@ onMounted(() => {
   font-weight: 900;
 }
 
+/*
 .tabla-tipos th:nth-child(1),
 .tabla-tipos td:nth-child(1) {
   width: 58px;
@@ -477,7 +480,7 @@ onMounted(() => {
 .tabla-tipos td:nth-child(7) {
   width: 260px;
 }
-
+*/
 .service-name {
   font-weight: 800;
 }
@@ -505,6 +508,7 @@ onMounted(() => {
   gap: 8px;
   flex-wrap: nowrap;
   align-items: center;
+  min-width: max-content;
 }
 
 .table-btn {
