@@ -10,6 +10,7 @@ export const useApiFetchTipoServicios = createFetch({
 
       options.headers = {
         Accept: 'application/json',
+        //trae token? si o no? si trae lo agrega al header, si no trae nada no agrega nada
         ...(authStore.token
           ? { Authorization: `Bearer ${authStore.token}` }
           : {}),
@@ -21,12 +22,14 @@ export const useApiFetchTipoServicios = createFetch({
     },
     onFetchError(ctx) {
       const authStore = useAuthStore()
+      // si el token expiró, nos regresa al login pa
       if (ctx.response?.status === 401) {
         authStore.logout()
       }
       return ctx
     },
   },
+  // pa q el backend no se ponga de morrita
   fetchOptions: {
     mode: 'cors',
   },

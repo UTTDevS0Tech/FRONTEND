@@ -227,12 +227,12 @@ onMounted(() => {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 40px;
+  padding: 24px;
   background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
 }
 
 .tipos-shell {
-  width: min(1440px, 100%);
+  width: min(1800px, 100%);
   animation: pageEnter 0.8s ease;
 }
 
@@ -347,8 +347,8 @@ onMounted(() => {
 
 .content-grid {
   display: grid;
-  grid-template-columns: minmax(420px, 520px) minmax(520px, 1fr);
-  gap: 18px;
+  grid-template-columns: minmax(460px, 560px) minmax(700px, 1fr);
+  gap: 24px;
   align-items: start;
 }
 
@@ -359,7 +359,7 @@ onMounted(() => {
 .tabla-panel {
   background: rgba(255, 255, 255, 0.62);
   border-radius: 28px;
-  padding: 28px;
+  padding: 32px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
   min-width: 0;
 }
@@ -395,7 +395,7 @@ onMounted(() => {
 .tabla-tipos th,
 .tabla-tipos td {
   text-align: left;
-  padding: 14px 12px;
+  padding: 10px 12px;
   border-bottom: 1px solid rgba(92, 75, 59, 0.08);
   vertical-align: middle;
   color: #5f4b3a;
