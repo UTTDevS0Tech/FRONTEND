@@ -228,29 +228,29 @@ onMounted(() => {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 34px;
+  padding: 22px;
   background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
 }
 
 .tipos-shell {
-  width: min(1880px, 100%);
+  width: min(1680px, 100%);
   animation: pageEnter 0.8s ease;
 }
 
 .tipos-layout {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  min-height: 860px;
-  border-radius: 34px;
+  grid-template-columns: 270px 1fr;
+  min-height: 780px;
+  border-radius: 30px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.56);
   border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: 0 26px 70px rgba(92, 75, 59, 0.16);
+  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
   backdrop-filter: blur(16px);
 }
 
 .tipos-sidebar {
-  padding: 40px 28px;
+  padding: 34px 24px;
   background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
   display: flex;
   flex-direction: column;
@@ -270,17 +270,17 @@ onMounted(() => {
 }
 
 .tipos-sidebar h1 {
-  margin: 0 0 18px;
-  font-size: 2.7rem;
+  margin: 0 0 16px;
+  font-size: 2.3rem;
   line-height: 1.05;
   color: #5f4b3a;
 }
 
 .tipos-sidebar p {
-  margin: 0 0 28px;
+  margin: 0 0 24px;
   color: #7b6a58;
-  line-height: 1.8;
-  font-size: 1rem;
+  line-height: 1.7;
+  font-size: 0.95rem;
 }
 
 .sidebar-stats {
@@ -289,8 +289,8 @@ onMounted(() => {
 }
 
 .stat-card {
-  padding: 20px;
-  border-radius: 22px;
+  padding: 18px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.45);
   box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
 }
@@ -298,7 +298,7 @@ onMounted(() => {
 .stat-card strong {
   display: block;
   margin-bottom: 8px;
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: #5f4b3a;
 }
 
@@ -308,11 +308,12 @@ onMounted(() => {
 }
 
 .tipos-content {
-  padding: 28px 34px;
+  padding: 24px 34px 24px 24px;
   background: rgba(254, 250, 224, 0.88);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  overflow: hidden;
 }
 
 .back-btn {
@@ -320,11 +321,12 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 18px;
+  padding: 10px 16px;
   border-radius: 14px;
   background: rgba(204, 213, 174, 0.55);
   color: #5f4b3a;
   font-weight: 800;
+  font-size: 0.95rem;
   text-decoration: none;
   box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
   transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
@@ -337,14 +339,15 @@ onMounted(() => {
 }
 
 .page-header h2 {
-  margin: 0 0 8px;
-  font-size: 2rem;
+  margin: 0 0 6px;
+  font-size: 1.8rem;
   color: #5f4b3a;
 }
 
 .page-header p {
   margin: 0;
   color: #8a7764;
+  font-size: 0.95rem;
 }
 
 .mensaje-exito,
@@ -369,9 +372,9 @@ onMounted(() => {
 
 .content-grid {
   display: grid;
-  grid-template-columns: minmax(500px, 560px) minmax(1040px, 1fr);
-  gap: 28px;
-  align-items: stretch;
+  grid-template-columns: minmax(470px, 520px) minmax(980px, 1fr);
+  gap: 34px;
+  align-items: start;
 }
 
 .form-wrap {
@@ -382,11 +385,11 @@ onMounted(() => {
 .tabla-panel {
   background: rgba(255, 255, 255, 0.62);
   border-radius: 28px;
-  padding: 24px;
+  padding: 22px 24px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
   min-width: 0;
-  min-height: 640px;
-  max-height: 640px;
+  min-height: 620px;
+  max-height: 620px;
   display: flex;
   flex-direction: column;
 }
@@ -414,7 +417,8 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 8px;
+  padding-right: 10px;
+  padding-bottom: 6px;
 }
 
 .tabla-tipos {
@@ -471,7 +475,7 @@ onMounted(() => {
 
 .tabla-tipos th:nth-child(7),
 .tabla-tipos td:nth-child(7) {
-  width: 270px;
+  width: 260px;
 }
 
 .service-name {

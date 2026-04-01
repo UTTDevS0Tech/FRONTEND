@@ -214,24 +214,24 @@ function guardarTipoServicio() {
 .servicios-panel {
   background: rgba(255, 255, 255, 0.62);
   border-radius: 28px;
-  padding: 24px;
+  padding: 20px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
   height: 100%;
-  min-height: 640px;
+  min-height: 620px;
   display: flex;
   flex-direction: column;
 }
 
 .servicios-panel h3 {
-  margin: 0 0 16px;
-  font-size: 1.5rem;
+  margin: 0 0 14px;
+  font-size: 1.35rem;
   color: #5f4b3a;
 }
 
 .servicio-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   height: 100%;
 }
 
@@ -254,7 +254,7 @@ function guardarTipoServicio() {
 .form-group label {
   color: #5f4b3a;
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 input[type="text"],
@@ -264,12 +264,12 @@ textarea,
 input[type="file"] {
   width: 100%;
   min-width: 0;
-  padding: 12px 13px;
+  padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(212, 163, 115, 0.22);
   background: rgba(255, 255, 255, 0.92);
   color: #5f4b3a;
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   outline: none;
   transition: 0.25s ease;
   font-family: inherit;
@@ -277,7 +277,7 @@ input[type="file"] {
 
 textarea {
   resize: vertical;
-  min-height: 92px;
+  min-height: 82px;
 }
 
 input[type="text"]:focus,
@@ -317,13 +317,13 @@ input[type="file"]:focus {
 }
 
 button {
-  padding: 11px 14px;
+  padding: 10px 13px;
   border: none;
   border-radius: 14px;
   cursor: pointer;
   font-weight: 800;
   transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 button:hover:not(:disabled) {
