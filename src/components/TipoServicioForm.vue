@@ -211,8 +211,12 @@ function guardarTipoServicio() {
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.8fr 0.8fr;
   gap: 14px;
+  justify-content: start;
+}
+.form-row .form-group {
+  max-width: 240px;
 }
 
 .form-group label {
@@ -226,12 +230,12 @@ input[type="number"],
 select,
 textarea,
 input[type="file"] {
-  padding: 12px 13px;
+  padding: 11px 13px;
   border-radius: 14px;
   border: 1px solid rgba(212, 163, 115, 0.22);
   background: rgba(255, 255, 255, 0.92);
   color: #5f4b3a;
-  font-size: 0.95rem;
+  font-size: 0.94rem;
   outline: none;
   transition: 0.25s ease;
   font-family: inherit;

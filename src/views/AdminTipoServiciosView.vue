@@ -369,7 +369,7 @@ onMounted(() => {
 
 .content-grid {
   display: grid;
-  grid-template-columns: minmax(420px, 470px) minmax(980px, 1fr);
+  grid-template-columns: minmax(420px, 460px) minmax(1080px, 1fr);
   gap: 26px;
   align-items: stretch;
 }
@@ -471,7 +471,7 @@ onMounted(() => {
 
 .tabla-tipos th:nth-child(7),
 .tabla-tipos td:nth-child(7) {
-  width: 250px;
+  width: 320px;
 }
 
 .service-name {
@@ -499,19 +499,19 @@ onMounted(() => {
 .acciones-tabla {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
 }
 
 .table-btn {
-  padding: 9px 11px;
+  padding: 8px 10px;
   border: none;
   border-radius: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
   white-space: nowrap;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .table-btn:hover {
