@@ -621,10 +621,20 @@ onMounted(() => {
 
 .table-btn {
   padding: 9px 12px;
-  border-radius: 12px;
+  border: none;
+  outline: none;
   box-shadow: none;
+  border-radius: 12px;
   font-size: 0.9rem;
-  white-space: nowrap;
+  white-space: nowrap; 
+}
+
+.table-btn:focus,
+.table-btn:focus-visible,
+.table-btn:active {
+  outline: none;
+  border: none;
+  box-shadow: none;
 }
 
 .table-btn.edit {
