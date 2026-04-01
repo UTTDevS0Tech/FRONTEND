@@ -228,12 +228,12 @@ onMounted(() => {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 40px;
+  padding: 34px;
   background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
 }
 
 .tipos-shell {
-  width: min(1720px, 100%);
+  width: min(1820px, 100%);
   animation: pageEnter 0.8s ease;
 }
 
@@ -250,7 +250,7 @@ onMounted(() => {
 }
 
 .tipos-sidebar {
-  padding: 42px 28px;
+  padding: 40px 28px;
   background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
   display: flex;
   flex-direction: column;
@@ -271,7 +271,7 @@ onMounted(() => {
 
 .tipos-sidebar h1 {
   margin: 0 0 18px;
-  font-size: 3rem;
+  font-size: 2.7rem;
   line-height: 1.05;
   color: #5f4b3a;
 }
@@ -279,8 +279,8 @@ onMounted(() => {
 .tipos-sidebar p {
   margin: 0 0 28px;
   color: #7b6a58;
-  line-height: 1.9;
-  font-size: 1.03rem;
+  line-height: 1.8;
+  font-size: 1rem;
 }
 
 .sidebar-stats {
@@ -289,7 +289,7 @@ onMounted(() => {
 }
 
 .stat-card {
-  padding: 22px;
+  padding: 20px;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.45);
   box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
@@ -308,7 +308,7 @@ onMounted(() => {
 }
 
 .tipos-content {
-  padding: 28px 30px;
+  padding: 28px 34px;
   background: rgba(254, 250, 224, 0.88);
   display: flex;
   flex-direction: column;
@@ -369,8 +369,8 @@ onMounted(() => {
 
 .content-grid {
   display: grid;
-  grid-template-columns: 430px minmax(980px, 1fr);
-  gap: 22px;
+  grid-template-columns: minmax(420px, 470px) minmax(980px, 1fr);
+  gap: 26px;
   align-items: stretch;
 }
 
@@ -382,7 +382,7 @@ onMounted(() => {
 .tabla-panel {
   background: rgba(255, 255, 255, 0.62);
   border-radius: 28px;
-  padding: 28px;
+  padding: 24px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
   min-width: 0;
   min-height: 640px;
@@ -414,7 +414,7 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 6px;
+  padding-right: 8px;
 }
 
 .tabla-tipos {
@@ -426,7 +426,7 @@ onMounted(() => {
 .tabla-tipos th,
 .tabla-tipos td {
   text-align: left;
-  padding: 14px 10px;
+  padding: 13px 10px;
   border-bottom: 1px solid rgba(92, 75, 59, 0.08);
   vertical-align: middle;
   color: #5f4b3a;
@@ -435,43 +435,43 @@ onMounted(() => {
 
 .tabla-tipos th {
   color: #6c5743;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 900;
 }
 
 .tabla-tipos th:nth-child(1),
 .tabla-tipos td:nth-child(1) {
-  width: 70px;
+  width: 60px;
 }
 
 .tabla-tipos th:nth-child(2),
 .tabla-tipos td:nth-child(2) {
-  width: 180px;
+  width: 170px;
 }
 
 .tabla-tipos th:nth-child(3),
 .tabla-tipos td:nth-child(3) {
-  width: 150px;
+  width: 130px;
 }
 
 .tabla-tipos th:nth-child(4),
 .tabla-tipos td:nth-child(4) {
-  width: 110px;
+  width: 95px;
 }
 
 .tabla-tipos th:nth-child(5),
 .tabla-tipos td:nth-child(5) {
-  width: 120px;
+  width: 105px;
 }
 
 .tabla-tipos th:nth-child(6),
 .tabla-tipos td:nth-child(6) {
-  width: 120px;
+  width: 110px;
 }
 
 .tabla-tipos th:nth-child(7),
 .tabla-tipos td:nth-child(7) {
-  width: 290px;
+  width: 250px;
 }
 
 .service-name {
@@ -480,9 +480,9 @@ onMounted(() => {
 
 .status-badge {
   display: inline-flex;
-  padding: 8px 14px;
+  padding: 8px 12px;
   border-radius: 999px;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 800;
 }
 
@@ -504,14 +504,14 @@ onMounted(() => {
 }
 
 .table-btn {
-  padding: 10px 12px;
+  padding: 9px 11px;
   border: none;
   border-radius: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
   white-space: nowrap;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .table-btn:hover {
@@ -589,13 +589,13 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 1450px) {
+@media (max-width: 1500px) {
   .tipos-shell {
-    width: min(100%, 1480px);
+    width: min(1560px, 100%);
   }
 
   .content-grid {
-    grid-template-columns: 430px minmax(760px, 1fr);
+    grid-template-columns: minmax(400px, 450px) minmax(760px, 1fr);
   }
 }
 
