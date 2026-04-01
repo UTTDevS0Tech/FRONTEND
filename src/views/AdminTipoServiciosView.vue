@@ -117,9 +117,10 @@ onMounted(() => {
         </aside>
 
         <section class="tipos-content">
-              <router-link to="/dashboard/admin" class="back-btn">
+          <router-link to="/dashboard/admin" class="back-btn">
             ← Volver al dashboard
-            </router-link>
+          </router-link>
+
           <div class="page-header">
             <div>
               <h2>{{ seleccionado?.id ? 'Editar tipo de servicio' : 'Crear tipo de servicio' }}</h2>
@@ -232,14 +233,14 @@ onMounted(() => {
 }
 
 .tipos-shell {
-  width: min(1440px, 100%);
+  width: min(1720px, 100%);
   animation: pageEnter 0.8s ease;
 }
 
 .tipos-layout {
   display: grid;
-  grid-template-columns: 290px 1fr;
-  min-height: 840px;
+  grid-template-columns: 320px 1fr;
+  min-height: 860px;
   border-radius: 34px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.56);
@@ -314,6 +315,27 @@ onMounted(() => {
   gap: 18px;
 }
 
+.back-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
 .page-header h2 {
   margin: 0 0 8px;
   font-size: 2rem;
@@ -347,13 +369,14 @@ onMounted(() => {
 
 .content-grid {
   display: grid;
-  grid-template-columns: minmax(420px, 520px) minmax(520px, 1fr);
-  gap: 18px;
-  align-items: start;
+  grid-template-columns: 430px minmax(980px, 1fr);
+  gap: 22px;
+  align-items: stretch;
 }
 
 .form-wrap {
   min-width: 0;
+  height: 100%;
 }
 
 .tabla-panel {
@@ -362,6 +385,10 @@ onMounted(() => {
   padding: 28px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
   min-width: 0;
+  min-height: 640px;
+  max-height: 640px;
+  display: flex;
+  flex-direction: column;
 }
 
 .tabla-header {
@@ -384,27 +411,67 @@ onMounted(() => {
 }
 
 .tabla-wrapper {
-  overflow-x: auto;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
 }
 
 .tabla-tipos {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .tabla-tipos th,
 .tabla-tipos td {
   text-align: left;
-  padding: 14px 12px;
+  padding: 14px 10px;
   border-bottom: 1px solid rgba(92, 75, 59, 0.08);
   vertical-align: middle;
   color: #5f4b3a;
+  word-wrap: break-word;
 }
 
 .tabla-tipos th {
   color: #6c5743;
   font-size: 0.95rem;
   font-weight: 900;
+}
+
+.tabla-tipos th:nth-child(1),
+.tabla-tipos td:nth-child(1) {
+  width: 70px;
+}
+
+.tabla-tipos th:nth-child(2),
+.tabla-tipos td:nth-child(2) {
+  width: 180px;
+}
+
+.tabla-tipos th:nth-child(3),
+.tabla-tipos td:nth-child(3) {
+  width: 150px;
+}
+
+.tabla-tipos th:nth-child(4),
+.tabla-tipos td:nth-child(4) {
+  width: 110px;
+}
+
+.tabla-tipos th:nth-child(5),
+.tabla-tipos td:nth-child(5) {
+  width: 120px;
+}
+
+.tabla-tipos th:nth-child(6),
+.tabla-tipos td:nth-child(6) {
+  width: 120px;
+}
+
+.tabla-tipos th:nth-child(7),
+.tabla-tipos td:nth-child(7) {
+  width: 290px;
 }
 
 .service-name {
@@ -433,15 +500,18 @@ onMounted(() => {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .table-btn {
-  padding: 10px 14px;
+  padding: 10px 12px;
   border: none;
   border-radius: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
+  white-space: nowrap;
+  font-size: 0.95rem;
 }
 
 .table-btn:hover {
@@ -519,6 +589,16 @@ onMounted(() => {
   }
 }
 
+@media (max-width: 1450px) {
+  .tipos-shell {
+    width: min(100%, 1480px);
+  }
+
+  .content-grid {
+    grid-template-columns: 430px minmax(760px, 1fr);
+  }
+}
+
 @media (max-width: 1250px) {
   .tipos-layout {
     grid-template-columns: 1fr;
@@ -527,25 +607,9 @@ onMounted(() => {
   .content-grid {
     grid-template-columns: 1fr;
   }
-}
-.back-btn {
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
-  border-radius: 14px;
-  background: rgba(204, 213, 174, 0.55);
-  color: #5f4b3a;
-  font-weight: 800;
-  text-decoration: none;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
-  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
-}
 
-.back-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(204, 213, 174, 0.78);
-  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+  .tabla-panel {
+    max-height: none;
+  }
 }
 </style>

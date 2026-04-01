@@ -165,8 +165,7 @@ function guardarTipoServicio() {
           type="button"
           class="secondary"
           :disabled="cargando"
-          @click="limpiarFormulario"
-        >
+          @click="limpiarFormulario">
           Limpiar
         </button>
       </div>
@@ -184,6 +183,8 @@ function guardarTipoServicio() {
   border-radius: 28px;
   padding: 28px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  height: 100%;
+  min-height: 640px;
 }
 
 .servicios-panel h3 {
@@ -196,6 +197,7 @@ function guardarTipoServicio() {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  height: 100%;
 }
 
 .form-group {
@@ -269,6 +271,7 @@ input[type="file"]:focus {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  margin-top: auto;
 }
 
 button {
