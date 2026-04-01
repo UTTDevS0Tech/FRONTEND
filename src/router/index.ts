@@ -50,10 +50,10 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 1 }
     },
     {
-      path: '/dashboard/personal/citas-escrirtorio',
+      path: '/dashboard/personal/citas-escritorio',
       name: 'dashboard/personal/citas-escritorio',
       component: CitaEscritorioView,
-      meta: { requiresAuth: true, role: 1 }
+      meta: { requiresAuth: true, role: 4 }
     },
     {
       path: '/dashboard/admin/servicios',
@@ -126,7 +126,8 @@ router.beforeEach((to,from, next ) => {
 //para que no batallen en entender el undefined es para cuando no se tenga un rol es como el compare de seguridad: eh compare ponte al tiro esto no trae basicamente
 function redirigir(rol_id: number |undefined, next: any) {
   if (rol_id === 2) return next({ name: 'dashboard/admin' })
-  if (rol_id === 1) return next({ name: 'dashboard/personal' })
+  if (rol_id === 1) return next({ name: 'dashboard/personal'})
+  if (rol_id === 4) return next({ name: 'dashboard/personal/citas-escritorio'})
   if (rol_id === 3) return next({ name: 'dashboard/cliente' })
   next('/login')
 }
