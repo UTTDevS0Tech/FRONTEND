@@ -113,7 +113,7 @@ function guardarTipoServicio() {
       </div>
 
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group compact-group">
           <label>Precio</label>
           <input
             v-model.number="formulario.precio"
@@ -125,7 +125,7 @@ function guardarTipoServicio() {
           />
         </div>
 
-        <div class="form-group">
+        <div class="form-group compact-group">
           <label>Tiempo estimado (min)</label>
           <input
             v-model.number="formulario.tiempo_estimado"
@@ -211,12 +211,12 @@ function guardarTipoServicio() {
 
 .form-row {
   display: grid;
-  grid-template-columns: 0.8fr 0.8fr;
-  gap: 14px;
-  justify-content: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
 }
-.form-row .form-group {
-  max-width: 240px;
+
+.compact-group {
+  min-width: 0;
 }
 
 .form-group label {
@@ -230,7 +230,9 @@ input[type="number"],
 select,
 textarea,
 input[type="file"] {
-  padding: 11px 13px;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 13px;
   border-radius: 14px;
   border: 1px solid rgba(212, 163, 115, 0.22);
   background: rgba(255, 255, 255, 0.92);

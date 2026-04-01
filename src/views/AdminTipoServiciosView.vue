@@ -233,13 +233,13 @@ onMounted(() => {
 }
 
 .tipos-shell {
-  width: min(1820px, 100%);
+  width: min(1880px, 100%);
   animation: pageEnter 0.8s ease;
 }
 
 .tipos-layout {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 300px 1fr;
   min-height: 860px;
   border-radius: 34px;
   overflow: hidden;
@@ -369,8 +369,8 @@ onMounted(() => {
 
 .content-grid {
   display: grid;
-  grid-template-columns: minmax(420px, 460px) minmax(1080px, 1fr);
-  gap: 26px;
+  grid-template-columns: minmax(500px, 560px) minmax(1040px, 1fr);
+  gap: 28px;
   align-items: stretch;
 }
 
@@ -441,37 +441,37 @@ onMounted(() => {
 
 .tabla-tipos th:nth-child(1),
 .tabla-tipos td:nth-child(1) {
-  width: 60px;
+  width: 58px;
 }
 
 .tabla-tipos th:nth-child(2),
 .tabla-tipos td:nth-child(2) {
-  width: 170px;
+  width: 160px;
 }
 
 .tabla-tipos th:nth-child(3),
 .tabla-tipos td:nth-child(3) {
-  width: 130px;
+  width: 120px;
 }
 
 .tabla-tipos th:nth-child(4),
 .tabla-tipos td:nth-child(4) {
-  width: 95px;
+  width: 90px;
 }
 
 .tabla-tipos th:nth-child(5),
 .tabla-tipos td:nth-child(5) {
-  width: 105px;
+  width: 95px;
 }
 
 .tabla-tipos th:nth-child(6),
 .tabla-tipos td:nth-child(6) {
-  width: 110px;
+  width: 105px;
 }
 
 .tabla-tipos th:nth-child(7),
 .tabla-tipos td:nth-child(7) {
-  width: 320px;
+  width: 270px;
 }
 
 .service-name {
@@ -591,11 +591,11 @@ onMounted(() => {
 
 @media (max-width: 1500px) {
   .tipos-shell {
-    width: min(1560px, 100%);
+    width: min(1600px, 100%);
   }
 
   .content-grid {
-    grid-template-columns: minmax(400px, 450px) minmax(760px, 1fr);
+    grid-template-columns: minmax(460px, 520px) minmax(820px, 1fr);
   }
 }
 
