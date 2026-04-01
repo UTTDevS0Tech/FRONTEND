@@ -16,6 +16,7 @@ const formulario = ref<Servicio>({
 
 const editando = ref(false)
 const idEditando = ref<number | null>(null)
+const modalAbierto = ref(false)
 
 function limpiarFormulario() {
   formulario.value = {
@@ -24,6 +25,16 @@ function limpiarFormulario() {
   }
   editando.value = false
   idEditando.value = null
+}
+
+function abrirModalNuevo() {
+  limpiarFormulario()
+  modalAbierto.value = true
+}
+
+function cerrarModal() {
+  modalAbierto.value = false
+  limpiarFormulario()
 }
 
 function obtenerServicios() {
@@ -70,7 +81,7 @@ function guardarServicio() {
     console.log('Servicio creado:', data.value)
 
     mensaje.value = data.value?.message || 'Servicio creado correctamente.'
-    limpiarFormulario()
+    cerrarModal()
     obtenerServicios()
   })
 
@@ -90,6 +101,7 @@ function cargarServicioParaEditar(servicio: Servicio) {
   editando.value = true
   mensaje.value = ''
   error.value = ''
+  modalAbierto.value = true
 }
 
 function actualizarServicio(id: number) {
@@ -104,7 +116,7 @@ function actualizarServicio(id: number) {
     console.log('Servicio actualizado:', data.value)
 
     mensaje.value = data.value?.message || 'Servicio actualizado correctamente.'
-    limpiarFormulario()
+    cerrarModal()
     obtenerServicios()
   })
 
@@ -193,12 +205,19 @@ onMounted(() => {
         </aside>
 
         <section class="servicios-content">
-          <router-link to="/dashboard/admin" class="back-btn"> 
-            ← Volver al dashboard
-          </router-link>
+          <div class="top-actions">
+            <router-link to="/dashboard/admin" class="back-btn">
+              ← Volver al dashboard
+            </router-link>
+
+            <button type="button" class="new-btn" @click="abrirModalNuevo">
+              + Nuevo servicio
+            </button>
+          </div>
+
           <div class="servicios-header">
             <div>
-              <h2>{{ editando ? 'Editar servicio' : 'Crear servicio' }}</h2>
+              <h2>Lista de servicios</h2>
               <p>Gestiona aquí el catálogo general de la estética.</p>
             </div>
           </div>
@@ -211,107 +230,120 @@ onMounted(() => {
             {{ error }}
           </div>
 
-          <div class="servicios-grid">
-            <div class="servicios-panel formulario-panel">
-              <h3>{{ editando ? 'Formulario de edición' : 'Nuevo servicio' }}</h3>
-
-              <form class="servicio-form">
-                <div class="form-group">
-                  <label>Nombre del servicio</label>
-                  <input
-                    v-model="formulario.nombre"
-                    type="text"
-                    placeholder="Ej. Cabello"
-                  />
-                </div>
-
-                <div class="form-group check-group">
-                  <label class="checkbox-wrap">
-                    <input
-                      v-model="formulario.activo"
-                      type="checkbox"
-                    />
-                    <span>Servicio activo</span>
-                  </label>
-                </div>
-
-                <div class="acciones-formulario">
-                  <button type="button" @click="guardarServicio">
-                    {{ editando ? 'Actualizar servicio' : 'Crear servicio' }}
-                  </button>
-
-                  <button type="button" class="secondary" @click="limpiarFormulario">
-                    Limpiar
-                  </button>
-                </div>
-              </form>
+          <div class="servicios-panel tabla-panel-full">
+            <div class="tabla-header">
+              <h3>Servicios registrados</h3>
+              <span>{{ cargando ? 'Cargando...' : `${servicios.length} registrados` }}</span>
             </div>
 
-            <div class="servicios-panel tabla-panel">
-              <div class="tabla-header">
-                <h3>Lista de servicios</h3>
-                <span>{{ cargando ? 'Cargando...' : `${servicios.length} registrados` }}</span>
-              </div>
+            <div v-if="cargando" class="loading-state">
+              <div class="loader"></div>
+              <p>Cargando servicios...</p>
+            </div>
 
-              <div v-if="cargando" class="loading-state">
-                <div class="loader"></div>
-                <p>Cargando servicios...</p>
-              </div>
+            <div v-else class="tabla-wrapper">
+              <table class="tabla-servicios">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
 
-              <div v-else class="tabla-wrapper">
-                <table class="tabla-servicios">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Nombre</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
+                <tbody>
+                  <tr v-for="servicio in servicios" :key="servicio.id">
+                    <td>#{{ servicio.id }}</td>
+                    <td class="service-name">{{ servicio.nombre }}</td>
+                    <td>
+                      <span
+                        class="status-badge"
+                        :class="servicio.activo ? 'activo' : 'inactivo'"
+                      >
+                        {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </td>
+                    <td class="acciones-tabla">
+                      <button type="button" class="table-btn edit" @click="cargarServicioParaEditar(servicio)">
+                        Editar
+                      </button>
 
-                  <tbody>
-                    <tr v-for="servicio in servicios" :key="servicio.id">
-                      <td>#{{ servicio.id }}</td>
-                      <td class="service-name">{{ servicio.nombre }}</td>
-                      <td>
-                        <span
-                          class="status-badge"
-                          :class="servicio.activo ? 'activo' : 'inactivo'"
-                        >
-                          {{ servicio.activo ? 'Activo' : 'Inactivo' }}
-                        </span>
-                      </td>
-                      <td class="acciones-tabla">
-                        <button type="button" class="table-btn edit" @click="cargarServicioParaEditar(servicio)">
-                          Editar
-                        </button>
+                      <button type="button" class="table-btn toggle" @click="toggleServicio(servicio.id)">
+                        {{ servicio.activo ? 'Desactivar' : 'Activar' }}
+                      </button>
 
-                        <button type="button" class="table-btn toggle" @click="toggleServicio(servicio.id)">
-                          {{ servicio.activo ? 'Desactivar' : 'Activar' }}
-                        </button>
+                      <button type="button" class="table-btn danger" @click="eliminarServicio(servicio.id)">
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
 
-                        <button type="button" class="table-btn danger" @click="eliminarServicio(servicio.id)">
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-
-                    <tr v-if="!servicios.length">
-                      <td colspan="4">
-                        <div class="empty-state">
-                          <h4>No hay servicios registrados</h4>
-                          <p>Crea tu primer servicio usando el formulario.</p>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                  <tr v-if="!servicios.length">
+                    <td colspan="4">
+                      <div class="empty-state">
+                        <h4>No hay servicios registrados</h4>
+                        <p>Haz clic en “Nuevo servicio” para crear el primero.</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
       </div>
     </section>
+
+    <transition name="fade">
+      <div v-if="modalAbierto" class="modal-overlay" @click.self="cerrarModal">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div>
+              <h3>{{ editando ? 'Editar servicio' : 'Nuevo servicio' }}</h3>
+              <p>Completa el formulario para guardar los cambios.</p>
+            </div>
+
+            <button type="button" class="close-btn" @click="cerrarModal">
+              ✕
+            </button>
+          </div>
+
+          <div class="modal-form">
+            <form class="servicio-form" @submit.prevent="guardarServicio">
+              <div class="form-group">
+                <label>Nombre del servicio</label>
+                <input
+                  v-model="formulario.nombre"
+                  type="text"
+                  placeholder="Ej. Cabello"
+                />
+              </div>
+
+              <div class="form-group check-group">
+                <label class="checkbox-wrap">
+                  <input
+                    v-model="formulario.activo"
+                    type="checkbox"
+                  />
+                  <span>Servicio activo</span>
+                </label>
+              </div>
+
+              <div class="acciones-formulario">
+                <button type="submit">
+                  {{ editando ? 'Actualizar servicio' : 'Crear servicio' }}
+                </button>
+
+                <button type="button" class="secondary" @click="cerrarModal">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </transition>
   </main>
 </template>
 
@@ -320,59 +352,38 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
-.back-btn {
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
-  border-radius: 14px;
-  background: rgba(204, 213, 174, 0.55);
-  color: #5f4b3a;
-  font-weight: 800;
-  text-decoration: none;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
-  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
-}
-
-.back-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(204, 213, 174, 0.78);
-  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
-}
-
 .servicios-page {
   width: 100%;
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 40px;
+  padding: 24px;
   background: linear-gradient(135deg, #FEFAE0 0%, #FAEDCD 58%, #E9EDC9 100%);
 }
 
 .servicios-shell {
-  width: min(1440px, 100%);
+  width: min(1600px, 100%);
   animation: pageEnter 0.8s ease;
 }
 
 .servicios-layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  min-height: 840px;
-  border-radius: 34px;
+  grid-template-columns: 280px 1fr;
+  min-height: 780px;
+  border-radius: 30px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.56);
   border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: 0 26px 70px rgba(92, 75, 59, 0.16);
+  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
   backdrop-filter: blur(16px);
 }
 
 .servicios-sidebar {
-  padding: 50px 36px;
+  padding: 34px 24px;
   background: linear-gradient(180deg, #CCD5AE 0%, #E9EDC9 100%);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .panel-tag {
@@ -388,41 +399,35 @@ onMounted(() => {
 }
 
 .servicios-sidebar h1 {
-  margin: 0 0 18px;
-  font-size: 3rem;
+  margin: 0 0 16px;
+  font-size: 2.3rem;
   line-height: 1.05;
   color: #5f4b3a;
 }
 
 .servicios-sidebar p {
-  margin: 0 0 28px;
+  margin: 0 0 24px;
   color: #7b6a58;
-  line-height: 1.9;
-  font-size: 1.03rem;
-  max-width: 290px;
+  line-height: 1.7;
+  font-size: 0.95rem;
 }
 
 .sidebar-stats {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .stat-card {
-  padding: 20px;
-  border-radius: 22px;
+  padding: 18px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.48);
   box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
-  transition: transform 0.25s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
 }
 
 .stat-card strong {
   display: block;
-  margin-bottom: 6px;
-  font-size: 2rem;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
   color: #5f4b3a;
 }
 
@@ -432,23 +437,70 @@ onMounted(() => {
 }
 
 .servicios-content {
-  padding: 42px;
+  padding: 24px 28px;
   background: rgba(254, 250, 224, 0.88);
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.back-btn,
+.new-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.back-btn {
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.new-btn {
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
+  color: white;
+  box-shadow: 0 12px 24px rgba(212, 163, 115, 0.22);
+}
+
+.new-btn:hover {
+  transform: translateY(-2px);
 }
 
 .servicios-header h2 {
-  margin: 0 0 8px;
-  font-size: 2.5rem;
+  margin: 0 0 6px;
+  font-size: 1.8rem;
   color: #5f4b3a;
 }
 
 .servicios-header p {
   margin: 0;
   color: #8a7764;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .mensaje-exito,
@@ -472,108 +524,16 @@ onMounted(() => {
   border: 1px solid rgba(161, 68, 68, 0.14);
 }
 
-.servicios-grid {
-  display: grid;
-  grid-template-columns: 390px 1fr;
-  gap: 22px;
-}
-
-.servicios-panel {
+.tabla-panel-full {
   background: rgba(255, 255, 255, 0.62);
   border-radius: 28px;
-  padding: 28px;
+  padding: 24px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
-}
-
-.servicios-panel h3 {
-  margin: 0 0 18px;
-  font-size: 1.6rem;
-  color: #5f4b3a;
-}
-
-.servicio-form {
+  min-height: 620px;
+  max-height: 620px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.form-group label {
-  color: #5f4b3a;
-  font-weight: 800;
-}
-
-input[type="text"] {
-  padding: 14px 15px;
-  border-radius: 16px;
-  border: 1px solid rgba(212, 163, 115, 0.22);
-  background: rgba(255, 255, 255, 0.92);
-  color: #5f4b3a;
-  font-size: 1rem;
-  outline: none;
-  transition: 0.25s ease;
-}
-
-input[type="text"]:focus {
-  border-color: #D4A373;
-  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
-  transform: translateY(-1px);
-}
-
-.check-group {
-  flex-direction: row;
-  align-items: center;
-}
-
-.checkbox-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  color: #5f4b3a;
-}
-
-.checkbox-wrap input {
-  width: 18px;
-  height: 18px;
-  accent-color: #D4A373;
-}
-
-.acciones-formulario,
-.acciones-tabla {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 12px 16px;
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  font-weight: 800;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-
-.acciones-formulario button {
-  background: linear-gradient(135deg, #D4A373, #bf8c5a);
-  color: white;
-  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
-}
-
-.acciones-formulario button.secondary {
-  background: linear-gradient(135deg, #CCD5AE, #b8c493);
-  color: #5f4b3a;
-  box-shadow: 0 14px 24px rgba(179, 192, 136, 0.22);
+  overflow: hidden;
 }
 
 .tabla-header {
@@ -584,24 +544,36 @@ button:hover {
   margin-bottom: 18px;
 }
 
+.tabla-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #5f4b3a;
+}
+
 .tabla-header span {
   color: #8a7764;
   font-weight: 700;
 }
 
 .tabla-wrapper {
+  flex: 1;
+  overflow-y: auto;
   overflow-x: auto;
+  padding-right: 12px;
+  padding-bottom: 8px;
 }
 
 .tabla-servicios {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
+  table-layout: auto;
 }
 
 .tabla-servicios th,
 .tabla-servicios td {
   text-align: left;
-  padding: 16px 12px;
+  padding: 14px 12px;
   border-bottom: 1px solid rgba(92, 75, 59, 0.08);
   vertical-align: middle;
 }
@@ -639,10 +611,20 @@ button:hover {
   color: #9b6a3b;
 }
 
+.acciones-tabla {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  align-items: center;
+  min-width: max-content;
+}
+
 .table-btn {
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: 12px;
   box-shadow: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .table-btn.edit {
@@ -688,6 +670,152 @@ button:hover {
   animation: spin 0.8s linear infinite;
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(71, 58, 45, 0.35);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 200;
+}
+
+.modal-card {
+  width: min(560px, 100%);
+  border-radius: 28px;
+  background: rgba(254, 250, 224, 0.98);
+  box-shadow: 0 28px 60px rgba(92, 75, 59, 0.22);
+  padding: 24px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-header h3 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+  color: #5f4b3a;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #8a7764;
+}
+
+.close-btn {
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: rgba(255, 226, 226, 0.95);
+  color: #a14444;
+}
+
+.close-btn:hover {
+  transform: translateY(-2px);
+}
+
+.modal-form .servicio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-form .form-group label {
+  color: #5f4b3a;
+  font-weight: 800;
+}
+
+.modal-form input[type="text"] {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 163, 115, 0.22);
+  background: rgba(255, 255, 255, 0.92);
+  color: #5f4b3a;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.modal-form input[type="text"]:focus {
+  border-color: #D4A373;
+  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
+}
+
+.modal-form .check-group {
+  flex-direction: row;
+  align-items: center;
+}
+
+.modal-form .checkbox-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #5f4b3a;
+}
+
+.modal-form .checkbox-wrap input {
+  width: 18px;
+  height: 18px;
+  accent-color: #D4A373;
+}
+
+.modal-form .acciones-formulario {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-form button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.modal-form button:hover {
+  transform: translateY(-2px);
+}
+
+.modal-form .acciones-formulario button {
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
+  color: white;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
+}
+
+.modal-form .acciones-formulario button.secondary {
+  background: linear-gradient(135deg, #CCD5AE, #b8c493);
+  color: #5f4b3a;
+  box-shadow: 0 14px 24px rgba(179, 192, 136, 0.22);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 @keyframes pageEnter {
   from {
     opacity: 0;
@@ -713,6 +841,16 @@ button:hover {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1250px) {
+  .servicios-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tabla-panel-full {
+    max-height: none;
   }
 }
 </style>
