@@ -12,6 +12,40 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
   const error = ref('')
   const mensaje = ref('')
 
+  function validarPayload(payload: CitaEscritorioPayload) {
+    if (!payload.cliente_id) {
+      throw new Error('Debes seleccionar un cliente')
+    }
+
+    if (!payload.personal_id) {
+      throw new Error('Debes seleccionar personal')
+    }
+
+    if (!payload.fecha_c) {
+      throw new Error('Debes seleccionar una fecha')
+    }
+
+    if (!payload.hora_c) {
+      throw new Error('Debes seleccionar una hora')
+    }
+
+    if (!payload.detalles || !Array.isArray(payload.detalles) || payload.detalles.length === 0) {
+      throw new Error('Debes agregar al menos un servicio')
+    }
+
+    const detallesInvalidos = payload.detalles.some(
+      (detalle) => !detalle.servicio_id || Number(detalle.subtotal) <= 0
+    )
+
+    if (detallesInvalidos) {
+      throw new Error('Hay servicios inválidos en la cita')
+    }
+
+    if (Number(payload.total) <= 0) {
+      throw new Error('El total debe ser mayor a 0')
+    }
+  }
+
   async function obtenerCitas() {
     loading.value = true
     error.value = ''
@@ -39,11 +73,16 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     mensaje.value = ''
 
     try {
+      validarPayload(payload)
+
+      console.log('Payload crear cita:', payload)
+
       const { data, error: fetchError } = await useApiFetchDiego('/citas-escritorio')
         .post(payload)
         .json()
 
       if (fetchError.value) {
+        console.error('Error backend crear cita:', fetchError.value)
         throw new Error(fetchError.value.message || 'No se pudo crear la cita')
       }
 
@@ -64,11 +103,16 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     mensaje.value = ''
 
     try {
+      validarPayload(payload)
+
+      console.log('Payload actualizar cita:', payload)
+
       const { data, error: fetchError } = await useApiFetchDiego(`/citas-escritorio/${id}`)
         .put(payload)
         .json()
 
       if (fetchError.value) {
+        console.error('Error backend actualizar cita:', fetchError.value)
         throw new Error(fetchError.value.message || 'No se pudo actualizar la cita')
       }
 
