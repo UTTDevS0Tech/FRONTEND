@@ -53,7 +53,7 @@ const router = createRouter({
       path: '/dashboard/personal/citas-escritorio',
       name: 'dashboard/personal/citas-escritorio',
       component: CitaEscritorioView,
-      meta: { requiresAuth: true, role: 1 }
+      meta: { requiresAuth: true, role: 4 }
     },
     {
       path: '/dashboard/admin/servicios',
