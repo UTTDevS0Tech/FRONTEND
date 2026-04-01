@@ -3,7 +3,7 @@ import { computed, reactive, watch } from 'vue'
 import type { Servicio, TipoServicio } from '@/types'
 
 const props = defineProps<{
-//viene del papá, si tiene id es edición, si no, es creación
+  //viene del papá, si tiene id es edición, si no, es creación
   modelValue?: TipoServicio | null
   //para la lista de servicios del select
   servicios: Servicio[]
@@ -14,15 +14,15 @@ const props = defineProps<{
 
 //estas madres son los eventos que se van a mandar de aquí al papá
 const emit = defineEmits<{
-  //es el formulario listo para ejecutarse 
+  //es el formulario listo para ejecutarse
   (e: 'submit', payload: FormData): void
   //esto es para cuando se limpia el formulario o se cancela la edición
-  //para que el papá sepa y pueda limpiar el formulario 
+  //para que el papá sepa y pueda limpiar el formulario
   (e: 'cancel'): void
 }>()
 
 //esto es lo q nos dijo ramiro de la reactividad, de cuando un usuario escribe algo en el formulario
-//reactive hace que el objeto formulario sea reactivo, osea que vue lo observe y 
+//reactive hace que el objeto formulario sea reactivo, osea que vue lo observe y
 // cuando cambie algo en el formulario, vue se de cuenta y actualice la vista
 const formulario = reactive({
   nombre: '',
@@ -33,8 +33,9 @@ const formulario = reactive({
   servicio_id: 0,
   imagen: null as File | null
 })
-//el computed se usa cuando sus dependdencias cambian sjjsjs 
-//en este caso lo estoy usando pa wachar que haya un id en el formulario pa checar si estas editando o no 
+
+//el computed se usa cuando sus dependdencias cambian sjjsjs
+//en este caso lo estoy usando pa wachar que haya un id en el formulario pa checar si estas editando o no
 const editando = computed(() => {
   if (props.modelValue && props.modelValue.id) {
     return true
@@ -44,10 +45,9 @@ const editando = computed(() => {
 })
 
 //el watch sirve para observar un valor reactivo y así poder ejecutar una función cuando estos camnbien
-//es como decirle a vue que este wachando esos valores y que cuando cambien, haga algo 
-
+//es como decirle a vue que este wachando esos valores y que cuando cambien, haga algo
 watch(
-  //aquí estamos vigilando lo que es el props.modelvalue, 
+  //aquí estamos vigilando lo que es el props.modelvalue,
   // cada vez que esto cambie desde el papá, el watch va a correr
   () => props.modelValue,
   //este valor es el nuevo que está en el modelValue ok?
@@ -55,7 +55,7 @@ watch(
   (valor) => {
     //este es el callback, lo que hace esto es copiar lo que viene del papá al formulario
     // cuando se selecciona el botón de editar en la lista de los tipos de servicio, el vue wacha que id
-    //ya no es nuelo, entonces cambia los valores que hay en el formulario 
+    //ya no es nuelo, entonces cambia los valores que hay en el formulario
     formulario.nombre = valor?.nombre ?? ''
     formulario.descripcion = valor?.descripcion ?? ''
     formulario.precio = valor?.precio ?? 0
@@ -64,9 +64,10 @@ watch(
     formulario.servicio_id = valor?.servicio_id ?? 0
     formulario.imagen = null
   },
-  {immediate: true}
- )
- //resetea el formulario y le avisa al papá que tambien cambie
+  { immediate: true }
+)
+
+//resetea el formulario y le avisa al papá que tambien cambie
 function limpiarFormulario() {
   formulario.nombre = ''
   formulario.descripcion = ''
@@ -77,12 +78,13 @@ function limpiarFormulario() {
   formulario.imagen = null
   emit('cancel')
 }
+
 //el evento es el evento del input (el @change)
 function manejarArchivo(event: Event) {
   //vamos a obtener el valor que cambió en el input
   //el event.target es el <input type="file">
   //el HTML InputElement es pq typescript nos odia y no confía en nodotros, entonces hay q decirle
-  //confía en mi, es un input vro 
+  //confía en mi, es un input vro
   const input = event.target as HTMLInputElement
   formulario.imagen = input.files?.[0] ?? null
 }
@@ -101,6 +103,7 @@ function guardarTipoServicio() {
   if (formulario.imagen) {
     formData.append('imagen', formulario.imagen)
   }
+
   //lo mandamos al papá
   emit('submit', formData)
 }
@@ -212,27 +215,23 @@ function guardarTipoServicio() {
 }
 
 .servicios-panel {
-  background: rgba(255, 255, 255, 0.62);
-  border-radius: 28px;
-  padding: 20px;
-  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
   height: 100%;
-  min-height: 620px;
   display: flex;
   flex-direction: column;
 }
 
 .servicios-panel h3 {
-  margin: 0 0 14px;
-  font-size: 1.35rem;
-  color: #5f4b3a;
+  display: none;
 }
 
 .servicio-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  height: 100%;
 }
 
 .form-group {
@@ -313,7 +312,7 @@ input[type="file"]:focus {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: auto;
+  margin-top: 8px;
 }
 
 button {

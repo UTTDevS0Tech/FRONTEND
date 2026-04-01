@@ -9,6 +9,7 @@ const serviciosStore = useServiciosStore()
 const tipoServiciosStore = useTipoServiciosStore()
 
 const seleccionado = ref<TipoServicio | null>(null)
+const modalAbierto = ref(false)
 
 const totalActivos = computed(() =>
   tipoServiciosStore.tipoServicios.filter(tipo => tipo.activo).length
@@ -34,6 +35,7 @@ async function guardar(payload: FormData) {
     }
 
     limpiarSeleccion()
+    modalAbierto.value = false
   } catch (err) {
     console.error('Error al guardar tipo de servicio:', err)
   }
@@ -47,10 +49,21 @@ function editar(item: TipoServicio) {
     servicio_id: Number(item.servicio_id),
     activo: Boolean(item.activo)
   }
+  modalAbierto.value = true
 }
 
 function limpiarSeleccion() {
   seleccionado.value = null
+}
+
+function abrirModalNuevo() {
+  limpiarSeleccion()
+  modalAbierto.value = true
+}
+
+function cerrarModal() {
+  modalAbierto.value = false
+  limpiarSeleccion()
 }
 
 async function eliminar(id?: number) {
@@ -117,14 +130,20 @@ onMounted(() => {
         </aside>
 
         <section class="tipos-content">
-          <router-link to="/dashboard/admin" class="back-btn">
-            ← Volver al dashboard
-          </router-link>
+          <div class="top-actions">
+            <router-link to="/dashboard/admin" class="back-btn">
+              ← Volver al dashboard
+            </router-link>
+
+            <button type="button" class="new-btn" @click="abrirModalNuevo">
+              + Nuevo tipo de servicio
+            </button>
+          </div>
 
           <div class="page-header">
             <div>
-              <h2>{{ seleccionado?.id ? 'Editar tipo de servicio' : 'Crear tipo de servicio' }}</h2>
-              <p>Completa el formulario para registrar un nuevo tipo de servicio.</p>
+              <h2>Tipos de servicio registrados</h2>
+              <p>Consulta, edita y administra los tipos de servicio del sistema.</p>
             </div>
           </div>
 
@@ -136,85 +155,98 @@ onMounted(() => {
             {{ tipoServiciosStore.error }}
           </div>
 
-          <div class="content-grid">
-            <div class="form-wrap">
-              <TipoServicioForm
-                :model-value="seleccionado"
-                :servicios="serviciosStore.servicios"
-                :cargando="tipoServiciosStore.cargando"
-                @submit="guardar"
-                @cancel="limpiarSeleccion"
-              />
+          <div class="tabla-panel tabla-panel-full">
+            <div class="tabla-header">
+              <h3>Lista completa</h3>
+              <span>
+                {{ tipoServiciosStore.cargando ? 'Cargando...' : `${tipoServiciosStore.tipoServicios.length} registros` }}
+              </span>
             </div>
 
-            <div class="tabla-panel">
-              <div class="tabla-header">
-                <h3>Tipos registrados</h3>
-                <span>
-                  {{ tipoServiciosStore.cargando ? 'Cargando...' : `${tipoServiciosStore.tipoServicios.length} registros` }}
-                </span>
-              </div>
+            <div v-if="tipoServiciosStore.cargando" class="loading-state">
+              <div class="loader"></div>
+              <p>Cargando tipos de servicio...</p>
+            </div>
 
-              <div v-if="tipoServiciosStore.cargando" class="loading-state">
-                <div class="loader"></div>
-                <p>Cargando tipos de servicio...</p>
-              </div>
+            <div v-else-if="tipoServiciosStore.tipoServicios.length" class="tabla-wrapper">
+              <table class="tabla-tipos">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Servicio</th>
+                    <th>Precio</th>
+                    <th>Tiempo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="tipo in tipoServiciosStore.tipoServicios" :key="tipo.id">
+                    <td>#{{ tipo.id }}</td>
+                    <td class="service-name">{{ tipo.nombre }}</td>
+                    <td>{{ obtenerNombreServicio(tipo.servicio_id) }}</td>
+                    <td>${{ Number(tipo.precio).toFixed(2) }}</td>
+                    <td>{{ tipo.tiempo_estimado }} min</td>
+                    <td>
+                      <span
+                        class="status-badge"
+                        :class="tipo.activo ? 'activo' : 'inactivo'"
+                      >
+                        {{ tipo.activo ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="acciones-tabla">
+                        <button type="button" class="table-btn edit" @click="editar(tipo)">
+                          Editar
+                        </button>
+                        <button type="button" class="table-btn toggle" @click="toggleEstado(tipo.id)">
+                          {{ tipo.activo ? 'Desactivar' : 'Activar' }}
+                        </button>
+                        <button type="button" class="table-btn danger" @click="eliminar(tipo.id)">
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-              <div v-else-if="tipoServiciosStore.tipoServicios.length" class="tabla-wrapper">
-                <table class="tabla-tipos">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Nombre</th>
-                      <th>Servicio</th>
-                      <th>Precio</th>
-                      <th>Tiempo</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="tipo in tipoServiciosStore.tipoServicios" :key="tipo.id">
-                      <td>#{{ tipo.id }}</td>
-                      <td class="service-name">{{ tipo.nombre }}</td>
-                      <td>{{ obtenerNombreServicio(tipo.servicio_id) }}</td>
-                      <td>${{ Number(tipo.precio).toFixed(2) }}</td>
-                      <td>{{ tipo.tiempo_estimado }} min</td>
-                      <td>
-                        <span
-                          class="status-badge"
-                          :class="tipo.activo ? 'activo' : 'inactivo'"
-                        >
-                          {{ tipo.activo ? 'Activo' : 'Inactivo' }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="acciones-tabla">
-                          <button type="button" class="table-btn edit" @click="editar(tipo)">
-                            Editar
-                          </button>
-                          <button type="button" class="table-btn toggle" @click="toggleEstado(tipo.id)">
-                            {{ tipo.activo ? 'Desactivar' : 'Activar' }}
-                          </button>
-                          <button type="button" class="table-btn danger" @click="eliminar(tipo.id)">
-                            Eliminar
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div v-else class="empty-state">
-                <h4>No hay tipos de servicio registrados</h4>
-                <p>Crea tu primer tipo de servicio usando el formulario.</p>
-              </div>
+            <div v-else class="empty-state">
+              <h4>No hay tipos de servicio registrados</h4>
+              <p>Haz clic en “Nuevo tipo de servicio” para crear el primero.</p>
             </div>
           </div>
         </section>
       </div>
     </section>
+
+    <transition name="fade">
+      <div v-if="modalAbierto" class="modal-overlay" @click.self="cerrarModal">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div>
+              <h3>{{ seleccionado?.id ? 'Editar tipo de servicio' : 'Nuevo tipo de servicio' }}</h3>
+              <p>Completa el formulario para guardar los cambios.</p>
+            </div>
+
+            <button type="button" class="close-btn" @click="cerrarModal">
+              ✕
+            </button>
+          </div>
+
+          <TipoServicioForm
+            :model-value="seleccionado"
+            :servicios="serviciosStore.servicios"
+            :cargando="tipoServiciosStore.cargando"
+            @submit="guardar"
+            @cancel="cerrarModal"
+          />
+        </div>
+      </div>
+    </transition>
   </main>
 </template>
 
@@ -308,7 +340,7 @@ onMounted(() => {
 }
 
 .tipos-content {
-  padding: 24px 34px 24px 24px;
+  padding: 24px 28px;
   background: rgba(254, 250, 224, 0.88);
   display: flex;
   flex-direction: column;
@@ -316,26 +348,50 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.back-btn {
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.back-btn,
+.new-btn {
   width: fit-content;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
   border-radius: 14px;
-  background: rgba(204, 213, 174, 0.55);
-  color: #5f4b3a;
   font-weight: 800;
   font-size: 0.95rem;
   text-decoration: none;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
   transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.back-btn {
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
 }
 
 .back-btn:hover {
   transform: translateY(-2px);
   background: rgba(204, 213, 174, 0.78);
   box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.new-btn {
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
+  color: white;
+  box-shadow: 0 12px 24px rgba(212, 163, 115, 0.22);
+}
+
+.new-btn:hover {
+  transform: translateY(-2px);
 }
 
 .page-header h2 {
@@ -370,24 +426,11 @@ onMounted(() => {
   border: 1px solid rgba(161, 68, 68, 0.14);
 }
 
-.content-grid {
-  display: grid;
-  grid-template-columns: minmax(470px, 520px) minmax(980px, 1fr);
-  gap: 34px;
-  align-items: start;
-}
-
-.form-wrap {
-  min-width: 0;
-  height: 100%;
-}
-
-.tabla-panel {
+.tabla-panel-full {
   background: rgba(255, 255, 255, 0.62);
   border-radius: 28px;
-  padding: 24px 30px 24px 24px;
+  padding: 24px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
-  min-width: 0;
   min-height: 640px;
   max-height: 640px;
   display: flex;
@@ -445,42 +488,6 @@ onMounted(() => {
   font-weight: 900;
 }
 
-/*
-.tabla-tipos th:nth-child(1),
-.tabla-tipos td:nth-child(1) {
-  width: 58px;
-}
-
-.tabla-tipos th:nth-child(2),
-.tabla-tipos td:nth-child(2) {
-  width: 160px;
-}
-
-.tabla-tipos th:nth-child(3),
-.tabla-tipos td:nth-child(3) {
-  width: 120px;
-}
-
-.tabla-tipos th:nth-child(4),
-.tabla-tipos td:nth-child(4) {
-  width: 90px;
-}
-
-.tabla-tipos th:nth-child(5),
-.tabla-tipos td:nth-child(5) {
-  width: 95px;
-}
-
-.tabla-tipos th:nth-child(6),
-.tabla-tipos td:nth-child(6) {
-  width: 105px;
-}
-
-.tabla-tipos th:nth-child(7),
-.tabla-tipos td:nth-child(7) {
-  width: 260px;
-}
-*/
 .service-name {
   font-weight: 800;
 }
@@ -569,6 +576,72 @@ onMounted(() => {
   animation: spin 0.8s linear infinite;
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(71, 58, 45, 0.35);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 200;
+}
+
+.modal-card {
+  width: min(760px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 28px;
+  background: rgba(254, 250, 224, 0.98);
+  box-shadow: 0 28px 60px rgba(92, 75, 59, 0.22);
+  padding: 24px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-header h3 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+  color: #5f4b3a;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #8a7764;
+}
+
+.close-btn {
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: rgba(255, 226, 226, 0.95);
+  color: #a14444;
+}
+
+.close-btn:hover {
+  transform: translateY(-2px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 @keyframes pageEnter {
   from {
     opacity: 0;
@@ -597,26 +670,12 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 1500px) {
-  .tipos-shell {
-    width: min(1600px, 100%);
-  }
-
-  .content-grid {
-    grid-template-columns: minmax(460px, 520px) minmax(820px, 1fr);
-  }
-}
-
 @media (max-width: 1250px) {
   .tipos-layout {
     grid-template-columns: 1fr;
   }
 
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tabla-panel {
+  .tabla-panel-full {
     max-height: none;
   }
 }
