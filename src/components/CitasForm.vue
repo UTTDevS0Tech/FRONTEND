@@ -41,7 +41,7 @@ const submitiarlacita = async () => {
       <select v-model="citaStore.nuevaCita.personal_id">
         <option :value="null" disabled>Selecciona un estilista</option>
         
-        <option v-for="p in citaStore.personalData || []" :key="p?.id" :value="p?.id">
+        <option v-for="p in citaStore.personalData?.data || citaStore.personalData || []" :key="p?.id" :value="p?.id">
           {{ p?.nombre }}
         </option>
       </select>
@@ -80,6 +80,9 @@ const submitiarlacita = async () => {
       <button @click="submitiarlacita" class="btn-agendar">Confirmar Cita</button>
     </div>
   </div>
+  <!-- QUIERO VER Q PEDO  -->
+  <pre>ID Personal seleccionado: {{ citaStore.nuevaCita.personal_id }}</pre>
+<pre>Servicios en el carrito: {{ citaStore.nuevaCita.detalle_cita }}</pre>
 </template>
 <style scoped>
 /* Estilos rápidos sin librerías externas */

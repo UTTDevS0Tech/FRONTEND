@@ -45,7 +45,7 @@ const gestionarServicio =
  (servicio: any/*any es q es cualquier tipo de dato */) => {
     const lista = nuevaCita.value.detalle_cita
 
-
+    const servicioId = Number(servicio.id) //aqui lo convertimos a numero por q el id del servicio es un numero pero el valor que nos llega del select es un string, entonces lo convertimos a numero para que no haya problemas al compararlo
     const indice = lista.findIndex(item => item.tipo_servicio_id === servicio.id)
     
     if(indice >-1) {
@@ -53,8 +53,8 @@ const gestionarServicio =
     } else {
         lista.push ({
             tipo_servicio_id: servicio.id,
-            precio_capturado: servicio.precio,
-            cita_id: 0// el backend me va a traer el id real de la cita
+            precio_capturado: Number(servicio.precio),
+         // el backend me va a traer el id real de la cita
         })
     }
 }

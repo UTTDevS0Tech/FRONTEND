@@ -58,7 +58,7 @@ export interface Cita {
 
 export interface DetalleCita{
     id?: number;
-    cita_id: number;
+    cita_id?: number;
     tipo_servicio_id: number;
     precio_capturado: number;
 
