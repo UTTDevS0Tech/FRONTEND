@@ -7,7 +7,7 @@ export const useCitaStore = defineStore('citas', () =>  {
 
 
 //nos traermos del bakend a los servicios y al peronal por q tenemos que hacer la cita, acuerdense
-const {data:serviciosData, isFetching: cargandoServicios} = useApiFetchDiego('servicios').get().json()
+const {data:serviciosData, isFetching: cargandoServicios} = useApiFetchDiego('tipo-servicios').get().json()
 const { data:personalData, isFetching: cargandoPersonal } = useApiFetchDiego('estilistas').get().json()
 // aqui lke decimos a nuestro bakend con nuestro useFetch propio "compare traime esa informacion"
 
@@ -42,17 +42,20 @@ const limpiarCita = () => {
 //despues de esto pa mi lo mas complicado, el "carrito" de servicios q basicamente es por q pues ya saben son varios
 
 const gestionarServicio =
+
+
  (servicio: any/*any es q es cualquier tipo de dato */) => {
     const lista = nuevaCita.value.detalle_cita
-
+console.log("ESTO ES LO QUE HAY EN EL DETALLE DE LA CITA", nuevaCita.value.detalle_cita);
+console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
     const servicioId = Number(servicio.id) //aqui lo convertimos a numero por q el id del servicio es un numero pero el valor que nos llega del select es un string, entonces lo convertimos a numero para que no haya problemas al compararlo
-    const indice = lista.findIndex(item => item.tipo_servicio_id === servicio.id)
+    const indice = lista.findIndex(item => item.tipo_servicio_id === servicioId)
     
     if(indice >-1) {
         lista.splice(indice, 1)
     } else {
         lista.push ({
-            tipo_servicio_id: servicio.id,
+            tipo_servicio_id: servicioId,
             precio_capturado: Number(servicio.precio),
          // el backend me va a traer el id real de la cita
         })
