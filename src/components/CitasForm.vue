@@ -34,7 +34,7 @@ const submitiarlacita = async () => {
 
 <template>
   <div class="cita-container">
-    <h2>Agendar Cita - Estética Yamileth</h2>
+    <h2>Agendar Cita - Estética Nova</h2>
 
     <div class="field">
       <label>¿Quién te va a atender?</label>
