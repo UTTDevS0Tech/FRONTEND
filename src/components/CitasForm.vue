@@ -85,31 +85,123 @@ const submitiarlacita = async () => {
 <pre>Servicios en el carrito: {{ citaStore.nuevaCita.detalle_cita }}</pre>
 </template>
 <style scoped>
-/* Estilos rápidos sin librerías externas */
-.cita-container { max-width: 500px; margin: auto; padding: 20px; font-family: sans-serif; }
-.field { margin-bottom: 15px; display: flex; flex-direction: column; }
-.botones-servicios { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Contenedor principal con un toque más elegante */
+.cita-container { 
+  max-width: 500px; 
+  margin: 40px auto; 
+  padding: 30px; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
+  border: 1px solid #000; /* Borde negro fino */
+  border-radius: 8px;
+  color: #000; /* Todo el texto base en negro */
+}
 
-button {
+h2 {
+  text-align: center;
+  color: #000;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.field { 
+  margin-bottom: 20px; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+/* Labels en negrita negra */
+label {
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+/* Inputs y Selects con texto negro */
+input, select {
   padding: 10px;
-  border: 1px solid #ccc;
-  background: white;
+  border: 1px solid #000;
+  border-radius: 4px;
+  color: #000;
+  background-color: #fff;
+  font-size: 1rem;
+}
+
+.servicios-grid {
+  margin-top: 20px;
+}
+
+.botones-servicios { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 12px; 
+  margin-top: 10px;
+}
+
+/* Botones de servicios */
+button {
+  padding: 12px;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000; /* Letra negra */
   cursor: pointer;
   border-radius: 5px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
+button:hover {
+  background-color: #f0f0f0;
+}
+
+/* El verde del seleccionado lo dejamos para que resalte, pero con letra negra o blanca */
 button.seleccionado {
-  background-color: #4ade80; /* Verde si está seleccionado */
-  border-color: #22c55e;
-  color: white;
+  background-color: #4ade80; 
+  border-color: #000;
+  color: #000; /* Letra negra sobre el verde para que combine */
+  font-weight: bold;
 }
 
+/* Sección de resumen */
+.resumen {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #000;
+}
+
+.resumen p {
+  margin: 5px 0;
+  color: #000;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Botón de acción principal */
 .btn-agendar {
   width: 100%;
-  background-color: #3b82f6;
-  color: white;
+  background-color: #000; /* Botón negro para que se vea elegante */
+  color: #fff; /* Letra blanca para que resalte en el fondo negro */
   font-weight: bold;
   margin-top: 20px;
   padding: 15px;
+  border: none;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.btn-agendar:hover {
+  background-color: #333;
+}
+
+/* Estilo para los pre de debug (negro sobre gris clarito) */
+pre {
+  background: #f4f4f4;
+  padding: 10px;
+  color: #000;
+  font-size: 0.8rem;
+  border: 1px dashed #000;
+  margin-top: 10px;
 }
 </style>
