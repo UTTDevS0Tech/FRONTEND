@@ -63,7 +63,7 @@ const submitiarlacita = async () => {
       
       <div v-else class="botones-servicios">
         <button 
-          v-for="s in citaStore.serviciosData || []" 
+          v-for="s in citaStore.serviciosData?.data || []" 
           :key="s?.id"
           @click="citaStore.gestionarServicio(s)"
           type="button"
