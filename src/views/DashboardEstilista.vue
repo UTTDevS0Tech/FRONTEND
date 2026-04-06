@@ -36,7 +36,10 @@ function cerrarSesion() {
   </div>
           <div class="right-header">
             <h2>Acciones disponibles</h2>
-            <span>Organiza tu día de trabajo con accesos rápidos</span>
+           <button class="action-card">
+              <strong>Ver Citas</strong>
+              <span>Consulta las citas próximas.</span>
+            </button>
           </div>
 
           <div class="actions-grid">
