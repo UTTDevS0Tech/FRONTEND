@@ -17,7 +17,7 @@ export const useClienteStore = defineStore('cliente', () => {
     error.value = ''
 
     try {
-      const { data, error: fetchError } = await useApiFetchDiego('/clientes')
+      const { data, error: fetchError } = await useApiFetchDiego('/ver-clientes')
         .get()
         .json()
 

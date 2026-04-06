@@ -17,7 +17,7 @@ export const usePersonalStore = defineStore('personal', () => {
     error.value = ''
 
     try {
-      const { data, error: fetchError } = await useApiFetchDiego('/personales')
+      const { data, error: fetchError } = await useApiFetchDiego('/estilistas')
         .get()
         .json()
 
