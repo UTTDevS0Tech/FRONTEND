@@ -195,7 +195,7 @@ function enviarFormulario() {
       <strong>Total: ${{ totalCalculado }}</strong>
     </div>
 
-    <button type="submit" :disabled="loading">
+    <button type="submit" class="submit-btn" :disabled="loading">
       {{ editando ? 'Actualizar cita' : 'Guardar cita' }}
     </button>
   </form>
@@ -256,12 +256,12 @@ button {
 
 .submit-btn {
   padding: 0.8rem 1rem;
-  background: #D4A373;
-  color: white;
-  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
+  background: #D4A373 !important;
+  color: white !important;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25) !important;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #c89463;
+  background: #c89463 !important;
 }
 </style>
