@@ -9,6 +9,7 @@ import AdminServiciosView from '@/views/AdminServiciosView.vue'
 import AgendarCita from '@/components/CitasForm.vue'
 import AdminTipoServiciosView from '@/views/AdminTipoServiciosView.vue'
 import CitaEscritorioView from '@/views/CitaEscritorioView.vue'
+import RecepcionistaClienteView from '@/views/RecepcionistaClienteView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -66,7 +67,13 @@ const router = createRouter({
     name: 'dashboard/admin/tipos-servicio',
     component: AdminTipoServiciosView,
     meta: { requiresAuth: true, role: 2 }
-  }
+  },
+  {
+  path: '/dashboard/personal/cliente-cita',
+  name: 'dashboard/personal/cliente-cita',
+  component: RecepcionistaClienteView,
+  meta: { requiresAuth: true, role: 4 }
+}
   ],
 })
 /*

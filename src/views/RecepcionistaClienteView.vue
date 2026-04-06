@@ -2,19 +2,19 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRecepcionistaStore } from '@/stores/recepcionista'
+import ClienteRecepcionistaForm from '@/components/ClienteRecepcionistaForm.vue'
 
 const router = useRouter()
 const recepcionistaStore = useRecepcionistaStore()
 
-
 const search = ref('')
+const modalAbierto = ref(false)
 
 const formulario = reactive({
   nom: '',
   apellido_p: '',
   apellido_m: '',
   tel: '',
-  email: '',
 })
 
 onMounted(() => {
@@ -23,6 +23,7 @@ onMounted(() => {
 
 async function crear() {
   const cliente = await recepcionistaStore.crearCliente({ ...formulario })
+
   if (!cliente?.id) return
 
   router.push({
@@ -44,12 +45,11 @@ function seleccionar(cliente: any) {
   })
 }
 
-const modalAbierto = ref(false)
-
 function abrirModal() {
   modalAbierto.value = true
   recepcionistaStore.buscarClientes()
 }
+
 function cerrarModal() {
   modalAbierto.value = false
   search.value = ''
@@ -64,19 +64,12 @@ function cerrarModal() {
         Antes de agendar una cita de escritorio, registra o elige al cliente.
       </p>
 
-      <div class="grid">
-        <input v-model="formulario.nom" placeholder="Nombre" />
-        <input v-model="formulario.apellido_p" placeholder="Apellido paterno" />
-        <input v-model="formulario.apellido_m" placeholder="Apellido materno" />
-        <input v-model="formulario.tel" placeholder="Teléfono" />
-        <input v-model="formulario.email" placeholder="Correo" />
-      </div>
+      <ClienteRecepcionistaForm
+        :formulario="formulario"
+        @submit="crear"
+      />
 
-      <div class="acciones">
-        <button class="btn primary" @click="crear">
-          Crear
-        </button>
-
+      <div class="acciones-secundarias">
         <button class="btn secondary" @click="abrirModal">
           Seleccionar cliente existente
         </button>
@@ -118,19 +111,12 @@ function cerrarModal() {
             >
               <div class="cliente-info">
                 <strong>
-                  {{ cliente.nom }}
-                  {{ cliente.apellido_p }}
-                  {{ cliente.apellido_m }}
+                  {{ cliente.nom }} {{ cliente.apellido_p }} {{ cliente.apellido_m }}
                 </strong>
-                <p>
-                  {{ cliente.tel || 'Sin teléfono' }}
-                </p>
+                <p>{{ cliente.tel || 'Sin teléfono' }}</p>
               </div>
 
-              <button
-                class="btn primary"
-                @click="seleccionar(cliente)"
-              >
+              <button class="btn primary" @click="seleccionar(cliente)">
                 Seleccionar
               </button>
             </li>

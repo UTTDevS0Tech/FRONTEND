@@ -11,7 +11,7 @@ function cerrarSesion() {
 }
 
 function irCrearCitaEscritorio() {
-  router.push('/dashboard/personal/citas-escritorio')
+  router.push({ name: 'dashboard/personal/cliente-cita' })
 }
 
 </script>
