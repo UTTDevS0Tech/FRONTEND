@@ -81,6 +81,7 @@ const router = createRouter({
     component: DashboardEstilista,
     meta: { requiresAuth: true, role: 1 }
     },
+    //porfa ocupo que jale la fakin ruta
 
   ],
 })
