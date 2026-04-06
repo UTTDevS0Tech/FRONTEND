@@ -246,4 +246,22 @@ button {
   border-radius: 10px;
   border: 1px solid #ccc;
 }
+
+.add-btn {
+  padding: 0.8rem 1rem;
+  background: linear-gradient(135deg, #CCD5AE, #b8c493);
+  color: #5f4b3a;
+  box-shadow: 0 14px 24px rgba(179, 192, 136, 0.22);
+}
+
+.submit-btn {
+  padding: 0.8rem 1rem;
+  background: #D4A373;
+  color: white;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #c89463;
+}
 </style>
