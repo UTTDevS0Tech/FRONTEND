@@ -120,9 +120,11 @@ function limpiarFormulario() {
 
         <!-- CONTENIDO -->
         <section class="citas-content">
-          <router-link to="/dashboard/personal" class="back-btn">
-            ← Volver al dashboard
-          </router-link>
+          <div class="top-actions">
+            <router-link to="/dashboard/personal" class="back-btn">
+              ← Volver al dashboard
+            </router-link>
+          </div>
 
           <div class="header">
             <h2>Nueva cita de escritorio</h2>
