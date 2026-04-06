@@ -72,14 +72,11 @@ function agregarDetalle() {
 
 function eliminarDetalle(index: number) {
   if (formulario.detalles.length === 1) return
-  if (!formulario.detalles[index]) return
-
   formulario.detalles.splice(index, 1)
 }
 
 function actualizarSubtotal(index: number) {
   const detalle = formulario.detalles[index]
-
   if (!detalle) return
 
   const servicio = props.servicios.find((s) => s.id === detalle.servicio_id)
@@ -111,7 +108,7 @@ function enviarFormulario() {
     detalles: formulario.detalles.map((detalle) => ({
       servicio_id: detalle.servicio_id,
       subtotal: Number(detalle.subtotal),
-    })) as FormularioDetalleCita[],
+    })),
   })
 }
 </script>
@@ -195,7 +192,7 @@ function enviarFormulario() {
       <strong>Total: ${{ totalCalculado }}</strong>
     </div>
 
-    <button type="submit" class="submit-btn" :disabled="loading">
+    <button type="submit" :disabled="loading">
       {{ editando ? 'Actualizar cita' : 'Guardar cita' }}
     </button>
   </form>
@@ -245,23 +242,5 @@ button {
   padding: 0.7rem;
   border-radius: 10px;
   border: 1px solid #ccc;
-}
-
-.add-btn {
-  padding: 0.8rem 1rem;
-  background: linear-gradient(135deg, #CCD5AE, #b8c493);
-  color: #5f4b3a;
-  box-shadow: 0 14px 24px rgba(179, 192, 136, 0.22);
-}
-
-.submit-btn {
-  padding: 0.8rem 1rem;
-  background: #D4A373 !important;
-  color: white !important;
-  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25) !important;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #c89463 !important;
 }
 </style>
