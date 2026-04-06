@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
+import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import type {
   ClienteOption,
@@ -8,13 +8,9 @@ import type {
   ServicioOption,
   FormularioCitaEscritorio,
   CitaEscritorioPayload,
-  CitaEscritorioResponse,
 } from '@/types/citaEscritorio'
 
 const citaStore = useCitaEscritorioStore()
-
-const editando = ref(false)
-const citaEditandoId = ref<number | null>(null)
 
 const clientes = ref<ClienteOption[]>([
   { id: 1, nombre: 'Juan Pérez' },
@@ -79,12 +75,6 @@ async function guardarCita(payload: FormularioCitaEscritorio) {
   }
 
   try {
-    if (editando.value && citaEditandoId.value !== null) {
-      await citaStore.actualizarCita(citaEditandoId.value, payloadFinal)
-      cancelarEdicion()
-      return
-    }
-
     await citaStore.crearCita(payloadFinal)
     limpiarFormulario()
   } catch (error) {
@@ -92,166 +82,207 @@ async function guardarCita(payload: FormularioCitaEscritorio) {
   }
 }
 
-function editarCita(cita: CitaEscritorioResponse) {
-  editando.value = true
-  citaEditandoId.value = cita.id
-
-  modeloFormulario.value = {
-    total: cita.total,
-    personal_id: cita.personal_id,
-    hora_c: cita.hora_c,
-    fecha_c: cita.fecha_c,
-    estado: cita.estado || 'pendiente',
-    cliente_id: cita.cliente_id,
-    detalles: (cita.detalles && cita.detalles.length > 0)
-      ? cita.detalles.map((detalle) => ({
-          servicio_id: detalle.servicio_id,
-          subtotal: detalle.subtotal,
-        }))
-      : [
-          {
-            servicio_id: null,
-            subtotal: 0,
-          },
-        ],
-  }
-}
-
-function cancelarEdicion() {
-  editando.value = false
-  citaEditandoId.value = null
-  modeloFormulario.value = crearFormularioVacio()
-}
-
 function limpiarFormulario() {
   modeloFormulario.value = crearFormularioVacio()
-}
-
-async function eliminarCita(id: number) {
-  const confirmado = window.confirm('¿Seguro que quieres eliminar esta cita?')
-  if (!confirmado) return
-
-  try {
-    await citaStore.eliminarCita(id)
-  } catch (error) {
-    console.error('Error al eliminar cita:', error)
-  }
 }
 </script>
 
 <template>
+  <main class="citas-page">
+    <section class="citas-shell">
+      <div class="citas-layout">
+        <aside class="citas-sidebar">
+          <span class="panel-tag">Recepción</span>
+          <h1>Cita de escritorio</h1>
+          <p>
+            Registra nuevas citas desde recepción de forma rápida y ordenada.
+            Selecciona cliente, personal, fecha, hora y los servicios incluidos.
+          </p>
 
-  <div style="background:red;color:white;padding:30px;font-size:32px;">
-    CITA ESCRITORIO VIEW CARGADA
-  </div>
+          <div class="sidebar-stats">
+            <div class="stat-card">
+              <strong>{{ clientes.length }}</strong>
+              <span>Clientes disponibles</span>
+            </div>
 
-  <section class="citas-page">
-    <div class="header">
-      <h1>Citas de escritorio</h1>
-      <p>Aquí puedes registrar y administrar las citas desde recepción.</p>
-    </div>
+            <div class="stat-card">
+              <strong>{{ personales.length }}</strong>
+              <span>Personal disponible</span>
+            </div>
 
-    <div v-if="citaStore.error" class="alert error">
-      {{ citaStore.error }}
-    </div>
+            <div class="stat-card">
+              <strong>{{ servicios.length }}</strong>
+              <span>Servicios disponibles</span>
+            </div>
+          </div>
+        </aside>
 
-    <div v-if="citaStore.mensaje" class="alert success">
-      {{ citaStore.mensaje }}
-    </div>
+        <section class="citas-content">
+          <div class="top-actions">
+            <router-link to="/dashboard/personal" class="back-btn">
+              ← Volver al dashboard
+            </router-link>
+          </div>
 
-    <div class="card">
-      <div class="card-header">
-        <h2>{{ editando ? 'Editar cita' : 'Nueva cita' }}</h2>
+          <div class="header">
+            <h2>Nueva cita de escritorio</h2>
+            <p>Completa la información para registrar la cita en el sistema.</p>
+          </div>
 
-        <button
-          v-if="editando"
-          type="button"
-          class="btn secondary"
-          @click="cancelarEdicion"
-        >
-          Cancelar
-        </button>
+          <div v-if="citaStore.error" class="alert error">
+            {{ citaStore.error }}
+          </div>
+
+          <div v-if="citaStore.mensaje" class="alert success">
+            {{ citaStore.mensaje }}
+          </div>
+
+          <div class="card form-card">
+            <div class="card-header">
+              <h3>Formulario de cita</h3>
+              <span>Captura los datos necesarios</span>
+            </div>
+
+            <CitaEscritorioForm
+              :modelo="modeloFormulario"
+              :editando="false"
+              :loading="citaStore.loading"
+              :clientes="clientes"
+              :personales="personales"
+              :servicios="servicios"
+              @submit="guardarCita"
+            />
+          </div>
+        </section>
       </div>
-
-      <CitaEscritorioForm
-        :modelo="modeloFormulario"
-        :editando="editando"
-        :loading="citaStore.loading"
-        :clientes="clientes"
-        :personales="personales"
-        :servicios="servicios"
-        @submit="guardarCita"
-      />
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h2>Listado de citas</h2>
-      </div>
-
-      <div v-if="citaStore.loading" class="empty-state">
-        Cargando citas...
-      </div>
-
-      <div v-else-if="!citaStore.citas.length" class="empty-state">
-        No hay citas registradas todavía.
-      </div>
-
-      <div v-else class="table-wrap">
-        <table class="tabla">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Personal</th>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Total</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="cita in citaStore.citas" :key="cita.id">
-              <td>{{ cita.id }}</td>
-              <td>{{ cita.cliente?.nombre || cita.cliente_id }}</td>
-              <td>{{ cita.personal?.nombre || cita.personal_id }}</td>
-              <td>{{ cita.fecha_c }}</td>
-              <td>{{ cita.hora_c }}</td>
-              <td>${{ cita.total }}</td>
-              <td class="acciones">
-                <button
-                  type="button"
-                  class="btn warning"
-                  @click="editarCita(cita)"
-                >
-                  Editar
-                </button>
-
-                <button
-                  type="button"
-                  class="btn danger"
-                  @click="eliminarCita(cita.id)"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+    </section>
+  </main>
 </template>
 
 <style scoped>
+:global(*) {
+  box-sizing: border-box;
+}
+
 .citas-page {
-  display: grid;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  width: 100%;
   min-height: 100vh;
-  background: #f6f1df;
-  color: #1f2937;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #FEFAE0 0%, #FAEDCD 58%, #E9EDC9 100%);
+  color: #5f4b3a;
+}
+
+.citas-shell {
+  width: min(1600px, 100%);
+  animation: pageEnter 0.8s ease;
+}
+
+.citas-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 780px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+.citas-sidebar {
+  padding: 34px 24px;
+  background: linear-gradient(180deg, #CCD5AE 0%, #E9EDC9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.panel-tag {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 24px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d5844;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.citas-sidebar h1 {
+  margin: 0 0 16px;
+  font-size: 2.3rem;
+  line-height: 1.05;
+  color: #5f4b3a;
+}
+
+.citas-sidebar p {
+  margin: 0 0 24px;
+  color: #7b6a58;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.sidebar-stats {
+  display: grid;
+  gap: 14px;
+}
+
+.stat-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
+}
+
+.citas-content {
+  padding: 24px 28px;
+  background: rgba(254, 250, 224, 0.88);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.back-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
 }
 
 .header {
@@ -259,23 +290,28 @@ async function eliminarCita(id: number) {
   gap: 0.35rem;
 }
 
-.header h1 {
+.header h2 {
   margin: 0;
-  font-size: 2rem;
-  color: #111827;
+  font-size: 1.8rem;
+  color: #5f4b3a;
 }
 
 .header p {
   margin: 0;
-  color: #4b5563;
+  color: #8a7764;
+  font-size: 0.95rem;
 }
 
 .card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 1.25rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  border: 1px solid #ece7d8;
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.7);
+}
+
+.form-card {
+  min-height: 620px;
 }
 
 .card-header {
@@ -284,98 +320,54 @@ async function eliminarCita(id: number) {
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
-.card-header h2 {
+.card-header h3 {
   margin: 0;
-  font-size: 1.2rem;
-  color: #111827;
+  font-size: 1.35rem;
+  color: #5f4b3a;
+}
+
+.card-header span {
+  color: #8a7764;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .alert {
   padding: 0.95rem 1rem;
   border-radius: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .alert.error {
-  background: #ffe5e5;
+  background: rgba(255, 228, 228, 0.9);
   color: #991b1b;
-  border: 1px solid #f5bcbc;
+  border: 1px solid rgba(245, 188, 188, 0.9);
 }
 
 .alert.success {
-  background: #e8ffef;
-  color: #166534;
-  border: 1px solid #bde8c8;
+  background: rgba(204, 213, 174, 0.35);
+  color: #3f5b2d;
+  border: 1px solid rgba(189, 232, 200, 0.8);
 }
 
-.table-wrap {
-  width: 100%;
-  overflow-x: auto;
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.tabla {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 760px;
-}
-
-.tabla th {
-  background: #f8fafc;
-  color: #374151;
-  font-weight: 700;
-}
-
-.tabla th,
-.tabla td {
-  padding: 0.9rem 0.8rem;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-}
-
-.tabla tbody tr:hover {
-  background: #faf7ee;
-}
-
-.acciones {
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 0.65rem 0.95rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s ease;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn.secondary {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.btn.warning {
-  background: #facc15;
-  color: #111827;
-}
-
-.btn.danger {
-  background: #ef4444;
-  color: white;
-}
-
-.empty-state {
-  padding: 1rem 0.25rem;
-  color: #6b7280;
-  font-weight: 500;
+@media (max-width: 1250px) {
+  .citas-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -392,8 +384,398 @@ async function eliminarCita(id: number) {
     align-items: flex-start;
   }
 
-  .header h1 {
-    font-size: 1.6rem;
+  .header h2 {
+    font-size: 1.5rem;
+  }
+}
+</style><script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
+import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
+import type {
+  ClienteOption,
+  PersonalOption,
+  ServicioOption,
+  FormularioCitaEscritorio,
+  CitaEscritorioPayload,
+} from '@/types/citaEscritorio'
+
+const citaStore = useCitaEscritorioStore()
+
+const clientes = ref<ClienteOption[]>([
+  { id: 1, nombre: 'Juan Pérez' },
+  { id: 2, nombre: 'María López' },
+])
+
+const personales = ref<PersonalOption[]>([
+  { id: 1, nombre: 'Ana' },
+  { id: 2, nombre: 'Luis' },
+])
+
+const servicios = ref<ServicioOption[]>([
+  { id: 1, nombre: 'Corte', precio: 120 },
+  { id: 2, nombre: 'Tinte', precio: 350 },
+  { id: 3, nombre: 'Peinado', precio: 180 },
+])
+
+function crearFormularioVacio(): FormularioCitaEscritorio {
+  return {
+    total: 0,
+    personal_id: null,
+    hora_c: '',
+    fecha_c: '',
+    estado: 'pendiente',
+    cliente_id: null,
+    detalles: [
+      {
+        servicio_id: null,
+        subtotal: 0,
+      },
+    ],
+  }
+}
+
+const modeloFormulario = ref<FormularioCitaEscritorio>(crearFormularioVacio())
+
+onMounted(() => {
+  citaStore.obtenerCitas()
+})
+
+async function guardarCita(payload: FormularioCitaEscritorio) {
+  if (payload.personal_id === null || payload.cliente_id === null) {
+    citaStore.error = 'Selecciona cliente y personal'
+    return
+  }
+
+  const detallesValidos = payload.detalles
+    .filter((detalle) => detalle.servicio_id !== null)
+    .map((detalle) => ({
+      servicio_id: Number(detalle.servicio_id),
+      subtotal: Number(detalle.subtotal),
+    }))
+
+  const payloadFinal: CitaEscritorioPayload = {
+    total: payload.total,
+    personal_id: Number(payload.personal_id),
+    hora_c: payload.hora_c,
+    fecha_c: payload.fecha_c,
+    estado: payload.estado,
+    cliente_id: Number(payload.cliente_id),
+    detalles: detallesValidos,
+  }
+
+  try {
+    await citaStore.crearCita(payloadFinal)
+    limpiarFormulario()
+  } catch (error) {
+    console.error('Error al guardar cita:', error)
+  }
+}
+
+function limpiarFormulario() {
+  modeloFormulario.value = crearFormularioVacio()
+}
+</script>
+
+<template>
+  <main class="citas-page">
+    <section class="citas-shell">
+      <div class="citas-layout">
+        <aside class="citas-sidebar">
+          <span class="panel-tag">Recepción</span>
+          <h1>Cita de escritorio</h1>
+          <p>
+            Registra nuevas citas desde recepción de forma rápida y ordenada.
+            Selecciona cliente, personal, fecha, hora y los servicios incluidos.
+          </p>
+
+          <div class="sidebar-stats">
+            <div class="stat-card">
+              <strong>{{ clientes.length }}</strong>
+              <span>Clientes disponibles</span>
+            </div>
+
+            <div class="stat-card">
+              <strong>{{ personales.length }}</strong>
+              <span>Personal disponible</span>
+            </div>
+
+            <div class="stat-card">
+              <strong>{{ servicios.length }}</strong>
+              <span>Servicios disponibles</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="citas-content">
+          <div class="top-actions">
+            <router-link to="/dashboard/personal" class="back-btn">
+              ← Volver al dashboard
+            </router-link>
+          </div>
+
+          <div class="header">
+            <h2>Nueva cita de escritorio</h2>
+            <p>Completa la información para registrar la cita en el sistema.</p>
+          </div>
+
+          <div v-if="citaStore.error" class="alert error">
+            {{ citaStore.error }}
+          </div>
+
+          <div v-if="citaStore.mensaje" class="alert success">
+            {{ citaStore.mensaje }}
+          </div>
+
+          <div class="card form-card">
+            <div class="card-header">
+              <h3>Formulario de cita</h3>
+              <span>Captura los datos necesarios</span>
+            </div>
+
+            <CitaEscritorioForm
+              :modelo="modeloFormulario"
+              :editando="false"
+              :loading="citaStore.loading"
+              :clientes="clientes"
+              :personales="personales"
+              :servicios="servicios"
+              @submit="guardarCita"
+            />
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+</template>
+
+<style scoped>
+:global(*) {
+  box-sizing: border-box;
+}
+
+.citas-page {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #FEFAE0 0%, #FAEDCD 58%, #E9EDC9 100%);
+  color: #5f4b3a;
+}
+
+.citas-shell {
+  width: min(1600px, 100%);
+  animation: pageEnter 0.8s ease;
+}
+
+.citas-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 780px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+.citas-sidebar {
+  padding: 34px 24px;
+  background: linear-gradient(180deg, #CCD5AE 0%, #E9EDC9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.panel-tag {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 24px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d5844;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.citas-sidebar h1 {
+  margin: 0 0 16px;
+  font-size: 2.3rem;
+  line-height: 1.05;
+  color: #5f4b3a;
+}
+
+.citas-sidebar p {
+  margin: 0 0 24px;
+  color: #7b6a58;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.sidebar-stats {
+  display: grid;
+  gap: 14px;
+}
+
+.stat-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
+}
+
+.citas-content {
+  padding: 24px 28px;
+  background: rgba(254, 250, 224, 0.88);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.back-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.header p {
+  margin: 0;
+  color: #8a7764;
+  font-size: 0.95rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.7);
+}
+
+.form-card {
+  min-height: 620px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #5f4b3a;
+}
+
+.card-header span {
+  color: #8a7764;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.alert {
+  padding: 0.95rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.alert.error {
+  background: rgba(255, 228, 228, 0.9);
+  color: #991b1b;
+  border: 1px solid rgba(245, 188, 188, 0.9);
+}
+
+.alert.success {
+  background: rgba(204, 213, 174, 0.35);
+  color: #3f5b2d;
+  border: 1px solid rgba(189, 232, 200, 0.8);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1250px) {
+  .citas-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .citas-page {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header h2 {
+    font-size: 1.5rem;
   }
 }
 </style>
