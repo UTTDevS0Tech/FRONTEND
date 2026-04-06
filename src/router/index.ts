@@ -107,6 +107,11 @@ router.beforeEach((to, from, next) => {
   const tavalidado = !!useAuthStore1.token
   const user_role = useAuthStore1.user?.rol_id
 
+  console.log('to.name:', to.name)
+  console.log('token:', useAuthStore1.token)
+  console.log('user:', useAuthStore1.user)
+  console.log('rol:', user_role)
+
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!tavalidado) {
       return next({ name: 'login' })
@@ -137,7 +142,7 @@ function redirigir(rol_id: number |undefined, next: any) {
   if (rol_id === 1) return next({ name: 'dashboard/personal'})
   if (rol_id === 2) return next({ name: 'dashboard/admin' })
   if (rol_id === 3) return next({ name: 'dashboard/cliente' })
-  if (rol_id === 4) return next({ name: 'dashboard/personal/'})
+  if (rol_id === 4) return next({ name: 'dashboard/personal'})
   next('/login')
 }
 //correecion to.matech es una lista de todas las rutas y el some es para decir "cual tieene la authRequired"
