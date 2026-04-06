@@ -210,14 +210,26 @@ function limpiarFormulario() {
 
 .sidebar-stats {
   margin-top: 20px;
-  display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .stat-card {
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.5);
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
 }
 
 .citas-content {
