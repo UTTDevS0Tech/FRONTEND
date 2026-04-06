@@ -102,35 +102,43 @@ next()
 })
 */
 
-router.beforeEach((to,from, next ) => {
+router.beforeEach((to, from, next) => {
   const useAuthStore1 = useAuthStore()
   const tavalidado = !!useAuthStore1.token
   const user_role = useAuthStore1.user?.rol_id
 
-  if( to.matched.some(record => record.meta.requiresAuth)) {
-    if(!tavalidado){
-        return next({name: 'login'})
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!tavalidado) {
+      return next({ name: 'login' })
     }
-    if(to.meta.role && to.meta.role !== user_role) {
-      return redirigir(user_role, next)
+
+    const rutaTieneRol = to.meta.role
+
+    if (rutaTieneRol) {
+      const allowedRoles = Array.isArray(rutaTieneRol) ? rutaTieneRol : [rutaTieneRol]
+
+      if (!allowedRoles.includes(user_role)) {
+        return redirigir(user_role, next)
+      }
     }
-    next()
-  } else if(to.name === 'login' && tavalidado) {
-    redirigir(user_role, next)
+
+    return next()
   }
-  else {
-    next()
+
+  if (to.name === 'login' && tavalidado) {
+    return redirigir(user_role, next)
   }
+
+  next()
 })
 
 //para que no batallen en entender el undefined es para cuando no se tenga un rol es como el compare de seguridad: eh compare ponte al tiro esto no trae basicamente
 function redirigir(rol_id: number |undefined, next: any) {
-  if (rol_id === 2) return next({ name: 'dashboard/admin' })
   if (rol_id === 1) return next({ name: 'dashboard/personal'})
-  if (rol_id === 4) return next({ name: 'dashboard/personal/citas-escritorio'})
+  if (rol_id === 2) return next({ name: 'dashboard/admin' })
   if (rol_id === 3) return next({ name: 'dashboard/cliente' })
+  if (rol_id === 4) return next({ name: 'dashboard/personal/'})
   next('/login')
 }
-
 //correecion to.matech es una lista de todas las rutas y el some es para decir "cual tieene la authRequired"
 export default router
