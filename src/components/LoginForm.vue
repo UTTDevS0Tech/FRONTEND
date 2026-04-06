@@ -44,7 +44,7 @@ function login() {
                 const sacamosroldeusuario = informacionUsuario.rol_id
 
                 if (sacamosroldeusuario === 1) {
-                  router.push({ name: 'dashboard/personal' })
+                  router.push({ name: 'dashboard/estilista' })
             } 
             if(sacamosroldeusuario === 2){
               router.push({name: 'dashboard/admin'})
