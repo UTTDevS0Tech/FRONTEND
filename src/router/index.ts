@@ -10,6 +10,7 @@ import AgendarCita from '@/components/CitasForm.vue'
 import AdminTipoServiciosView from '@/views/AdminTipoServiciosView.vue'
 import CitaEscritorioView from '@/views/CitaEscritorioView.vue'
 import RecepcionistaClienteView from '@/views/RecepcionistaClienteView.vue'
+import DashboardEstilista from '@/views/DashboardEstilista.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,7 +49,7 @@ const router = createRouter({
       path: '/dashboard/personal',
       name: 'dashboard/personal',
       component: DashboardPersonal,
-      meta: { requiresAuth: true, role: [1, 4] }
+      meta: { requiresAuth: true, role: 4 }
     },
     {
       path: '/dashboard/personal/citas-escritorio',
@@ -73,7 +74,14 @@ const router = createRouter({
   name: 'dashboard/personal/cliente-cita',
   component: RecepcionistaClienteView,
   meta: { requiresAuth: true, role: 4 }
-}
+  },
+  {
+    path: '/dashboard/estilista',
+    name: 'dashboard/estilista',
+    component: DashboardEstilista,
+    meta: { requiresAuth: true, role: 1 }
+    },
+
   ],
 })
 /*
@@ -146,7 +154,7 @@ router.beforeEach((to, from, next) => {
 
 //para que no batallen en entender el undefined es para cuando no se tenga un rol es como el compare de seguridad: eh compare ponte al tiro esto no trae basicamente
 function redirigir(rol_id: number |undefined, next: any) {
-  if (rol_id === 1) return next({ name: 'dashboard/personal'})
+  if (rol_id === 1) return next({ name: 'dashboard/estilista'})
   if (rol_id === 2) return next({ name: 'dashboard/admin' })
   if (rol_id === 3) return next({ name: 'dashboard/cliente' })
   if (rol_id === 4) return next({ name: 'dashboard/personal'})
