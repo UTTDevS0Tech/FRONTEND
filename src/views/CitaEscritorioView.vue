@@ -4,7 +4,7 @@ import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import { useClienteStore } from '@/stores/cliente'
 import { usePersonalStore } from '@/stores/personal'
-import { useServicioStore } from '@/stores/servicio'
+import { useServiciosStore } from '@/stores/servicios'
 import type {
   FormularioCitaEscritorio,
   CitaEscritorioPayload,
@@ -13,7 +13,7 @@ import type {
 const citaStore = useCitaEscritorioStore()
 const clienteStore = useClienteStore()
 const personalStore = usePersonalStore()
-const servicioStore = useServicioStore()
+const servicioStore = useServiciosStore()
 
 function crearFormularioVacio(): FormularioCitaEscritorio {
   return {
@@ -155,7 +155,7 @@ function limpiarFormulario() {
                 citaStore.loading ||
                 clienteStore.loading ||
                 personalStore.loading ||
-                servicioStore.loading
+                servicioStore.cargando
               "
               :clientes="clienteStore.clientes"
               :personales="personalStore.personales"
