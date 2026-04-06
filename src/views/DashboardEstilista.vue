@@ -41,12 +41,6 @@ function cerrarSesion() {
               <span>Consulta las citas próximas.</span>
             </button>
           </div>
-
-          <div class="actions-grid">
-            <div class="actions">
-                <button class="action-card">Ver Citas Pendientes</button>
-            </div>
-          </div>
         </div>
       </div>
     </section>
