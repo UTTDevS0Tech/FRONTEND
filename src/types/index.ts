@@ -64,12 +64,15 @@ export interface DetalleCita{
 
 }
 
+
 export interface Cliente {
-    id?: number;
-    nom: string;
-    telefono: string;
-    email: string;
-    user_id: number;
+  id?: number
+  nom: string
+  apellido_p: string
+  apellido_m: string
+  tel?: string
+  email?: string
+  user_id?: number | null
 }
 
 

@@ -53,6 +53,9 @@ function login() {
             if(sacamosroldeusuario === 3) {
               router.push({name: 'dashboard/cliente'})
             }
+            if(sacamosroldeusuario === 4) {
+              router.push({name: 'dashboard/personal'})
+            }
 
 
             
