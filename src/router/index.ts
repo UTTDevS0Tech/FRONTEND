@@ -47,7 +47,7 @@ const router = createRouter({
       path: '/dashboard/personal',
       name: 'dashboard/personal',
       component: DashboardPersonal,
-      meta: { requiresAuth: true, role: 1 }
+      meta: { requiresAuth: true, role: [1, 4] }
     },
     {
       path: '/dashboard/personal/citas-escritorio',
