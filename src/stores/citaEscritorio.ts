@@ -75,14 +75,11 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     try {
       validarPayload(payload)
 
-      console.log('Payload crear cita:', payload)
-
       const { data, error: fetchError } = await useApiFetchDiego('/citas-escritorio')
         .post(payload)
         .json()
 
       if (fetchError.value) {
-        console.error('Error backend crear cita:', fetchError.value)
         throw new Error(fetchError.value.message || 'No se pudo crear la cita')
       }
 
@@ -105,14 +102,11 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     try {
       validarPayload(payload)
 
-      console.log('Payload actualizar cita:', payload)
-
       const { data, error: fetchError } = await useApiFetchDiego(`/citas-escritorio/${id}`)
         .put(payload)
         .json()
 
       if (fetchError.value) {
-        console.error('Error backend actualizar cita:', fetchError.value)
         throw new Error(fetchError.value.message || 'No se pudo actualizar la cita')
       }
 
@@ -151,6 +145,11 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     }
   }
 
+  function limpiarMensajes() {
+    error.value = ''
+    mensaje.value = ''
+  }
+
   return {
     citas,
     loading,
@@ -160,5 +159,6 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     crearCita,
     actualizarCita,
     eliminarCita,
+    limpiarMensajes,
   }
 })
