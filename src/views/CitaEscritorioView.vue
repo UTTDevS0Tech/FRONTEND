@@ -266,4 +266,26 @@ function limpiarFormulario() {
     transform: translateY(20px);
   }
 }
+
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.back-btn,
+.new-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
 </style>
