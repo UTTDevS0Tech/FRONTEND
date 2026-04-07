@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
+import { useTipoServiciosStore } from '@/stores/tipoServicios'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import { useClienteStore } from '@/stores/cliente'
 import { usePersonalStore } from '@/stores/personal'
-import { useServiciosStore } from '@/stores/servicios'
 import type {
   FormularioCitaEscritorio,
   CitaEscritorioPayload,
@@ -13,7 +13,7 @@ import type {
 const citaStore = useCitaEscritorioStore()
 const clienteStore = useClienteStore()
 const personalStore = usePersonalStore()
-const servicioStore = useServiciosStore()
+const tipoServicioStore = useTipoServiciosStore()
 
 function crearFormularioVacio(): FormularioCitaEscritorio {
   return {
@@ -39,7 +39,7 @@ onMounted(async () => {
     citaStore.obtenerCitas(),
     clienteStore.obtenerClientes(),
     personalStore.obtenerPersonales(),
-    servicioStore.obtenerServicios(),
+    tipoServicioStore.obtenerTiposServicio(),
   ])
 })
 
@@ -104,7 +104,7 @@ function limpiarFormulario() {
             </div>
 
             <div class="stat-card">
-              <strong>{{ servicioStore.servicios.length }}</strong>
+              <strong>{{ tipoServicioStore.tipoServicios.length }}</strong>
               <span>Servicios disponibles</span>
             </div>
           </div>
@@ -138,8 +138,8 @@ function limpiarFormulario() {
             {{ personalStore.error }}
           </div>
 
-          <div v-if="servicioStore.error" class="alert error">
-            {{ servicioStore.error }}
+          <div v-if="tipoServicioStore.error" class="alert error">
+            {{ tipoServicioStore.error }}
           </div>
 
           <div class="card form-card">
@@ -155,11 +155,11 @@ function limpiarFormulario() {
                 citaStore.loading ||
                 clienteStore.loading ||
                 personalStore.loading ||
-                servicioStore.cargando
+                tipoServicioStore.cargando
               "
               :clientes="clienteStore.clientes"
               :personales="personalStore.personales"
-              :servicios="servicioStore.servicios"
+              :servicios="tipoServicioStore.tipoServicios"
               @submit="guardarCita"
             />
           </div>
