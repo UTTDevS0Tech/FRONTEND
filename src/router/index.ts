@@ -12,6 +12,7 @@ import CitaEscritorioView from '@/views/CitaEscritorioView.vue'
 import RecepcionistaClienteView from '@/views/RecepcionistaClienteView.vue'
 import DashboardEstilista from '@/views/DashboardEstilista.vue'
 import LandingView from '@/views/LandingView.vue'
+import RegisterView from '@/views/RegisterView.vue'
 
 
 const router = createRouter({
@@ -35,6 +36,11 @@ const router = createRouter({
       component: AgendarCita,
       meta: {requiresAuth: true, role: 3}
     },
+    {
+    path: '/register',
+    name: 'register',
+    component: RegisterView
+},
     {
       path: '/login',
       name: 'login',
