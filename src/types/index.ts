@@ -120,7 +120,7 @@ export interface ApiResponse<T> {
 }
 
 export interface TipoServicio {
-  id?: number
+  id: number
   nombre: string
   descripcion?: string | null
   precio: number

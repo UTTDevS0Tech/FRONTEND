@@ -3,13 +3,13 @@ import { computed, reactive, watch } from 'vue'
 import type {
   ClienteOption,
   PersonalOption,
-  ServicioOption,
   FormularioCitaEscritorio,
   FormularioDetalleCita,
 } from '@/types/citaEscritorio'
+import type { TipoServicio } from '@/types'
 
 const props = defineProps<{
-  servicios: ServicioOption[]
+  servicios: TipoServicio[]
   personales: PersonalOption[]
   clientes: ClienteOption[]
   modelo?: FormularioCitaEscritorio | null
