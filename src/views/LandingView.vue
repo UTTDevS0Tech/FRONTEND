@@ -1,48 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
-const isLoading = ref(true)
-const loadingProgress = ref(0)
-
-onMounted(() => {
-  let progress = 0
-
-  const interval = setInterval(() => {
-    progress += Math.floor(Math.random() * 18) + 8
-    loadingProgress.value = Math.min(progress, 100)
-
-    if (loadingProgress.value >= 100) {
-      clearInterval(interval)
-
-      setTimeout(() => {
-        isLoading.value = false
-      }, 350)
-    }
-  }, 120)
-})
 </script>
 
 <template>
-  <transition name="loader-fade">
-    <div v-if="isLoading" class="loader-screen">
-      <div class="loader-content">
-        <div class="loader-brand">
-          <span class="loader-logo">✦</span>
-          <span>Estética Nova</span>
-        </div>
-
-        <p class="loader-text">Cargando experiencia...</p>
-
-        <div class="loader-bar">
-          <div class="loader-fill" :style="{ width: `${loadingProgress}%` }"></div>
-        </div>
-
-        <span class="loader-percent">{{ loadingProgress }}%</span>
-      </div>
-    </div>
-  </transition>
-
-  <main v-show="!isLoading" class="landing-page">
+  <main class="landing-page">
     <section class="hero">
       <div class="bg-zoom"></div>
       <div class="overlay"></div>
@@ -153,84 +113,6 @@ onMounted(() => {
   min-height: 100vh;
   background: #f5f0e6;
   overflow: hidden;
-}
-
-/* LOADER */
-.loader-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(circle at top, rgba(217, 165, 116, 0.22), transparent 35%),
-    linear-gradient(135deg, #f5f0e6 0%, #e9dcc7 50%, #d8c2a0 100%);
-}
-
-.loader-content {
-  width: min(420px, 88vw);
-  text-align: center;
-  animation: loaderPop 0.7s ease;
-}
-
-.loader-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  color: #7b5b3d;
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.loader-logo {
-  font-size: 20px;
-  animation: spinSoft 4s linear infinite;
-}
-
-.loader-text {
-  margin: 0 0 16px;
-  color: #6f5a45;
-  font-size: 0.98rem;
-}
-
-.loader-bar {
-  width: 100%;
-  height: 12px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.55);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.loader-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #c9925d 0%, #d9a574 50%, #efd2ae 100%);
-  box-shadow: 0 0 20px rgba(201, 146, 93, 0.45);
-  transition: width 0.18s ease;
-}
-
-.loader-percent {
-  display: inline-block;
-  margin-top: 12px;
-  color: #7b5b3d;
-  font-size: 0.92rem;
-  font-weight: 700;
-}
-
-.loader-fade-enter-active,
-.loader-fade-leave-active {
-  transition: opacity 0.45s ease, transform 0.45s ease;
-}
-
-.loader-fade-enter-from,
-.loader-fade-leave-to {
-  opacity: 0;
-  transform: scale(1.02);
 }
 
 /* HERO */
@@ -662,26 +544,6 @@ onMounted(() => {
   }
 }
 
-@keyframes loaderPop {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes spinSoft {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes scrollDot {
   0% {
     opacity: 0;
@@ -821,10 +683,6 @@ onMounted(() => {
     width: 56px;
     height: 56px;
     font-size: 1.5rem;
-  }
-
-  .loader-content {
-    width: 90vw;
   }
 }
 </style>
