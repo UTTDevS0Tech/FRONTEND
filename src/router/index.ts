@@ -13,12 +13,13 @@ import RecepcionistaClienteView from '@/views/RecepcionistaClienteView.vue'
 import DashboardEstilista from '@/views/DashboardEstilista.vue'
 import LandingView from '@/views/LandingView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import GaleriaAdminView from '@/views/GaleriaAdminView.vue'
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [     
-    
+  routes: [
+
     /*{
       path: '/personal',
       name: 'personal',
@@ -37,10 +38,10 @@ const router = createRouter({
       meta: {requiresAuth: true, role: 3}
     },
     {
-    path: '/register',
-    name: 'register',
-    component: RegisterView
-},
+      path: '/register',
+      name: 'register',
+      component: RegisterView
+    },
     {
       path: '/login',
       name: 'login',
@@ -75,34 +76,40 @@ const router = createRouter({
       name: 'dashboard/admin/servicios',
       component: AdminServiciosView,
       meta: { requiresAuth: true, role: 2 }
-    }, 
-    {
-    path: '/dashboard/admin/tipos-servicio',
-    name: 'dashboard/admin/tipos-servicio',
-    component: AdminTipoServiciosView,
-    meta: { requiresAuth: true, role: 2 }
-  },
-  {
-  path: '/dashboard/personal/cliente-cita',
-  name: 'dashboard/personal/cliente-cita',
-  component: RecepcionistaClienteView,
-  meta: { requiresAuth: true, role: 4 }
-  },
-  {
-    path: '/dashboard/estilista',
-    name: 'dashboard/estilista',
-    component: DashboardEstilista,
-    meta: { requiresAuth: true, role: 1 }
     },
-    //porfa ocupo que jale la fakin ruta
+    {
+      path: '/dashboard/admin/tipos-servicio',
+      name: 'dashboard/admin/tipos-servicio',
+      component: AdminTipoServiciosView,
+      meta: { requiresAuth: true, role: 2 }
+    },
+    {
+      path: '/dashboard/personal/cliente-cita',
+      name: 'dashboard/personal/cliente-cita',
+      component: RecepcionistaClienteView,
+      meta: { requiresAuth: true, role: 4 }
+    },
+    {
+      path: '/dashboard/estilista',
+      name: 'dashboard/estilista',
+      component: DashboardEstilista,
+      meta: { requiresAuth: true, role: 1 }
+    },
+      //porfa ocupo que jale la fakin ruta
+    {
+      path: '/dashboard/admin/galeria',
+      name: 'dashboard/admin/galeria',
+      component: GaleriaAdminView,
+      meta: { requiresAuth: true, role: 2 }
+    },
 
   ],
 })
 /*
 router.beforeEach((to, from, next) => {
 // y este before each es por q se va a lanzar antes de mandarlo a la vista
-  //usamos una instancia de mi tienda pinia, el to.matech.some es para que agarre la ruta con el nombre tal 
-  // y el record.meta.requiresAuth es para que verifique tenga el meta: { requiresAuth: true 
+  //usamos una instancia de mi tienda pinia, el to.matech.some es para que agarre la ruta con el nombre tal
+  // y el record.meta.requiresAuth es para que verifique tenga el meta: { requiresAuth: true
   //despues de eso el if es para saber si hay token, si no hay te manda al login
   //si si hay te manda al dashboard,
   //el otro elseif es para cuando alguien meta la ruta /;login pero su token siga vigente entonce lo rediriga al dashboard
@@ -113,7 +120,7 @@ router.beforeEach((to, from, next) => {
       next('/login')
     }
     if(to.meta.role && to.meta.role !=== userRol) {
-      return redirigir(userRol, next) 
+      return redirigir(userRol, next)
     }
 
 next()

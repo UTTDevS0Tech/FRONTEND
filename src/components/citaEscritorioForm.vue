@@ -117,15 +117,13 @@ function enviarFormulario() {
 <template>
   <form class="cita-form" @submit.prevent="enviarFormulario">
     <div class="grid">
-      <div class="field">
-        <label>Cliente</label>
-        <select v-model="formulario.cliente_id" required>
-          <option :value="null" disabled>Selecciona un cliente</option>
-          <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
-            {{ cliente.nombre }}
-          </option>
-        </select>
-      </div>
+
+  <div class="field">
+      <label>Cliente</label>
+  <input
+    type="text"
+    :value="clientes.find(c => c.id === formulario.cliente_id)?.nombre || 'Cliente seleccionado'" disabled/>
+</div>
 
       <div class="field">
         <label>Personal</label>
@@ -151,7 +149,7 @@ function enviarFormulario() {
     <div class="detalles">
       <div class="detalles-header">
         <h3>Servicios</h3>
-       <button type="button" @click="agregarDetalle" :disabled="formulario.detalles.length >= 3"> Agregar servicio </button>
+       <button type="button" class= "btn primary" @click="agregarDetalle" :disabled="formulario.detalles.length >= 3"> Agregar servicio </button>
       </div>
 
       <span v-if="formulario.detalles.length >= 3" style="font-size: 0.9rem; opacity: 0.7;"> Máximo 3 servicios </span>
@@ -185,7 +183,7 @@ function enviarFormulario() {
           required
         />
 
-        <button type="button" @click="eliminarDetalle(index)">
+        <button type="button" class="btn remove-btn" @click="eliminarDetalle(index)">
           Quitar
         </button>
       </div>
@@ -195,13 +193,17 @@ function enviarFormulario() {
       <strong>Total: ${{ totalCalculado }}</strong>
     </div>
 
-    <button type="submit" :disabled="loading">
+    <button type="submit" class="submit-btn" :disabled="loading">
       {{ editando ? 'Actualizar cita' : 'Guardar cita' }}
     </button>
   </form>
 </template>
 
 <style scoped>
+:global(*) {
+  box-sizing: border-box;
+}
+
 .cita-form {
   display: grid;
   gap: 1rem;
@@ -209,13 +211,19 @@ function enviarFormulario() {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .field {
   display: grid;
-  gap: 0.4rem;
+  gap: 0.45rem;
+}
+
+.field label,
+.detalles-header h3 {
+  color: #5f4b3a;
+  font-weight: 800;
 }
 
 .detalles {
@@ -227,23 +235,154 @@ function enviarFormulario() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.detalles-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
 }
 
 .detalle-row {
   display: grid;
   grid-template-columns: 2fr 1fr auto;
   gap: 0.75rem;
+  align-items: center;
 }
 
 .total-box {
-  font-size: 1.1rem;
+  padding: 0.95rem 1rem;
+  border-radius: 16px;
+  background: rgba(204, 213, 174, 0.25);
+  color: #5f4b3a;
+  font-size: 1.05rem;
 }
 
 input,
-select,
-button {
-  padding: 0.7rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+select {
+  width: 100%;
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  background: rgba(255, 255, 255, 0.95);
+  color: #5f4b3a;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+input::placeholder {
+  color: #a08c7a;
+  font-weight: 500;
+}
+
+input:hover,
+select:hover {
+  border-color: rgba(212, 163, 115, 0.5);
+}
+
+input:focus,
+select:focus {
+  border-color: #D4A373;
+  box-shadow:
+    0 0 0 4px rgba(212, 163, 115, 0.15),
+    0 6px 12px rgba(212, 163, 115, 0.15);
+  transform: translateY(-1px);
+}
+
+input[disabled] {
+  background: rgba(255, 255, 255, 0.82);
+  color: #7a6858;
+  cursor: not-allowed;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: none;
+  border-radius: 16px;
+  background: #D4A373 !important;
+  color: white !important;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25) !important;
+  transition: all 0.22s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #c89463 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn {
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.95rem;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.btn.primary {
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
+  color: white;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
+}
+
+.btn.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
+}
+
+.btn.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+span {
+  color: #8a7764;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detalle-row {
+    grid-template-columns: 1fr;
+  }
+
+  .detalles-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn.primary,
+  .submit-btn {
+    width: 100%;
+  }
+}
+
+.remove-btn {
+  padding: 12px 18px;
+  background: rgba(255, 226, 226, 0.95);
+  color: #ae4d4d;
+  box-shadow: 0 10px 20px rgba(174, 77, 77, 0.12);
+}
+
+.remove-btn:hover {
+  transform: translateY(-2px);
 }
 </style>

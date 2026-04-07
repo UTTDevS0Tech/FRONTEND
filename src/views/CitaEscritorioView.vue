@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
+import { useRoute } from 'vue-router'
+import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
 import { useTipoServiciosStore } from '@/stores/tipoServicios'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import { useClienteStore } from '@/stores/cliente'
@@ -14,6 +15,7 @@ const citaStore = useCitaEscritorioStore()
 const clienteStore = useClienteStore()
 const personalStore = usePersonalStore()
 const tipoServicioStore = useTipoServiciosStore()
+const route = useRoute()
 
 function crearFormularioVacio(): FormularioCitaEscritorio {
   return {
@@ -41,6 +43,12 @@ onMounted(async () => {
     personalStore.obtenerPersonales(),
     tipoServicioStore.obtenerTiposServicio(),
   ])
+
+  const clienteId = Number(route.query.cliente_id)
+
+  if (!Number.isNaN(clienteId) && clienteId > 0) {
+    modeloFormulario.value.cliente_id = clienteId
+  }
 })
 
 async function guardarCita(payload: FormularioCitaEscritorio) {
@@ -79,6 +87,7 @@ async function guardarCita(payload: FormularioCitaEscritorio) {
 function limpiarFormulario() {
   modeloFormulario.value = crearFormularioVacio()
 }
+
 </script>
 
 <template>
@@ -179,19 +188,19 @@ function limpiarFormulario() {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 24px;
-  background: linear-gradient(135deg, #FEFAE0 0%, #FAEDCD 58%, #E9EDC9 100%);
+  padding: 22px;
+  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
   color: #5f4b3a;
 }
 
 .citas-shell {
-  width: min(1600px, 100%);
+  width: min(1680px, 100%);
   animation: pageEnter 0.8s ease;
 }
 
 .citas-layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 270px 1fr;
   min-height: 780px;
   border-radius: 30px;
   overflow: hidden;
@@ -203,87 +212,81 @@ function limpiarFormulario() {
 
 .citas-sidebar {
   padding: 34px 24px;
-  background: linear-gradient(180deg, #CCD5AE 0%, #E9EDC9 100%);
+  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .panel-tag {
   display: inline-block;
-  margin-bottom: 20px;
-  padding: 8px 14px;
+  width: fit-content;
+  margin-bottom: 24px;
+  padding: 10px 18px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d5844;
   font-weight: 800;
+  font-size: 0.95rem;
 }
 
-.sidebar-stats {
-  margin-top: 20px;
-  display: grid;
-  gap: 12px;
-}
-
-.stat-card {
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.5);
-}
-
-.citas-content {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.back-btn {
-  text-decoration: none;
-  font-weight: 800;
+.citas-sidebar h1 {
+  margin: 0 0 16px;
+  font-size: 2.3rem;
+  line-height: 1.05;
   color: #5f4b3a;
 }
 
-.header h2 {
-  margin: 0;
+.citas-sidebar p {
+  margin: 0 0 24px;
+  color: #7b6a58;
+  line-height: 1.7;
+  font-size: 0.95rem;
 }
 
-.card {
-  background: white;
+.sidebar-stats {
+  display: grid;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.stat-card {
+  padding: 18px;
   border-radius: 20px;
-  padding: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
 }
 
-.card-header {
-  margin-bottom: 12px;
+.stat-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  color: #5f4b3a;
 }
 
-.alert {
-  padding: 10px;
-  border-radius: 10px;
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
 }
 
-.alert.error {
-  background: #ffe5e5;
-}
-
-.alert.success {
-  background: #e5ffe5;
-}
-
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+.citas-content {
+  padding: 24px 28px;
+  background: rgba(254, 250, 224, 0.88);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
 }
 
 .top-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
 }
 
-.back-btn,
-.new-btn {
+.back-btn {
   width: fit-content;
   display: inline-flex;
   align-items: center;
@@ -294,5 +297,113 @@ function limpiarFormulario() {
   font-size: 0.95rem;
   text-decoration: none;
   transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.header p {
+  margin: 0;
+  color: #8a7764;
+  font-size: 0.95rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.7);
+}
+
+.form-card {
+  min-height: 620px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #5f4b3a;
+}
+
+.card-header span {
+  color: #8a7764;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.alert {
+  padding: 0.95rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.alert.error {
+  background: rgba(255, 228, 228, 0.9);
+  color: #991b1b;
+  border: 1px solid rgba(245, 188, 188, 0.9);
+}
+
+.alert.success {
+  background: rgba(204, 213, 174, 0.35);
+  color: #3f5b2d;
+  border: 1px solid rgba(189, 232, 200, 0.8);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1250px) {
+  .citas-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .citas-page {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .header h2 {
+    font-size: 1.5rem;
+  }
 }
 </style>
