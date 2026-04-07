@@ -104,9 +104,9 @@ public function up(): void
 */
 
 export interface Servicio {
-  id: number
+  id?: number
   nombre: string
-  precio: number
+  precio?: number
   activo: boolean
   created_at?: string
   updated_at?: string
