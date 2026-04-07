@@ -129,3 +129,12 @@ export interface TipoServicio {
   servicio_id: number
   imagen?: string | File | null
 }
+
+export interface Galeria {
+  id?: number
+  titulo: string
+  imagen?: string
+  imagen_url?: string | null
+  created_at?: string
+  updated_at?: string
+}

@@ -13,6 +13,7 @@ import RecepcionistaClienteView from '@/views/RecepcionistaClienteView.vue'
 import DashboardEstilista from '@/views/DashboardEstilista.vue'
 import LandingView from '@/views/LandingView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import GaleriaAdminView from '@/views/GaleriaAdminView.vue'
 
 
 const router = createRouter({
@@ -37,10 +38,10 @@ const router = createRouter({
       meta: {requiresAuth: true, role: 3}
     },
     {
-    path: '/register',
-    name: 'register',
-    component: RegisterView
-},
+      path: '/register',
+      name: 'register',
+      component: RegisterView
+    },
     {
       path: '/login',
       name: 'login',
@@ -77,24 +78,30 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 2 }
     },
     {
-    path: '/dashboard/admin/tipos-servicio',
-    name: 'dashboard/admin/tipos-servicio',
-    component: AdminTipoServiciosView,
-    meta: { requiresAuth: true, role: 2 }
-  },
-  {
-  path: '/dashboard/personal/cliente-cita',
-  name: 'dashboard/personal/cliente-cita',
-  component: RecepcionistaClienteView,
-  meta: { requiresAuth: true, role: 4 }
-  },
-  {
-    path: '/dashboard/estilista',
-    name: 'dashboard/estilista',
-    component: DashboardEstilista,
-    meta: { requiresAuth: true, role: 1 }
+      path: '/dashboard/admin/tipos-servicio',
+      name: 'dashboard/admin/tipos-servicio',
+      component: AdminTipoServiciosView,
+      meta: { requiresAuth: true, role: 2 }
     },
-    //porfa ocupo que jale la fakin ruta
+    {
+      path: '/dashboard/personal/cliente-cita',
+      name: 'dashboard/personal/cliente-cita',
+      component: RecepcionistaClienteView,
+      meta: { requiresAuth: true, role: 4 }
+    },
+    {
+      path: '/dashboard/estilista',
+      name: 'dashboard/estilista',
+      component: DashboardEstilista,
+      meta: { requiresAuth: true, role: 1 }
+    },
+      //porfa ocupo que jale la fakin ruta
+    {
+      path: '/dashboard/admin/galeria',
+      name: 'dashboard/admin/galeria',
+      component: GaleriaAdminView,
+      meta: { requiresAuth: true, role: 2 }
+    },
 
   ],
 })
