@@ -25,7 +25,10 @@ export const useClienteStore = defineStore('cliente', () => {
         throw new Error(fetchError.value.message || 'No se pudieron obtener los clientes')
       }
 
-      clientes.value = data.value?.data || []
+      clientes.value = (data.value?.data || []).map((cliente: any) => ({
+        id: Number(cliente.id),
+        nombre: cliente.nombre_completo ?? cliente.nombre ?? cliente.nom ?? 'Sin nombre',
+      }))
     } catch (err: any) {
       error.value = err.message || 'Error al obtener clientes'
     } finally {
