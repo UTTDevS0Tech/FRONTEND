@@ -54,7 +54,7 @@
   align-items: center;
   justify-content: center;
   padding: 32px;
-  background-image: url('@/assets/spa-bg.jpg');
+  background-image: url('@/assets/banner-principal.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
