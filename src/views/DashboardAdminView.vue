@@ -55,6 +55,11 @@ function cerrarSesion() {
               <strong>Administrar Personal</strong>
               <span>Administra personal nuevo y amplía tu equipo de trabajo.</span>
             </button>
+
+            <button class="action-card secondary" @click="$router.push('/dashboard/admin/galeria')">
+              <strong>Administrar Galería</strong>
+              <span>Gestiona las imágenes que se mostrarán en la galería principal.</span>
+            </button>
           </div>
         </div>
       </div>

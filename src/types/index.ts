@@ -139,3 +139,12 @@ export interface RegisterData {
   password: string
   password_confirmation: string
 }
+
+export interface Galeria {
+  id?: number
+  titulo: string
+  imagen?: string
+  imagen_url?: string | null
+  created_at?: string
+  updated_at?: string
+}
