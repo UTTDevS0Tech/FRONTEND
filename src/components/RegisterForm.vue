@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { User } from '@/types'
+import type { RegisterData } from '@/types'
 
-const emit = defineEmits<{
-  submitted: []
-}>()
-
-const formulario = ref<User & { password_confirmation: string }>({
+const formulario = ref<RegisterData>({
+  nom: '',
+  apellido_p: '',
+  apellido_m: '',
+  tel: '',
   email: '',
   password: '',
   password_confirmation: '',
 })
 
+const cargando = ref(false)
 const mensaje = ref('')
 const error = ref('')
-const cargando = ref(false)
 
 async function registrar() {
   mensaje.value = ''
@@ -38,21 +38,24 @@ async function registrar() {
         const primerError = Object.values(data.errors).flat()[0]
         error.value = String(primerError)
       } else {
-        error.value = data.message || 'No se pudo registrar el usuario.'
+        error.value = data.message || 'No se pudo registrar la cuenta.'
       }
       return
     }
 
     mensaje.value =
-      data.message || 'Usuario registrado correctamente. Revisa tu correo.'
-    emit('submitted')
+      data.message || 'Cuenta creada correctamente. Revisa tu correo.'
 
     formulario.value = {
+      nom: '',
+      apellido_p: '',
+      apellido_m: '',
+      tel: '',
       email: '',
       password: '',
       password_confirmation: '',
     }
-  } catch (err) {
+  } catch (e) {
     error.value = 'Error al conectar con el servidor.'
   } finally {
     cargando.value = false
@@ -62,41 +65,96 @@ async function registrar() {
 
 <template>
   <form class="register-form" @submit.prevent="registrar">
-    <div class="form-group">
-      <label for="email">Correo electrónico</label>
-      <input
-        id="email"
-        v-model="formulario.email"
-        type="email"
-        placeholder="Ingresa tu correo"
-        required
-      />
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nom">Nombre</label>
+        <input
+          id="nom"
+          v-model="formulario.nom"
+          type="text"
+          placeholder="Tu nombre"
+          required
+        />
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="password">Contraseña</label>
-      <input
-        id="password"
-        v-model="formulario.password"
-        type="password"
-        placeholder="Ingresa tu contraseña"
-        required
-      />
+    <div class="form-row two-cols">
+      <div class="form-group">
+        <label for="apellido_p">Apellido paterno</label>
+        <input
+          id="apellido_p"
+          v-model="formulario.apellido_p"
+          type="text"
+          placeholder="Apellido paterno"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="apellido_m">Apellido materno</label>
+        <input
+          id="apellido_m"
+          v-model="formulario.apellido_m"
+          type="text"
+          placeholder="Apellido materno"
+          required
+        />
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="password_confirmation">Confirmar contraseña</label>
-      <input
-        id="password_confirmation"
-        v-model="formulario.password_confirmation"
-        type="password"
-        placeholder="Confirma tu contraseña"
-        required
-      />
+    <div class="form-row">
+      <div class="form-group">
+        <label for="tel">Teléfono</label>
+        <input
+          id="tel"
+          v-model="formulario.tel"
+          type="text"
+          placeholder="Opcional"
+        />
+      </div>
     </div>
 
-    <button type="submit" class="btn-register" :disabled="cargando">
-      {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input
+          id="email"
+          v-model="formulario.email"
+          type="email"
+          placeholder="correo@ejemplo.com"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          v-model="formulario.password"
+          type="password"
+          placeholder="Mínimo 8 caracteres"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="password_confirmation">Confirmar contraseña</label>
+        <input
+          id="password_confirmation"
+          v-model="formulario.password_confirmation"
+          type="password"
+          placeholder="Confirma tu contraseña"
+          required
+        />
+      </div>
+    </div>
+
+    <button class="btn-register" type="submit" :disabled="cargando">
+      {{ cargando ? 'Creando cuenta...' : 'Crear cuenta' }}
     </button>
 
     <p v-if="mensaje" class="success-message">
@@ -113,13 +171,23 @@ async function registrar() {
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  width: 100%;
+}
+
+.two-cols {
+  gap: 14px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 }
 
 .form-group label {
@@ -146,6 +214,7 @@ async function registrar() {
 }
 
 .btn-register {
+  margin-top: 8px;
   height: 52px;
   border: none;
   border-radius: 14px;
@@ -169,14 +238,24 @@ async function registrar() {
 }
 
 .success-message {
+  margin-top: 4px;
   color: #1d7a43;
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .error-message {
+  margin-top: 4px;
   color: #c0392b;
   font-weight: 600;
   font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .two-cols {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 </style>

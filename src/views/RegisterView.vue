@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import RegisterForm from '@/components/RegisterForm.vue'
 </script>
 
@@ -9,7 +10,7 @@ import RegisterForm from '@/components/RegisterForm.vue'
         <span class="brand-tag">Estética Nova</span>
 
         <h1>Crea tu cuenta</h1>
-        <p>
+        <p class="subtitle">
           Regístrate para comenzar a agendar tus citas y disfrutar la experiencia
           completa.
         </p>
@@ -45,7 +46,7 @@ import RegisterForm from '@/components/RegisterForm.vue'
 
 .register-card {
   width: 100%;
-  max-width: 460px;
+  max-width: 620px;
   padding: 34px 28px;
   border-radius: 26px;
   background: rgba(255, 255, 255, 0.93);
@@ -70,7 +71,7 @@ import RegisterForm from '@/components/RegisterForm.vue'
   color: #4f3727;
 }
 
-.register-card p {
+.subtitle {
   margin: 12px 0 24px;
   color: #6f5847;
   line-height: 1.6;

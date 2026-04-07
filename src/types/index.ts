@@ -130,11 +130,12 @@ export interface TipoServicio {
   imagen?: string | File | null
 }
 
-export interface Galeria {
-  id?: number
-  titulo: string
-  imagen?: string
-  imagen_url?: string | null
-  created_at?: string
-  updated_at?: string
+export interface RegisterData {
+  nom: string
+  apellido_p: string
+  apellido_m: string
+  tel?: string
+  email: string
+  password: string
+  password_confirmation: string
 }
