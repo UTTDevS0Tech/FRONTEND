@@ -67,6 +67,7 @@ watch(
 )
 
 function agregarDetalle() {
+  if (formulario.detalles.length >= 3) return
   formulario.detalles.push(crearDetalleVacio())
 }
 
@@ -150,8 +151,10 @@ function enviarFormulario() {
     <div class="detalles">
       <div class="detalles-header">
         <h3>Servicios</h3>
-        <button type="button" @click="agregarDetalle">Agregar servicio</button>
+       <button type="button" @click="agregarDetalle" :disabled="formulario.detalles.length >= 3"> Agregar servicio </button>
       </div>
+
+      <span v-if="formulario.detalles.length >= 3" style="font-size: 0.9rem; opacity: 0.7;"> Máximo 3 servicios </span>
 
       <div
         v-for="(detalle, index) in formulario.detalles"
