@@ -11,6 +11,8 @@ import AdminTipoServiciosView from '@/views/AdminTipoServiciosView.vue'
 import CitaEscritorioView from '@/views/CitaEscritorioView.vue'
 import RecepcionistaClienteView from '@/views/RecepcionistaClienteView.vue'
 import DashboardEstilista from '@/views/DashboardEstilista.vue'
+import LandingView from '@/views/LandingView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +24,11 @@ const router = createRouter({
       component: PersonalView
     },
     */
+    {
+      path: '/',
+      name: 'landing',
+      component: LandingView
+    },
     {
       path: '/dashboard/cliente/cita',
       name: 'agendar-cita',
