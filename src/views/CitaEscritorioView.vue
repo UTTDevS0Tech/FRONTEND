@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
 import { useTipoServiciosStore } from '@/stores/tipoServicios'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
@@ -14,6 +15,7 @@ const citaStore = useCitaEscritorioStore()
 const clienteStore = useClienteStore()
 const personalStore = usePersonalStore()
 const tipoServicioStore = useTipoServiciosStore()
+const route = useRoute()
 
 function crearFormularioVacio(): FormularioCitaEscritorio {
   return {
@@ -41,6 +43,12 @@ onMounted(async () => {
     personalStore.obtenerPersonales(),
     tipoServicioStore.obtenerTiposServicio(),
   ])
+
+  const clienteId = Number(route.query.cliente_id)
+
+  if (!Number.isNaN(clienteId) && clienteId > 0) {
+    modeloFormulario.value.cliente_id = clienteId
+  }
 })
 
 async function guardarCita(payload: FormularioCitaEscritorio) {
@@ -79,6 +87,7 @@ async function guardarCita(payload: FormularioCitaEscritorio) {
 function limpiarFormulario() {
   modeloFormulario.value = crearFormularioVacio()
 }
+
 </script>
 
 <template>

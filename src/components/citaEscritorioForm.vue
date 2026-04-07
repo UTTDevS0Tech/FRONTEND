@@ -117,15 +117,13 @@ function enviarFormulario() {
 <template>
   <form class="cita-form" @submit.prevent="enviarFormulario">
     <div class="grid">
-      <div class="field">
-        <label>Cliente</label>
-        <select v-model="formulario.cliente_id" required>
-          <option :value="null" disabled>Selecciona un cliente</option>
-          <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
-            {{ cliente.nombre }}
-          </option>
-        </select>
-      </div>
+
+  <div class="field">
+      <label>Cliente</label>
+  <input
+    type="text"
+    :value="clientes.find(c => c.id === formulario.cliente_id)?.nombre || 'Cliente seleccionado'" disabled/>
+</div>
 
       <div class="field">
         <label>Personal</label>
