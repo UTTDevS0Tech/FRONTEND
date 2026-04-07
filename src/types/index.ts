@@ -129,3 +129,13 @@ export interface TipoServicio {
   servicio_id: number
   imagen?: string | File | null
 }
+
+export interface RegisterData {
+  nom: string
+  apellido_p: string
+  apellido_m: string
+  tel?: string
+  email: string
+  password: string
+  password_confirmation: string
+}
