@@ -289,6 +289,8 @@ function cerrarModal() {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .back-btn {

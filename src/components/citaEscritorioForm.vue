@@ -149,7 +149,7 @@ function enviarFormulario() {
     <div class="detalles">
       <div class="detalles-header">
         <h3>Servicios</h3>
-       <button type="button" @click="agregarDetalle" :disabled="formulario.detalles.length >= 3"> Agregar servicio </button>
+       <button type="button" class= "btn primary" @click="agregarDetalle" :disabled="formulario.detalles.length >= 3"> Agregar servicio </button>
       </div>
 
       <span v-if="formulario.detalles.length >= 3" style="font-size: 0.9rem; opacity: 0.7;"> Máximo 3 servicios </span>
@@ -183,7 +183,7 @@ function enviarFormulario() {
           required
         />
 
-        <button type="button" @click="eliminarDetalle(index)">
+        <button type="button" class="btn primary" @click="eliminarDetalle(index)">
           Quitar
         </button>
       </div>
@@ -193,7 +193,7 @@ function enviarFormulario() {
       <strong>Total: ${{ totalCalculado }}</strong>
     </div>
 
-    <button type="submit" :disabled="loading">
+    <button type="submit" class="submit-btn" :disabled="loading">
       {{ editando ? 'Actualizar cita' : 'Guardar cita' }}
     </button>
   </form>
@@ -208,7 +208,7 @@ function enviarFormulario() {
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 16px;
 }
 
 .field {
@@ -237,11 +237,65 @@ function enviarFormulario() {
   font-size: 1.1rem;
 }
 
-input,
-select,
-button {
-  padding: 0.7rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  background: rgba(255, 255, 255, 0.95);
+  color: #5f4b3a;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+input::placeholder {
+  color: #a08c7a;
+  font-weight: 500;
+}
+
+input:hover {
+  border-color: rgba(212, 163, 115, 0.5);
+}
+
+input:focus {
+  border-color: #D4A373;
+  box-shadow: 
+    0 0 0 4px rgba(212, 163, 115, 0.15),
+    0 6px 12px rgba(212, 163, 115, 0.15);
+  transform: translateY(-1px);
+}
+
+.submit-btn {
+  padding: 0.8rem 1rem;
+  background: #D4A373 !important;
+  color: white !important;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25) !important;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #c89463 !important;
+}
+
+.btn {
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.95rem;
+  transition: all 0.22s ease;
+}
+
+.btn.primary {
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
+  color: white;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
 }
 </style>
