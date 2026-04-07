@@ -69,6 +69,7 @@ function cerrarModal() {
           </p>
 
           <div class="sidebar-stats">
+            <h2>3 pasos</h2>
             <div class="stat-card">
               <strong>1</strong>
               <span>Registrar cliente</span>

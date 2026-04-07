@@ -37,34 +37,45 @@ const emit = defineEmits<{
 .cliente-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  gap: 16px;
 }
 
 input {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(212, 163, 115, 0.22);
-  background: rgba(255, 255, 255, 0.92);
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  background: rgba(255, 255, 255, 0.95);
   color: #5f4b3a;
   font-size: 0.95rem;
   outline: none;
-  transition: 0.25s ease;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+input::placeholder {
+  color: #a08c7a;
+  font-weight: 500;
+}
+
+input:hover {
+  border-color: rgba(212, 163, 115, 0.5);
 }
 
 input:focus {
   border-color: #D4A373;
-  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
+  box-shadow: 
+    0 0 0 4px rgba(212, 163, 115, 0.15),
+    0 6px 12px rgba(212, 163, 115, 0.15);
   transform: translateY(-1px);
 }
 
-/* BOTONES BONITOS ✨ */
 .acciones {
   display: flex;
   justify-content: flex-end;
@@ -79,7 +90,6 @@ input:focus {
   transition: all 0.22s ease;
 }
 
-/* CAFECITO GOD */
 .btn.primary {
   padding: 12px 18px;
   background: linear-gradient(135deg, #D4A373, #bf8c5a);
@@ -92,7 +102,6 @@ input:focus {
   box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
 }
 
-/* RESPONSIVE */
 @media (max-width: 700px) {
   .grid {
     grid-template-columns: 1fr;
