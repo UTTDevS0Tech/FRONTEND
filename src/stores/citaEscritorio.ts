@@ -33,6 +33,10 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
       throw new Error('Debes agregar al menos un servicio')
     }
 
+    if (payload.detalles.length > 3) {
+    throw new Error('Solo puedes agregar máximo 3 servicios')
+  }
+
     const detallesInvalidos = payload.detalles.some(
       (detalle) => !detalle.servicio_id || Number(detalle.subtotal) <= 0
     )
