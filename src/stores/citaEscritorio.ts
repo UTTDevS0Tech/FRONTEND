@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useApiFetchDiego } from '@/composables/useApi'
+import { useApiCitaEscritorio } from '@/composables/UseApiCitaEscritorio'
 import type {
   CitaEscritorioPayload,
   CitaEscritorioResponse,
@@ -75,7 +75,7 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     error.value = ''
 
     try {
-      const { data, error: fetchError } = await useApiFetchDiego('/citas-escritorio')
+      const { data, error: fetchError } = await useApiCitaEscritorio('/citas-escritorio')
         .get()
         .json()
 
@@ -101,14 +101,11 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     try {
       validarPayload(payload)
 
-      const { data, error: fetchError } = await useApiFetchDiego('/citas-escritorio')
+      const { data, error: fetchError } = await useApiCitaEscritorio('/citas-escritorio')
         .post(payload)
         .json()
 
       if (fetchError.value) {
-        console.log('fetchError crearCita:', fetchError.value)
-        console.log('data crearCita:', data.value)
-
         throw new Error(
           obtenerMensajeError(fetchError.value, data.value, 'No se pudo crear la cita')
         )
@@ -133,14 +130,11 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     try {
       validarPayload(payload)
 
-      const { data, error: fetchError } = await useApiFetchDiego(`/citas-escritorio/${id}`)
+      const { data, error: fetchError } = await useApiCitaEscritorio(`/citas-escritorio/${id}`)
         .put(payload)
         .json()
 
       if (fetchError.value) {
-        console.log('fetchError actualizarCita:', fetchError.value)
-        console.log('data actualizarCita:', data.value)
-
         throw new Error(
           obtenerMensajeError(fetchError.value, data.value, 'No se pudo actualizar la cita')
         )
@@ -163,7 +157,7 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     mensaje.value = ''
 
     try {
-      const { data, error: fetchError } = await useApiFetchDiego(`/citas-escritorio/${id}`)
+      const { data, error: fetchError } = await useApiCitaEscritorio(`/citas-escritorio/${id}`)
         .delete()
         .json()
 
