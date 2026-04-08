@@ -1,16 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import GaleriaAdminForm from '@/components/GaleriaAdminForm.vue'
-
-const modalAbierto = ref(false)
-
-function abrirModal() {
-  modalAbierto.value = true
-}
-
-function cerrarModal() {
-  modalAbierto.value = false
-}
 </script>
 
 <template>
@@ -43,10 +33,6 @@ function cerrarModal() {
             <router-link to="/dashboard/admin" class="back-btn">
               ← Volver al dashboard
             </router-link>
-
-            <button type="button" class="new-btn" @click="abrirModal">
-              + Nueva imagen
-            </button>
           </div>
 
           <div class="page-header">
@@ -61,25 +47,6 @@ function cerrarModal() {
         </section>
       </div>
     </section>
-
-    <transition name="fade">
-      <div v-if="modalAbierto" class="modal-overlay" @click.self="cerrarModal">
-        <div class="modal-card">
-          <div class="modal-header">
-            <div>
-              <h3>Nueva imagen</h3>
-              <p>Completa el formulario para subir una nueva imagen.</p>
-            </div>
-
-            <button type="button" class="close-btn" @click="cerrarModal">
-              ✕
-            </button>
-          </div>
-
-          <GaleriaAdminForm :modo-modal="true" @cerrar-modal="cerrarModal" />
-        </div>
-      </div>
-    </transition>
   </main>
 </template>
 
