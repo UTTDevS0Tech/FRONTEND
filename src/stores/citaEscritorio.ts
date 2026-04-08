@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useApiCitaEscritorio } from '@/composables/UseApiCitaEscritorio'
+import { useApiCitaEscritorio } from '@/composables/useApiCitaEscritorio'
 import type {
   CitaEscritorioPayload,
   CitaEscritorioResponse,
