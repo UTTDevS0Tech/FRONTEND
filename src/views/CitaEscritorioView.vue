@@ -79,15 +79,15 @@ async function guardarCita(payload: FormularioCitaEscritorio) {
   try {
     await citaStore.crearCita(payloadFinal)
     limpiarFormulario()
-  } catch (error) {
-    console.error('Error al guardar cita:', error)
+  } catch (err: any) {
+    console.error('Error al guardar cita:', err)
+    citaStore.error = err?.message || citaStore.error || 'No se pudo crear la cita'
   }
 }
 
 function limpiarFormulario() {
   modeloFormulario.value = crearFormularioVacio()
 }
-
 </script>
 
 <template>
