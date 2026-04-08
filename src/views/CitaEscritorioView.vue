@@ -47,7 +47,10 @@ onMounted(async () => {
   const clienteId = Number(route.query.cliente_id)
 
   if (!Number.isNaN(clienteId) && clienteId > 0) {
-    modeloFormulario.value.cliente_id = clienteId
+    modeloFormulario.value = {
+      ...modeloFormulario.value,
+      cliente_id: clienteId,
+    }
   }
 })
 
