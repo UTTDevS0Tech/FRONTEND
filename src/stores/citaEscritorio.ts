@@ -6,8 +6,9 @@ import type {
   CitaEscritorioResponse,
 } from '@/types/citaEscritorio'
 
-function obtenerMensajeError(fetchError: any, fallback: string) {
+function obtenerMensajeError(fetchError: any, data: any, fallback: string) {
   const errores =
+    data?.errors ||
     fetchError?.data?.errors ||
     fetchError?.response?._data?.errors
 
@@ -17,6 +18,7 @@ function obtenerMensajeError(fetchError: any, fallback: string) {
   }
 
   return (
+    data?.message ||
     fetchError?.data?.message ||
     fetchError?.response?._data?.message ||
     fetchError?.message ||
@@ -78,7 +80,9 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
         .json()
 
       if (fetchError.value) {
-        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudieron obtener las citas'))
+        throw new Error(
+          obtenerMensajeError(fetchError.value, data.value, 'No se pudieron obtener las citas')
+        )
       }
 
       citas.value = data.value?.data || []
@@ -102,7 +106,12 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
         .json()
 
       if (fetchError.value) {
-        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo crear la cita'))
+        console.log('fetchError crearCita:', fetchError.value)
+        console.log('data crearCita:', data.value)
+
+        throw new Error(
+          obtenerMensajeError(fetchError.value, data.value, 'No se pudo crear la cita')
+        )
       }
 
       mensaje.value = data.value?.message || 'Cita creada correctamente'
@@ -129,7 +138,12 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
         .json()
 
       if (fetchError.value) {
-        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo actualizar la cita'))
+        console.log('fetchError actualizarCita:', fetchError.value)
+        console.log('data actualizarCita:', data.value)
+
+        throw new Error(
+          obtenerMensajeError(fetchError.value, data.value, 'No se pudo actualizar la cita')
+        )
       }
 
       mensaje.value = data.value?.message || 'Cita actualizada correctamente'
@@ -154,7 +168,9 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
         .json()
 
       if (fetchError.value) {
-        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo eliminar la cita'))
+        throw new Error(
+          obtenerMensajeError(fetchError.value, data.value, 'No se pudo eliminar la cita')
+        )
       }
 
       mensaje.value = data.value?.message || 'Cita eliminada correctamente'
