@@ -50,10 +50,17 @@ console.log("ESTO ES LO QUE HAY EN EL DETALLE DE LA CITA", nuevaCita.value.detal
 console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
     const servicioId = Number(servicio.id) //aqui lo convertimos a numero por q el id del servicio es un numero pero el valor que nos llega del select es un string, entonces lo convertimos a numero para que no haya problemas al compararlo
     const indice = lista.findIndex(item => item.tipo_servicio_id === servicioId)
+
+ 
     
     if(indice >-1) {
         lista.splice(indice, 1)
     } else {
+        if(lista.length >= 3) {
+            alert('tienes un max ed 3 servicios por cita')
+            return;
+        }
+
         lista.push ({
             tipo_servicio_id: servicioId,
             precio_capturado: Number(servicio.precio),
