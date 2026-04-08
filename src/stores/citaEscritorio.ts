@@ -24,7 +24,6 @@ function obtenerMensajeError(fetchError: any, fallback: string) {
   )
 }
 
-
 export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
   const citas = ref<CitaEscritorioResponse[]>([])
   const loading = ref(false)
@@ -53,8 +52,8 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     }
 
     if (payload.detalles.length > 3) {
-    throw new Error('Solo puedes agregar máximo 3 servicios')
-  }
+      throw new Error('Solo puedes agregar máximo 3 servicios')
+    }
 
     const detallesInvalidos = payload.detalles.some(
       (detalle) => !detalle.servicio_id || Number(detalle.subtotal) <= 0
@@ -78,9 +77,9 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
         .get()
         .json()
 
-if (fetchError.value) {
-  throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo crear la cita'))
-}
+      if (fetchError.value) {
+        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudieron obtener las citas'))
+      }
 
       citas.value = data.value?.data || []
     } catch (err: any) {
@@ -103,7 +102,7 @@ if (fetchError.value) {
         .json()
 
       if (fetchError.value) {
-        throw new Error(fetchError.value.message || 'No se pudo crear la cita')
+        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo crear la cita'))
       }
 
       mensaje.value = data.value?.message || 'Cita creada correctamente'
@@ -130,7 +129,7 @@ if (fetchError.value) {
         .json()
 
       if (fetchError.value) {
-        throw new Error(fetchError.value.message || 'No se pudo actualizar la cita')
+        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo actualizar la cita'))
       }
 
       mensaje.value = data.value?.message || 'Cita actualizada correctamente'
@@ -155,7 +154,7 @@ if (fetchError.value) {
         .json()
 
       if (fetchError.value) {
-        throw new Error(fetchError.value.message || 'No se pudo eliminar la cita')
+        throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo eliminar la cita'))
       }
 
       mensaje.value = data.value?.message || 'Cita eliminada correctamente'
