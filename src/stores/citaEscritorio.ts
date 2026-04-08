@@ -6,6 +6,25 @@ import type {
   CitaEscritorioResponse,
 } from '@/types/citaEscritorio'
 
+function obtenerMensajeError(fetchError: any, fallback: string) {
+  const errores =
+    fetchError?.data?.errors ||
+    fetchError?.response?._data?.errors
+
+  if (errores) {
+    const primerError = Object.values(errores)[0]
+    return Array.isArray(primerError) ? String(primerError[0]) : fallback
+  }
+
+  return (
+    fetchError?.data?.message ||
+    fetchError?.response?._data?.message ||
+    fetchError?.message ||
+    fallback
+  )
+}
+
+
 export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
   const citas = ref<CitaEscritorioResponse[]>([])
   const loading = ref(false)
@@ -59,9 +78,9 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
         .get()
         .json()
 
-      if (fetchError.value) {
-        throw new Error(fetchError.value.message || 'No se pudieron obtener las citas')
-      }
+if (fetchError.value) {
+  throw new Error(obtenerMensajeError(fetchError.value, 'No se pudo crear la cita'))
+}
 
       citas.value = data.value?.data || []
     } catch (err: any) {
