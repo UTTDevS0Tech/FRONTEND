@@ -148,3 +148,56 @@ export interface Galeria {
   created_at?: string
   updated_at?: string
 }
+//lo q me regresa el backend
+export interface AdminUser{
+id: number
+email: string
+activo: boolean
+rol_id: number
+}
+
+export interface AdminUserPayload{
+email:string
+password: string
+password_confirmation: string
+activo?: boolean
+rol_id?: number
+}
+
+export interface AdminUserUpdatePayload{
+email?:string
+password?: string
+password_confirmation?: string
+activo?: boolean
+rol_id?: number
+}
+//lo q me regresa el backend 
+export interface AdminPersonal{
+id: number
+nombre: string
+descripcion: string
+user_id: number
+}
+
+export interface AdminPersonalPayload {
+  nombre: string
+  descripcion: string
+  user_id: number
+}
+
+export interface AdminPersonalUpdatePayload {
+  nombre?: string
+  descripcion?: string
+  user_id?: number
+}
+
+// a ver q onda con esto, de una vez lo pongo pq no va a ser el diabolo
+export interface HorarioPersonal {
+  dia: string
+  inicio: string
+  fin: string
+  activo: boolean
+}
+
+
+
