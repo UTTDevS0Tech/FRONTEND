@@ -53,7 +53,7 @@ async function obtenerPersonales(){
         cargando.value=true
         error.value=null
         try{
-            const {data, error:fetchError}=await useApiFetchDiego('estilistas').post({body: payload}).json<ApiResponse<AdminPersonal>>()
+            const {data, error:fetchError}=await useApiFetchDiego('estilistas').post(payload).json<ApiResponse<AdminPersonal>>()
             if(fetchError.value){
                 throw fetchError.value
             }   
@@ -72,7 +72,7 @@ async function obtenerPersonales(){
         error.value=null
     
         try{
-            const {data, error:fetchError}=await useApiFetchDiego(`estilistas/${id}`).put({body: payload}).json<ApiResponse<AdminPersonal>>()
+            const {data, error:fetchError}=await useApiFetchDiego(`estilistas/${id}`).put(payload).json<ApiResponse<AdminPersonal>>()
             if(fetchError.value){
                 throw fetchError.value
             }

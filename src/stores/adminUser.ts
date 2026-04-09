@@ -56,7 +56,7 @@ export const useAdminUserStore= defineStore('admin-user', ()=>{
     error.value=null
     try{
 
-    const {data, error:fetchError}=await useApiFetchDiego('users').post({body: payload}).json<ApiResponse<AdminUser>>()
+    const {data, error:fetchError}=await useApiFetchDiego('users').post(payload).json<ApiResponse<AdminUser>>()
     if(fetchError.value){
         throw fetchError.value
     }
@@ -85,7 +85,7 @@ export const useAdminUserStore= defineStore('admin-user', ()=>{
         delete payloadLimpio.password
         delete payloadLimpio.password_confirmation
     }
-    const {data, error:fetchError}=await useApiFetchDiego(`users/${id}`).put({body: payloadLimpio}).json<ApiResponse<AdminUser>>()
+    const {data, error:fetchError}=await useApiFetchDiego(`users/${id}`).put(payloadLimpio).json<ApiResponse<AdminUser>>()
     if(fetchError.value){
         throw fetchError.value  
     }
