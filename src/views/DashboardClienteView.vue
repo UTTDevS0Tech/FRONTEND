@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { onMounted, onUnmounted } from 'vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -29,21 +30,31 @@ const totalPaginas = computed(() =>
   Math.ceil(imagenesGaleria.length / visiblesPorVista)
 )
 
+const imagenesVisibles = computed(() => {
+  const inicio = indiceActual.value * visiblesPorVista
+  return imagenesGaleria.slice(inicio, inicio + visiblesPorVista)
+})
+
 function siguienteSlide() {
-  indiceActual.value =
-    indiceActual.value < totalPaginas.value - 1 ? indiceActual.value + 1 : 0
+  if (indiceActual.value < totalPaginas.value - 1) {
+    indiceActual.value++
+  } else {
+    indiceActual.value = 0
+  }
 }
 
 function anteriorSlide() {
-  indiceActual.value =
-    indiceActual.value > 0 ? indiceActual.value - 1 : totalPaginas.value - 1
+  if (indiceActual.value > 0) {
+    indiceActual.value--
+  } else {
+    indiceActual.value = totalPaginas.value - 1
+  }
 }
 
 function irAPagina(index: number) {
   indiceActual.value = index
 }
 
-/* autoplay */
 let intervalo: number | null = null
 
 function iniciarCarrusel() {
@@ -53,17 +64,22 @@ function iniciarCarrusel() {
 }
 
 function pausarCarrusel() {
-  if (intervalo) {
+  if (intervalo !== null) {
     clearInterval(intervalo)
     intervalo = null
   }
 }
 
 function reanudarCarrusel() {
-  if (!intervalo) iniciarCarrusel()
+  if (intervalo === null) {
+    iniciarCarrusel()
+  }
 }
 
-onMounted(() => iniciarCarrusel())
+onMounted(() => {
+  iniciarCarrusel()
+})
+
 onUnmounted(() => {
   if (intervalo) clearInterval(intervalo)
 })
@@ -71,17 +87,16 @@ onUnmounted(() => {
 
 <template>
   <main class="client-home">
-    <!-- NAV -->
     <header class="top-nav">
       <div class="brand">
-        <img src="@/assets/logolargo.png" />
+        <img src="@/assets/logolargo.png" alt="Estética Nova" />
       </div>
 
       <nav class="nav-links">
-        <a>Home</a>
-        <a>Estilistas</a>
-        <a>Servicios</a>
-        <a>Perfil</a>
+        <a href="#">Home</a>
+        <a href="#">Estilistas</a>
+        <a href="#">Servicios</a>
+        <a href="#">Perfil</a>
       </nav>
 
       <button class="logout-btn" @click="cerrarSesion">
@@ -89,24 +104,25 @@ onUnmounted(() => {
       </button>
     </header>
 
-    <!-- HERO -->
     <section class="hero">
       <div class="hero-image">
-        <img src="@/assets/banner-principal.jpg" />
+        <img src="@/assets/banner-principal.jpg" alt="Interior de la estética" />
         <div class="hero-overlay"></div>
       </div>
 
       <div class="hero-content">
         <span class="hero-badge">Bienvenida</span>
         <h1>Tu espacio para relajarte, renovarte y verte increíble</h1>
-        <p>Descubre nuestros servicios y agenda tu cita fácilmente.</p>
+        <p>
+          Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
+          en un ambiente pensado para tu bienestar.
+        </p>
         <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">
           Agendar cita
         </button>
       </div>
     </section>
 
-    <!-- GALERÍA CARRUSEL -->
     <section class="gallery">
       <div class="section-head">
         <span>Nuestra Galería</span>
@@ -118,7 +134,9 @@ onUnmounted(() => {
         @mouseenter="pausarCarrusel"
         @mouseleave="reanudarCarrusel"
       >
-        <button class="carousel-btn" @click="anteriorSlide">‹</button>
+        <button class="carousel-btn" @click="anteriorSlide">
+          ‹
+        </button>
 
         <div class="carousel-viewport">
           <div
@@ -136,109 +154,279 @@ onUnmounted(() => {
                   :key="imagen.src"
                   class="gallery-card"
                 >
-                  <img :src="imagen.src" />
+                  <img :src="imagen.src" :alt="imagen.alt" />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <button class="carousel-btn" @click="siguienteSlide">›</button>
+        <button class="carousel-btn" @click="siguienteSlide">
+          ›
+        </button>
       </div>
 
       <div class="carousel-dots">
         <button
-          v-for="(_, i) in totalPaginas"
-          :key="i"
+          v-for="(_, index) in totalPaginas"
+          :key="index"
           class="dot"
-          :class="{ active: indiceActual === i }"
-          @click="irAPagina(i)"
+          :class="{ active: indiceActual === index }"
+          @click="irAPagina(index)"
         ></button>
       </div>
     </section>
+
+    <footer class="about-bar">
+      <div>
+        <h3>Sobre Nosotros</h3>
+        <p>Un espacio dedicado al cuidado personal, la belleza y el bienestar.</p>
+      </div>
+
+      <div>
+        <h4>Dirección</h4>
+        <p>*****************</p>
+      </div>
+
+      <div>
+        <h4>Contacto</h4>
+        <p>Tel. 000 000 0000</p>
+        <p>estetica@gmail.com</p>
+      </div>
+    </footer>
   </main>
 </template>
 
 <style scoped>
 .client-home {
+  min-height: 100vh;
   background: #FEFAE0;
+  color: #5f4b3a;
+  animation: pageFade 0.8s ease;
 }
 
-/* NAV */
 .top-nav {
   display: flex;
   justify-content: space-between;
-  padding: 1.2rem 3rem;
+  align-items: center;
+  padding: 1.2rem 3.2rem;
+  background: rgba(254, 250, 224, 0.96);
+  border-bottom: 1px solid rgba(212, 163, 115, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
 }
 
-.logout-btn {
-  background: #ffe2e2;
-  border-radius: 14px;
-  padding: 0.8rem 1rem;
-  cursor: pointer;
+.brand {
+  display: flex;
+  align-items: center;
 }
 
-/* HERO */
+.brand img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.brand img:hover {
+  transform: scale(1.06);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: #5f4b3a;
+  text-decoration: none;
+  font-weight: 800;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  transition: 0.25s ease;
+}
+
+.nav-links a:hover {
+  background: rgba(212, 163, 115, 0.14);
+  transform: translateY(-2px);
+}
+
 .hero {
   position: relative;
-  min-height: 80vh;
+  min-height: 82vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.hero-image {
+  position: absolute;
+  inset: 0;
 }
 
 .hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: zoomSlow 12s ease-in-out infinite alternate;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(95, 75, 58, 0.60),
+    rgba(95, 75, 58, 0.26)
+  );
 }
 
 .hero-content {
   position: relative;
+  z-index: 2;
+  width: min(1100px, 100%);
+  padding: 2rem;
   text-align: center;
   color: white;
+  animation: riseIn 1s ease;
 }
 
-/* GALERÍA */
+.hero-badge {
+  display: inline-block;
+  margin-bottom: 1.1rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  font-weight: 800;
+}
+
+.hero-content h1 {
+  margin: 0 auto 1rem;
+  max-width: 860px;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 1.05;
+}
+
+.hero-content p {
+  max-width: 760px;
+  margin: 0 auto 1.6rem;
+  line-height: 1.9;
+  font-size: 1.08rem;
+}
+
+.hero-btn {
+  border: none;
+  border-radius: 18px;
+  padding: 1.05rem 1.7rem;
+  background: #D4A373;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 16px 30px rgba(212, 163, 115, 0.28);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 36px rgba(212, 163, 115, 0.34);
+}
+
 .gallery {
-  padding: 4rem 2rem;
+  padding: 5rem 3rem;
+  background: #FEFAE0;
+}
+
+.section-head {
+  text-align: center;
+  margin-bottom: 2.6rem;
+}
+
+.section-head span {
+  color: #D4A373;
+  font-weight: 800;
+}
+
+.section-head h2 {
+  margin: 0.55rem 0 0;
+  font-size: 2.6rem;
 }
 
 .carousel-shell {
+  width: min(1420px, 100%);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .carousel-viewport {
   overflow: hidden;
+  width: 100%;
 }
 
 .carousel-track {
   display: flex;
+  width: 100%;
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .carousel-page {
   min-width: 100%;
+  flex-shrink: 0;
+}
+
+.carousel-btn {
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(212, 163, 115, 0.18);
+  color: #8d633c;
+  font-size: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.carousel-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(212, 163, 115, 0.28);
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.4rem;
 }
 
-/* 🔥 IMÁGENES UNIFORMES */
 .gallery-card {
-  aspect-ratio: 4 / 3;
-  border-radius: 20px;
+  border-radius: 26px;
   overflow: hidden;
+  box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
+  background: #FAEDCD;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  aspect-ratio: 4 / 3;
+  width: 100%;
   display: flex;
+}
+
+.gallery-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 26px 42px rgba(92, 75, 59, 0.18);
 }
 
 .gallery-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.4s ease;
 }
 
@@ -246,33 +434,94 @@ onUnmounted(() => {
   transform: scale(1.05);
 }
 
-/* BOTONES */
-.carousel-btn {
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 1.8rem;
-  background: rgba(212,163,115,0.2);
-  cursor: pointer;
-}
-
-/* DOTS */
 .carousel-dots {
-  margin-top: 1rem;
+  margin-top: 1.8rem;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 0.7rem;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
+  border: none;
   border-radius: 50%;
-  background: #ccc;
+  background: rgba(212, 163, 115, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.dot:hover {
+  transform: scale(1.08);
 }
 
 .dot.active {
   background: #D4A373;
+}
+
+.about-bar {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 2rem;
+  padding: 2.5rem 3rem;
+  background: #CCD5AE;
+  color: #5f4b3a;
+}
+
+.about-bar h3,
+.about-bar h4 {
+  margin-top: 0;
+}
+
+.about-bar p {
+  margin: 0.35rem 0;
+  line-height: 1.7;
+}
+
+.logout-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+  background: rgba(255, 226, 226, 0.96);
+  color: #a14444;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.10);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 214, 214, 1);
+  box-shadow: 0 14px 24px rgba(161, 68, 68, 0.14);
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomSlow {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
 }
 </style>
