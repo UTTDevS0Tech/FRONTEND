@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
-import { onMounted, onUnmounted } from 'vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -29,6 +28,11 @@ const indiceActual = ref(0)
 const totalPaginas = computed(() =>
   Math.ceil(imagenesGaleria.length / visiblesPorVista)
 )
+
+const imagenesVisibles = computed(() => {
+  const inicio = indiceActual.value * visiblesPorVista
+  return imagenesGaleria.slice(inicio, inicio + visiblesPorVista)
+})
 
 function siguienteSlide() {
   if (indiceActual.value < totalPaginas.value - 1) {
@@ -76,7 +80,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (intervalo) clearInterval(intervalo)
+  if (intervalo !== null) clearInterval(intervalo)
 })
 </script>
 
@@ -134,26 +138,17 @@ onUnmounted(() => {
         </button>
 
         <div class="carousel-viewport">
-          <div
-            class="carousel-track"
-            :style="{ transform: `translateX(-${indiceActual * 100}%)` }"
-          >
-            <div
-              v-for="pagina in totalPaginas"
-              :key="pagina"
-              class="carousel-page"
-            >
-              <div class="gallery-grid">
-                <div
-                  v-for="imagen in imagenesGaleria.slice((pagina - 1) * visiblesPorVista, pagina * visiblesPorVista)"
-                  :key="imagen.src"
-                  class="gallery-card"
-                >
-                  <img :src="imagen.src" :alt="imagen.alt" />
-                </div>
+          <transition name="slide-page" mode="out-in">
+            <div :key="indiceActual" class="gallery-grid">
+              <div
+                v-for="imagen in imagenesVisibles"
+                :key="`${indiceActual}-${imagen.src}`"
+                class="gallery-card"
+              >
+                <img :src="imagen.src" :alt="imagen.alt" />
               </div>
             </div>
-          </div>
+          </transition>
         </div>
 
         <button class="carousel-btn" @click="siguienteSlide">
@@ -362,42 +357,14 @@ onUnmounted(() => {
 .carousel-viewport {
   overflow: hidden;
   width: 100%;
-}
-
-.carousel-track {
-  display: flex;
-  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.carousel-page {
-  min-width: 100%;
-  flex-shrink: 0;
-}
-
-.carousel-btn {
-  width: 54px;
-  height: 54px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(212, 163, 115, 0.18);
-  color: #8d633c;
-  font-size: 2rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
-  transition: transform 0.22s ease, background 0.22s ease;
-}
-
-.carousel-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(212, 163, 115, 0.28);
+  min-height: 340px;
 }
 
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.4rem;
+  width: 100%;
 }
 
 .gallery-card {
@@ -426,6 +393,25 @@ onUnmounted(() => {
 
 .gallery-card:hover img {
   transform: scale(1.05);
+}
+
+.carousel-btn {
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(212, 163, 115, 0.18);
+  color: #8d633c;
+  font-size: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.carousel-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(212, 163, 115, 0.28);
 }
 
 .carousel-dots {
@@ -488,6 +474,21 @@ onUnmounted(() => {
   transform: translateY(-2px);
   background: rgba(255, 214, 214, 1);
   box-shadow: 0 14px 24px rgba(161, 68, 68, 0.14);
+}
+
+.slide-page-enter-active,
+.slide-page-leave-active {
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease;
+}
+
+.slide-page-enter-from {
+  opacity: 0;
+  transform: translateX(60px);
+}
+
+.slide-page-leave-to {
+  opacity: 0;
+  transform: translateX(-60px);
 }
 
 @keyframes pageFade {
