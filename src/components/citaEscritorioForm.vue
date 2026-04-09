@@ -165,13 +165,15 @@ function enviarFormulario() {
           required
         >
           <option :value="null" disabled>Selecciona un servicio</option>
-          <option
-            v-for="servicio in servicios"
-            :key="servicio.id"
-            :value="servicio.id"
+        <option
+        v-for="servicio in servicios"
+        :key="servicio.id"
+        :value="servicio.id"
+        :disabled="!servicio.activo"
+        :class="{ 'opcion-inactiva': !servicio.activo }"
           >
-            {{ servicio.nombre }} - ${{ servicio.precio }}
-          </option>
+     {{ servicio.nombre }} - ${{ servicio.precio }}{{ !servicio.activo ? ' (No disponible)' : '' }}
+        </option>
         </select>
 
         <button type="button" class="btn remove-btn" @click="eliminarDetalle(index)">
@@ -375,5 +377,11 @@ span {
 
 .remove-btn:hover {
   transform: translateY(-2px);
+}
+
+option:disabled,
+.opcion-inactiva {
+  color: #b0a090;
+  background: #f5f0eb;
 }
 </style>
