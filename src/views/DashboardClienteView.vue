@@ -30,11 +30,6 @@ const totalPaginas = computed(() =>
   Math.ceil(imagenesGaleria.length / visiblesPorVista)
 )
 
-const imagenesVisibles = computed(() => {
-  const inicio = indiceActual.value * visiblesPorVista
-  return imagenesGaleria.slice(inicio, inicio + visiblesPorVista)
-})
-
 function siguienteSlide() {
   if (indiceActual.value < totalPaginas.value - 1) {
     indiceActual.value++
@@ -371,7 +366,6 @@ onUnmounted(() => {
 
 .carousel-track {
   display: flex;
-  width: 100%;
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
@@ -414,7 +408,6 @@ onUnmounted(() => {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   aspect-ratio: 4 / 3;
   width: 100%;
-  display: flex;
 }
 
 .gallery-card:hover {
@@ -425,6 +418,7 @@ onUnmounted(() => {
 .gallery-card img {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
   object-position: center;
   transition: transform 0.4s ease;
