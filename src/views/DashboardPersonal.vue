@@ -14,6 +14,11 @@ function irCrearCitaEscritorio() {
   router.push({ name: 'dashboard/personal/cliente-cita' })
 }
 
+function irVerCitasPendientes() {
+  router.push({ name: 'dashboard/personal/citas-pendientes' })
+}
+
+
 </script>
 
 <template>
@@ -50,10 +55,11 @@ function irCrearCitaEscritorio() {
               <span>Registra nuevas citas para clientes directamente desde recepción.</span>
             </button>
 
-            <button class="action-card secondary">
-              <strong>Ver Citas Pendientes</strong>
-              <span>Consulta las citas próximas y mantén el control de la agenda.</span>
-            </button>
+          <button class="action-card secondary" @click="irVerCitasPendientes">
+            <strong>Ver Citas Pendientes</strong>
+            <span>Consulta las citas próximas y mantén el control de la agenda.</span>
+          </button>
+          
           </div>
         </div>
       </div>

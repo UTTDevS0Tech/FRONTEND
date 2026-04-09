@@ -81,5 +81,31 @@ const citasFiltradas = computed(() => {
         </tbody>
       </table>
     </section>
+    
+<section class="card">
+  <div class="card-header">
+    <div>
+      <h1>Citas pendientes</h1>
+      <p>Consulta todos los tickets del sistema y filtra por cliente.</p>
+    </div>
+
+    <input
+      v-model="search"
+      type="text"
+      placeholder="Buscar por cliente..."
+      class="search-input"
+    />
+  </div>
+
+  <pre>{{ citaStore.citas }}</pre>
+
+  <div v-if="citaStore.loading">Cargando citas...</div>
+
+  <table v-else class="tabla">
+    ...
+  </table>
+</section>
+
+
   </main>
 </template>

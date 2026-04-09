@@ -15,6 +15,8 @@ import LandingView from '@/views/LandingView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import GaleriaAdminView from '@/views/GaleriaAdminView.vue'
 import AdminPersonalView from '@/views/AdminPersonalView.vue'
+import CitasRecepionistaView from '@/views/CitasRecepionistaView.vue'
+
 
 
 const router = createRouter({
@@ -108,7 +110,14 @@ const router = createRouter({
       name: 'dashboard/admin/personal',
       component: AdminPersonalView,
       meta: { requiresAuth: true, role: 2 }
-    }
+    },
+    {
+    path: '/dashboard/personal/citas-pendientes',
+    name: 'dashboard/personal/citas-pendientes',
+    component: CitasRecepionistaView,
+    meta: { requiresAuth: true, role: 4 }
+    },
+
 
   ],
 })
