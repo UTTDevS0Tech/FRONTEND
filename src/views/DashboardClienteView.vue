@@ -363,8 +363,7 @@ onUnmounted(() => {
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.4rem;
-  width: 100%;
+  gap: 1rem; /* antes 1.4rem */
 }
 
 .gallery-card {
@@ -373,7 +372,7 @@ onUnmounted(() => {
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
   background: #FAEDCD;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 5 / 4; /* 🔥 un poco más alto */
   width: 100%;
 }
 
