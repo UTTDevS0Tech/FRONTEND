@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { onMounted, onUnmounted } from 'vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -9,26 +11,81 @@ function cerrarSesion() {
   authStore.logout()
   router.push('/login')
 }
+
+const imagenesGaleria = [
+  { src: new URL('@/assets/galeria1.jpg', import.meta.url).href, alt: 'Galería 1' },
+  { src: new URL('@/assets/galeria2.jpg', import.meta.url).href, alt: 'Galería 2' },
+  { src: new URL('@/assets/galeria3.jpg', import.meta.url).href, alt: 'Galería 3' },
+  { src: new URL('@/assets/galeria4.jpg', import.meta.url).href, alt: 'Galería 4' },
+  { src: new URL('@/assets/galeria5.jpg', import.meta.url).href, alt: 'Galería 5' },
+  { src: new URL('@/assets/galeria6.jpg', import.meta.url).href, alt: 'Galería 6' },
+  { src: new URL('@/assets/galeria7.jpg', import.meta.url).href, alt: 'Galería 7' },
+  { src: new URL('@/assets/galeria8.jpg', import.meta.url).href, alt: 'Galería 8' },
+]
+
+const visiblesPorVista = 4
+const indiceActual = ref(0)
+
+const totalPaginas = computed(() =>
+  Math.ceil(imagenesGaleria.length / visiblesPorVista)
+)
+
+const imagenesVisibles = computed(() => {
+  const inicio = indiceActual.value * visiblesPorVista
+  return imagenesGaleria.slice(inicio, inicio + visiblesPorVista)
+})
+
+function siguienteSlide() {
+  if (indiceActual.value < totalPaginas.value - 1) {
+    indiceActual.value++
+  } else {
+    indiceActual.value = 0
+  }
+}
+
+function anteriorSlide() {
+  if (indiceActual.value > 0) {
+    indiceActual.value--
+  } else {
+    indiceActual.value = totalPaginas.value - 1
+  }
+}
+
+function irAPagina(index: number) {
+  indiceActual.value = index
+}
+
+let intervalo: number | null = null
+
+onMounted(() => {
+  intervalo = window.setInterval(() => {
+    siguienteSlide()
+  }, 4000)
+})
+
+onUnmounted(() => {
+  if (intervalo) clearInterval(intervalo)
+})
 </script>
 
 <template>
   <main class="client-home">
     <header class="top-nav">
-  <div class="brand">
-    <img src="@/assets/logolargo.png" alt="Estética Nova" />
-  </div>
+      <div class="brand">
+        <img src="@/assets/logolargo.png" alt="Estética Nova" />
+      </div>
 
-  <nav class="nav-links">
-    <a href="#">Home</a>
-    <a href="#">Estilistas</a>
-    <a href="#">Servicios</a>
-    <a href="#">Perfil</a>
-  </nav>
+      <nav class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">Estilistas</a>
+        <a href="#">Servicios</a>
+        <a href="#">Perfil</a>
+      </nav>
 
-  <button class="logout-btn" @click="cerrarSesion">
-    Cerrar sesión
-  </button>
-</header>
+      <button class="logout-btn" @click="cerrarSesion">
+        Cerrar sesión
+      </button>
+    </header>
 
     <section class="hero">
       <div class="hero-image">
@@ -43,7 +100,9 @@ function cerrarSesion() {
           Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
           en un ambiente pensado para tu bienestar.
         </p>
-        <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">Agendar cita</button>
+        <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">
+          Agendar cita
+        </button>
       </div>
     </section>
 
@@ -53,16 +112,34 @@ function cerrarSesion() {
         <h2>Momentos y espacios</h2>
       </div>
 
-      <div class="gallery-grid">
-        <div class="gallery-card">
-          <img src="@/assets/galeria1.jpg" alt="Galería 1" />
+      <div class="carousel-shell">
+        <button class="carousel-btn" @click="anteriorSlide">
+          ‹
+        </button>
+
+        <div class="gallery-grid">
+          <div
+            v-for="imagen in imagenesVisibles"
+            :key="imagen.src"
+            class="gallery-card"
+          >
+            <img :src="imagen.src" :alt="imagen.alt" />
+          </div>
         </div>
-        <div class="gallery-card">
-          <img src="@/assets/galeria2.jpg" alt="Galería 2" />
-        </div>
-        <div class="gallery-card">
-          <img src="@/assets/galeria3.jpg" alt="Galería 3" />
-        </div>
+
+        <button class="carousel-btn" @click="siguienteSlide">
+          ›
+        </button>
+      </div>
+
+      <div class="carousel-dots">
+        <button
+          v-for="(_, index) in totalPaginas"
+          :key="index"
+          class="dot"
+          :class="{ active: indiceActual === index }"
+          @click="irAPagina(index)"
+        ></button>
       </div>
     </section>
 
@@ -244,11 +321,37 @@ function cerrarSesion() {
   font-size: 2.6rem;
 }
 
-.gallery-grid {
-  width: min(1320px, 100%);
+.carousel-shell {
+  width: min(1420px, 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.carousel-btn {
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(212, 163, 115, 0.18);
+  color: #8d633c;
+  font-size: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.carousel-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(212, 163, 115, 0.28);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.4rem;
 }
 
@@ -256,7 +359,7 @@ function cerrarSesion() {
   border-radius: 26px;
   overflow: hidden;
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
-  min-height: 340px;
+  min-height: 320px;
   background: #FAEDCD;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -270,6 +373,31 @@ function cerrarSesion() {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.carousel-dots {
+  margin-top: 1.8rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.7rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(212, 163, 115, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.dot:hover {
+  transform: scale(1.08);
+}
+
+.dot.active {
+  background: #D4A373;
 }
 
 .about-bar {
@@ -291,6 +419,24 @@ function cerrarSesion() {
   line-height: 1.7;
 }
 
+.logout-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+  background: rgba(255, 226, 226, 0.96);
+  color: #a14444;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.10);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 214, 214, 1);
+  box-shadow: 0 14px 24px rgba(161, 68, 68, 0.14);
+}
+
 @keyframes pageFade {
   from {
     opacity: 0;
@@ -309,24 +455,6 @@ function cerrarSesion() {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.logout-btn {
-  border: none;
-  border-radius: 14px;
-  padding: 0.9rem 1.2rem;
-  background: rgba(255, 226, 226, 0.96);
-  color: #a14444;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.10);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-}
-
-.logout-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 214, 214, 1);
-  box-shadow: 0 14px 24px rgba(161, 68, 68, 0.14);
 }
 
 @keyframes zoomSlow {
