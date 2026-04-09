@@ -346,7 +346,7 @@ onUnmounted(() => {
 }
 
 .carousel-shell {
-  width: min(1420px, 100%);
+  width: min(1720px, 100%);
   margin: 0 auto;
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -363,7 +363,7 @@ onUnmounted(() => {
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem; /* antes 1.4rem */
+  gap: 0.8rem;
 }
 
 .gallery-card {
@@ -372,7 +372,7 @@ onUnmounted(() => {
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
   background: #FAEDCD;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  aspect-ratio: 5 / 4; /* 🔥 un poco más alto */
+  aspect-ratio: 1 / 1;
   width: 100%;
 }
 
