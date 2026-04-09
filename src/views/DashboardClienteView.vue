@@ -372,7 +372,7 @@ onUnmounted(() => {
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
   background: #FAEDCD;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1.08;
   width: 100%;
 }
 
