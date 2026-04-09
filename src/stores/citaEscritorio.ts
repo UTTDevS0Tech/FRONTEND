@@ -1,30 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useApiCitaEscritorio } from '@/composables/useApiCitaEscritorio'
+import { useApiFetchDiego } from '@/composables/useApi'
 import type {
   CitaEscritorioPayload,
   CitaEscritorioResponse,
 } from '@/types/citaEscritorio'
-
-function obtenerMensajeError(fetchError: any, data: any, fallback: string) {
-  const errores =
-    data?.errors ||
-    fetchError?.data?.errors ||
-    fetchError?.response?._data?.errors
-
-  if (errores) {
-    const primerError = Object.values(errores)[0]
-    return Array.isArray(primerError) ? String(primerError[0]) : fallback
-  }
-
-  return (
-    data?.message ||
-    fetchError?.data?.message ||
-    fetchError?.response?._data?.message ||
-    fetchError?.message ||
-    fallback
-  )
-}
 
 export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
   const citas = ref<CitaEscritorioResponse[]>([])
@@ -49,6 +29,22 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
       throw new Error('Debes seleccionar una hora')
     }
 
+    // Validación de hora (09:00 - 20:00)
+   const [horas = 0, minutos = 0] = payload.hora_c.split(':').map(Number)
+    const totalMinutos = horas * 60 + minutos
+    if (totalMinutos < 9 * 60) {
+      throw new Error('La hora de la cita no puede ser antes de las 09:00')
+    }
+    if (totalMinutos > 20 * 60) {
+      throw new Error('La hora de la cita no puede ser después de las 20:00')
+    }
+
+    // Validación de año (máximo 2050)
+    const año = new Date(payload.fecha_c).getFullYear()
+    if (año > 2050) {
+      throw new Error('La fecha de la cita no puede ser mayor al 31-12-2050')
+    }
+
     if (!payload.detalles || !Array.isArray(payload.detalles) || payload.detalles.length === 0) {
       throw new Error('Debes agregar al menos un servicio')
     }
@@ -70,19 +66,29 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     }
   }
 
+  function extraerMensajeError(fetchError: any, fallback: string): string {
+    const errData = fetchError?.data
+    if (errData?.errors) {
+      const mensajes = Object.values(errData.errors).flat().join(' | ')
+      return mensajes as string
+    }
+    if (errData?.message) {
+      return errData.message
+    }
+    return fallback
+  }
+
   async function obtenerCitas() {
     loading.value = true
     error.value = ''
 
     try {
-      const { data, error: fetchError } = await useApiCitaEscritorio('/citas-escritorio')
+      const { data, error: fetchError } = await useApiFetchDiego('/citas-escritorio')
         .get()
         .json()
 
       if (fetchError.value) {
-        throw new Error(
-          obtenerMensajeError(fetchError.value, data.value, 'No se pudieron obtener las citas')
-        )
+        throw new Error(fetchError.value.message || 'No se pudieron obtener las citas')
       }
 
       citas.value = data.value?.data || []
@@ -101,14 +107,12 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     try {
       validarPayload(payload)
 
-      const { data, error: fetchError } = await useApiCitaEscritorio('/citas-escritorio')
+      const { data, error: fetchError } = await useApiFetchDiego('/citas-escritorio')
         .post(payload)
         .json()
 
       if (fetchError.value) {
-        throw new Error(
-          obtenerMensajeError(fetchError.value, data.value, 'No se pudo crear la cita')
-        )
+        throw new Error(extraerMensajeError(fetchError.value, 'No se pudo crear la cita'))
       }
 
       mensaje.value = data.value?.message || 'Cita creada correctamente'
@@ -130,14 +134,12 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     try {
       validarPayload(payload)
 
-      const { data, error: fetchError } = await useApiCitaEscritorio(`/citas-escritorio/${id}`)
+      const { data, error: fetchError } = await useApiFetchDiego(`/citas-escritorio/${id}`)
         .put(payload)
         .json()
 
       if (fetchError.value) {
-        throw new Error(
-          obtenerMensajeError(fetchError.value, data.value, 'No se pudo actualizar la cita')
-        )
+        throw new Error(extraerMensajeError(fetchError.value, 'No se pudo actualizar la cita'))
       }
 
       mensaje.value = data.value?.message || 'Cita actualizada correctamente'
@@ -157,14 +159,12 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     mensaje.value = ''
 
     try {
-      const { data, error: fetchError } = await useApiCitaEscritorio(`/citas-escritorio/${id}`)
+      const { data, error: fetchError } = await useApiFetchDiego(`/citas-escritorio/${id}`)
         .delete()
         .json()
 
       if (fetchError.value) {
-        throw new Error(
-          obtenerMensajeError(fetchError.value, data.value, 'No se pudo eliminar la cita')
-        )
+        throw new Error(extraerMensajeError(fetchError.value, 'No se pudo eliminar la cita'))
       }
 
       mensaje.value = data.value?.message || 'Cita eliminada correctamente'
