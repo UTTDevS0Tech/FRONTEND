@@ -120,6 +120,11 @@ export const useAdminUserStore= defineStore('admin-user', ()=>{
 
   }
 
+  function limpiarMensaje(){
+    error.value=null
+    mensaje.value=null
+  }
+
   return {
     usuarios, 
     usuario, 
@@ -130,7 +135,8 @@ export const useAdminUserStore= defineStore('admin-user', ()=>{
     obtenerUsuarioPorId, 
     crearUsuario, 
     actualizarUsuario, 
-    toggleUsuario
+    toggleUsuario,
+    limpiarMensaje
 }
 })
 
