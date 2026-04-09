@@ -105,7 +105,7 @@ export const useAdminUserStore= defineStore('admin-user', ()=>{
     error.value=null
 
     try{
-        const {data, error}=await useApiFetchDiego(`users/${id}/toggle`).post().json<ApiResponse<AdminUser>>()
+        const {data, error}=await useApiFetchDiego(`users/${id}/toggle`).patch().json<ApiResponse<AdminUser>>()
         if(error.value){
             throw error.value
         }   

@@ -51,7 +51,7 @@ function cerrarSesion() {
                 <span>Administra los tipos de servicio disponibles.</span>
               </button>
 
-            <button class="action-card secondary">
+            <button class="action-card secondary" @click="$router.push('/dashboard/admin/personal')">
               <strong>Administrar Personal</strong>
               <span>Administra personal nuevo y amplía tu equipo de trabajo.</span>
             </button>

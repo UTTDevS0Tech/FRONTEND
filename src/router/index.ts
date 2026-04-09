@@ -14,6 +14,7 @@ import DashboardEstilista from '@/views/DashboardEstilista.vue'
 import LandingView from '@/views/LandingView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import GaleriaAdminView from '@/views/GaleriaAdminView.vue'
+import AdminPersonalView from '@/views/AdminPersonalView.vue'
 
 
 const router = createRouter({
@@ -102,6 +103,12 @@ const router = createRouter({
       component: GaleriaAdminView,
       meta: { requiresAuth: true, role: 2 }
     },
+    {
+      path: '/dashboard/admin/personal',
+      name: 'dashboard/admin/personal',
+      component: AdminPersonalView,
+      meta: { requiresAuth: true, role: 2 }
+    }
 
   ],
 })

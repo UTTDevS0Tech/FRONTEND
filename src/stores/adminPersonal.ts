@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useApiFetchDiego } from '@/composables/useApi'
 import type {ApiResponse, AdminPersonal, AdminPersonalPayload, AdminPersonalUpdatePayload,} from '@/types'
-import { C } from 'vue-router/dist/options-BErt5RTe.cjs'
 
 export const useAdminPersonalStore = defineStore('admin-personal', () => {
 const personales = ref<AdminPersonal[]>([])
@@ -17,7 +16,7 @@ async function obtenerPersonales(){
     error.value=null
 
     try{
-        const {data, error:fetchError}=await useApiFetchDiego('personal').get().json<ApiResponse<AdminPersonal[]>>()
+        const {data, error:fetchError}=await useApiFetchDiego('estilistas').get().json<ApiResponse<AdminPersonal[]>>()
         if(fetchError){
             throw fetchError.value
         }   
@@ -35,7 +34,7 @@ async function obtenerPersonales(){
         error.value=null
 
         try{
-            const {data, error:fetchError}=await useApiFetchDiego(`personal/${id}`).get().json<ApiResponse<AdminPersonal>>()
+            const {data, error:fetchError}=await useApiFetchDiego(`estilistas/${id}`).get().json<ApiResponse<AdminPersonal>>()
             if(fetchError){
                 throw fetchError.value
             }
@@ -54,7 +53,7 @@ async function obtenerPersonales(){
         cargando.value=true
         error.value=null
         try{
-            const {data, error:fetchError}=await useApiFetchDiego('personal').post({body: payload}).json<ApiResponse<AdminPersonal>>()
+            const {data, error:fetchError}=await useApiFetchDiego('estilistas').post({body: payload}).json<ApiResponse<AdminPersonal>>()
             if(fetchError){
                 throw fetchError.value
             }   
@@ -73,7 +72,7 @@ async function obtenerPersonales(){
         error.value=null
     
         try{
-            const {data, error:fetchError}=await useApiFetchDiego(`personal/${id}`).put({body: payload}).json<ApiResponse<AdminPersonal>>()
+            const {data, error:fetchError}=await useApiFetchDiego(`estilistas/${id}`).put({body: payload}).json<ApiResponse<AdminPersonal>>()
             if(fetchError){
                 throw fetchError.value
             }
