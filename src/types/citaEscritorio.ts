@@ -44,17 +44,20 @@ export interface FormularioCitaEscritorio {
   detalles: FormularioDetalleCita[]
 }
 
+export interface DetalleCitaTicket {
+  servicio: string
+  precio_capturado: string
+}
+
 export interface CitaEscritorioResponse {
   id: number
-  total: number
-  personal_id: number
-  cliente_id: number
-  fecha_c: string
+  apartado: string
+  total: string
+  personal: string
   hora_c: string
   hora_fin?: string
-  estado?: string
-  apartado?: number
-  detalles?: DetalleCitaPayload[]
-  cliente?: ClienteOption
-  personal?: PersonalOption
+  fecha_c: string
+  estado: string
+  cliente: string
+  detalle_cita: DetalleCitaTicket[]
 }
