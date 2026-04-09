@@ -17,7 +17,7 @@ async function obtenerPersonales(){
 
     try{
         const {data, error:fetchError}=await useApiFetchDiego('estilistas').get().json<ApiResponse<AdminPersonal[]>>()
-        if(fetchError){
+        if(fetchError.value){
             throw fetchError.value
         }   
         personales.value=data.value?.data || []
@@ -35,7 +35,7 @@ async function obtenerPersonales(){
 
         try{
             const {data, error:fetchError}=await useApiFetchDiego(`estilistas/${id}`).get().json<ApiResponse<AdminPersonal>>()
-            if(fetchError){
+            if(fetchError.value){
                 throw fetchError.value
             }
             personal.value=data.value?.data || null
@@ -53,8 +53,8 @@ async function obtenerPersonales(){
         cargando.value=true
         error.value=null
         try{
-            const {data, error:fetchError}=await useApiFetchDiego('estilistas').post({body: payload}).json<ApiResponse<AdminPersonal>>()
-            if(fetchError){
+            const {data, error:fetchError}=await useApiFetchDiego('estilistas').post(payload).json<ApiResponse<AdminPersonal>>()
+            if(fetchError.value){
                 throw fetchError.value
             }   
             personal.value=data.value?.data || null
@@ -72,8 +72,8 @@ async function obtenerPersonales(){
         error.value=null
     
         try{
-            const {data, error:fetchError}=await useApiFetchDiego(`estilistas/${id}`).put({body: payload}).json<ApiResponse<AdminPersonal>>()
-            if(fetchError){
+            const {data, error:fetchError}=await useApiFetchDiego(`estilistas/${id}`).put(payload).json<ApiResponse<AdminPersonal>>()
+            if(fetchError.value){
                 throw fetchError.value
             }
             personal.value=data.value?.data || null

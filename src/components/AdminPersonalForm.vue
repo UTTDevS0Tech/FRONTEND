@@ -12,7 +12,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'submit', payload: AdminPersonalPayload | AdminPersonalUpdatePayload): void
+  (e: 'submit', payload: { nombre: string; descripcion: string }): void
   (e: 'cancel'): void
 }>()
 
@@ -41,24 +41,14 @@ function limpiarFormulario() {
 }
 
 function guardarPersonal() {
-  if (!editando.value) {
-    const payload: AdminPersonalPayload = {
-      nombre: formulario.nombre,
-      descripcion: formulario.descripcion,
-      user_id: 0,
-    }
-
-    emit('submit', payload)
-    return
-  }
-
-  const payload: AdminPersonalUpdatePayload = {
+  const payload = {
     nombre: formulario.nombre,
     descripcion: formulario.descripcion,
   }
 
   emit('submit', payload)
 }
+
 </script>
 
 <template>

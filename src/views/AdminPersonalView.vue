@@ -4,6 +4,20 @@ import {useAdminUserStore} from '../stores/adminUser'
 import { useAdminPersonalStore } from '@/stores/adminPersonal'
 import AdminUserForm from '@/components/AdminUserForm.vue'
 import AdminPersonalForm from '@/components/AdminPersonalForm.vue'
+import type { AdminUserPayload, AdminUserUpdatePayload } from '@/types'
+
+type RegistroAdminPersonal = {
+  id: number
+  nombre: string
+  descripcion: string
+  user_id: number
+  user: {
+    id: number
+    email: string
+    activo: boolean
+    rol_id: number
+  } | null
+}
 
 
 const adminUserStore = useAdminUserStore()
@@ -11,11 +25,13 @@ const adminPersonalStore = useAdminPersonalStore()
 const modalCrearAbierto = ref(false)
 const modalEditarAbierto = ref(false)
 const modalSeleccionEditarAbierto = ref(false)
-const personalSeleccionado = ref<any | null>(null)
+const personalSeleccionado = ref<RegistroAdminPersonal | null>(null)
 const tipoEdicion = ref<'credenciales' | 'personal' | null>(null)
+const usuarioCreadoId = ref<number | null>(null)
+const pasoCreacion = ref<'credenciales' | 'personal'>('credenciales')
 
 
-    const registrosCombinados = computed(() => {
+    const registrosCombinados = computed<RegistroAdminPersonal[]>(() => {
     return adminPersonalStore.personales.map((personal) => {
         const usuario = adminUserStore.usuarios.find(
         (user) => user.id === personal.user_id
@@ -42,13 +58,23 @@ async function cargarTodo() {
 }
 function abrirModalCrear() {
   modalCrearAbierto.value = true
+  pasoCreacion.value = 'credenciales'
+  usuarioCreadoId.value = null
 }
 
 function cerrarModalCrear() {
   modalCrearAbierto.value = false
+  usuarioCreadoId.value = null
+  pasoCreacion.value = 'credenciales'
 }
 
-function abrirSeleccionEdicion(registro: any) {
+ function cerrarModalEditar() {
+  modalEditarAbierto.value = false
+  personalSeleccionado.value = null
+  tipoEdicion.value = null
+}
+
+function abrirSeleccionEdicion(registro: RegistroAdminPersonal) {
   personalSeleccionado.value = registro
   modalSeleccionEditarAbierto.value = true
 }
@@ -69,6 +95,66 @@ function elegirEditarPersonal() {
   modalSeleccionEditarAbierto.value = false
   modalEditarAbierto.value = true
 }
+
+
+async function guardarCredencialesNuevo(payload: AdminUserPayload | AdminUserUpdatePayload){
+try{
+
+    const usuarioCreado = await adminUserStore.crearUsuario(payload as AdminUserPayload)
+    if(!usuarioCreado?.id) {
+      throw new Error('No se pudo obtener el ID del usuario')
+    }
+
+    usuarioCreadoId.value = usuarioCreado.id
+    pasoCreacion.value = 'personal'
+}catch(error){
+  console.error('Error al crear usuario:', error) 
+}
+}
+
+async function guardarNuevoPersonal(payload: {nombre: string; descripcion:string}) {
+
+  if(!usuarioCreadoId.value) return
+
+  try{
+    await adminPersonalStore.crearPersonal({
+      ...payload,
+      user_id:usuarioCreadoId.value,
+    })
+
+    cerrarModalCrear()
+    await cargarTodo()
+
+  }catch(error){
+    console.error('Error al crear personal:', error)
+  }
+
+}
+
+async function guardarCredencialesEditado(payload: AdminUserPayload | AdminUserUpdatePayload) {
+  if (!personalSeleccionado.value?.user?.id) return
+
+  try {
+    await adminUserStore.actualizarUsuario(personalSeleccionado.value.user.id, payload as AdminUserUpdatePayload)
+    cerrarModalEditar()
+    await cargarTodo()
+  } catch (error) {
+    console.error('Error al actualizar credenciales:', error)
+  }
+}
+
+async function guardarPersonalEditado(payload: { nombre: string; descripcion: string }) {
+  if (!personalSeleccionado.value?.id) return
+
+  try {
+    await adminPersonalStore.actualizarPersonal(personalSeleccionado.value.id, payload)
+    cerrarModalEditar()
+    await cargarTodo()
+  } catch (error) {
+    console.error('Error al actualizar personal:', error)
+  }
+}
+
 
 async function toggleUsuario(userId?: number) {
   if (!userId) return
@@ -160,30 +246,47 @@ onMounted(() => {
       </div>
     </transition>
 
-    <transition name="fade">
-      <div v-if="modalCrearAbierto" class="modal-overlay" @click.self="cerrarModalCrear">
-        <div class="modal-card">
-          <div class="modal-header">
-            <div>
-              <h3>Crear nuevo personal</h3>
-              <p>Primero crea las credenciales del usuario estilista.</p>
-            </div>
+<transition name="fade">
+  <div v-if="modalCrearAbierto" class="modal-overlay" @click.self="cerrarModalCrear">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 v-if="pasoCreacion === 'credenciales'">Crear credenciales</h3>
+          <h3 v-else>Crear datos del personal</h3>
 
-            <button type="button" class="close-btn" @click="cerrarModalCrear">
-              X
-            </button>
-          </div>
-
-          <AdminUserForm
-            :cargando="adminUserStore.cargando"
-            @cancel="cerrarModalCrear"
-          />
+          <p v-if="pasoCreacion === 'credenciales'">
+            Ingresa el correo y contraseña para el nuevo usuario estilista.
+          </p>
+          <p v-else>
+            Ahora ingresa el nombre y descripción del nuevo personal.
+          </p>
         </div>
+
+        <button type="button" class="close-btn" @click="cerrarModalCrear">
+          X
+        </button>
       </div>
-    </transition>
+
+      <AdminUserForm
+        v-if="pasoCreacion === 'credenciales'"
+        :cargando="adminUserStore.cargando"
+        @submit="guardarCredencialesNuevo"
+        @cancel="cerrarModalCrear"
+      />
+
+      <AdminPersonalForm
+        v-else
+        :cargando="adminPersonalStore.cargando"
+        @submit="guardarNuevoPersonal"
+        @cancel="cerrarModalCrear"
+      />
+    </div>
+  </div>
+</transition>
+
 
     <transition name="fade">
-      <div v-if="modalEditarAbierto" class="modal-overlay" @click.self="modalEditarAbierto = false">
+      <div v-if="modalEditarAbierto" class="modal-overlay" @click.self="cerrarModalEditar">
         <div class="modal-card">
           <div class="modal-header">
             <div>
@@ -199,7 +302,7 @@ onMounted(() => {
               </p>
             </div>
 
-            <button type="button" class="close-btn" @click="modalEditarAbierto = false">
+            <button type="button" class="close-btn" @click="cerrarModalEditar">
               X
             </button>
           </div>
@@ -208,14 +311,16 @@ onMounted(() => {
             v-if="tipoEdicion === 'credenciales'"
             :model-value="personalSeleccionado?.user ?? null"
             :cargando="adminUserStore.cargando"
-            @cancel="modalEditarAbierto = false"
+            @submit="guardarCredencialesEditado"
+            @cancel="cerrarModalEditar"
           />
 
           <AdminPersonalForm
             v-else-if="tipoEdicion === 'personal'"
             :model-value="personalSeleccionado"
             :cargando="adminPersonalStore.cargando"
-            @cancel="modalEditarAbierto = false"
+            @submit="guardarPersonalEditado"
+            @cancel="cerrarModalEditar"
           />
         </div>
       </div>
