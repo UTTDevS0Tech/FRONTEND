@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue'
-import type {
-  AdminPersonal,
-  AdminPersonalPayload,
-  AdminPersonalUpdatePayload,
-} from '@/types'
+import type { AdminPersonal } from '@/types'
 
 const props = defineProps<{
   modelValue?: AdminPersonal | null
@@ -21,9 +17,7 @@ const formulario = reactive({
   descripcion: '',
 })
 
-const editando = computed(() => {
-  return !!props.modelValue?.id
-})
+const editando = computed(() => !!props.modelValue?.id)
 
 watch(
   () => props.modelValue,
@@ -35,53 +29,74 @@ watch(
 )
 
 function limpiarFormulario() {
-  formulario.nombre = ''
-  formulario.descripcion = ''
+  formulario.nombre = props.modelValue?.nombre ?? ''
+  formulario.descripcion = props.modelValue?.descripcion ?? ''
   emit('cancel')
 }
 
 function guardarPersonal() {
-  const payload = {
-    nombre: formulario.nombre,
-    descripcion: formulario.descripcion,
-  }
-
-  emit('submit', payload)
+  emit('submit', {
+    nombre: formulario.nombre.trim(),
+    descripcion: formulario.descripcion.trim(),
+  })
 }
-
 </script>
 
 <template>
   <div class="formulario-panel">
+    <div class="form-intro">
+      <span class="form-tag">Datos del personal</span>
+      <h4>{{ editando ? 'Actualiza la información del estilista' : 'Completa el perfil del nuevo estilista' }}</h4>
+      <p>
+        Captura un nombre claro y una descripción breve para identificar al personal dentro del sistema.
+      </p>
+    </div>
+
     <form class="admin-form" @submit.prevent="guardarPersonal">
-      <div class="form-group">
-        <label>Nombre del personal</label>
+      <div class="field-card">
+        <div class="field-head">
+          <label for="nombre-personal">Nombre del personal</label>
+          <span>Visible en el panel administrativo</span>
+        </div>
+
         <input
+          id="nombre-personal"
           v-model="formulario.nombre"
           type="text"
           placeholder="Ej. Ana López"
+          maxlength="120"
           required
         />
       </div>
 
-      <div class="form-group">
-        <label>Descripción</label>
+      <div class="field-card">
+        <div class="field-head">
+          <label for="descripcion-personal">Descripción</label>
+          <span>Agrega una breve reseña o especialidad</span>
+        </div>
+
         <textarea
+          id="descripcion-personal"
           v-model="formulario.descripcion"
-          rows="4"
-          placeholder="Describe brevemente al estilista"
+          rows="5"
+          maxlength="500"
+          placeholder="Ej. Especialista en colorimetría, peinados sociales y tratamientos capilares."
           required
         />
+
+        <small class="field-note">
+          {{ formulario.descripcion.length }}/500 caracteres
+        </small>
       </div>
 
       <div class="acciones-formulario">
-        <button type="submit" :disabled="cargando">
-          {{ editando ? 'Actualizar datos del personal' : 'Guardar datos del personal' }}
+        <button type="submit" class="primary-btn" :disabled="cargando">
+          {{ cargando ? 'Guardando...' : editando ? 'Actualizar datos del personal' : 'Guardar datos del personal' }}
         </button>
 
         <button
           type="button"
-          class="secondary"
+          class="secondary-btn"
           :disabled="cargando"
           @click="limpiarFormulario"
         >
@@ -100,85 +115,167 @@ function guardarPersonal() {
 .formulario-panel {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+}
+
+.form-intro {
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(204, 213, 174, 0.35), rgba(250, 237, 205, 0.72));
+  border: 1px solid rgba(212, 163, 115, 0.14);
+}
+
+.form-tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #7a6048;
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.form-intro h4 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  color: #5f4b3a;
+}
+
+.form-intro p {
+  margin: 0;
+  color: #7b6a58;
+  line-height: 1.7;
+  font-size: 0.95rem;
 }
 
 .admin-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
-.form-group {
+.field-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(236, 231, 216, 0.9);
+  box-shadow: 0 12px 26px rgba(92, 75, 59, 0.06);
 }
 
-.form-group label {
+.field-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-head label {
   color: #5f4b3a;
-  font-weight: 800;
-  font-size: 0.92rem;
+  font-weight: 900;
+  font-size: 0.96rem;
+}
+
+.field-head span,
+.field-note {
+  color: #8a7764;
+  font-size: 0.84rem;
+  font-weight: 600;
 }
 
 input[type='text'],
 textarea {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(212, 163, 115, 0.22);
-  background: rgba(255, 255, 255, 0.92);
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 163, 115, 0.24);
+  background: rgba(255, 255, 255, 0.96);
   color: #5f4b3a;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
+  line-height: 1.6;
   outline: none;
-  transition: 0.25s ease;
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
   font-family: inherit;
 }
 
 textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 130px;
 }
 
 input[type='text']:focus,
 textarea:focus {
   border-color: #d4a373;
   box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
+  transform: translateY(-1px);
+}
+
+input[type='text']::placeholder,
+textarea::placeholder {
+  color: #b29b87;
 }
 
 .acciones-formulario {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
-button {
-  padding: 10px 14px;
+.primary-btn,
+.secondary-btn {
+  padding: 12px 18px;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
   cursor: pointer;
-  font-weight: 800;
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  font-weight: 900;
+  font-size: 0.95rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
 }
 
-button:hover:not(:disabled) {
+.primary-btn {
+  background: linear-gradient(135deg, #d4a373, #bf8c5a);
+  color: white;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.24);
+}
+
+.secondary-btn {
+  background: rgba(204, 213, 174, 0.58);
+  color: #5f4b3a;
+  box-shadow: 0 12px 24px rgba(179, 192, 136, 0.2);
+}
+
+.primary-btn:hover:not(:disabled),
+.secondary-btn:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
-button:disabled {
-  opacity: 0.7;
+.primary-btn:disabled,
+.secondary-btn:disabled {
+  opacity: 0.72;
   cursor: not-allowed;
 }
 
-.acciones-formulario button {
-  background: linear-gradient(135deg, #d4a373, #bf8c5a);
-  color: white;
-  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
-}
+@media (max-width: 640px) {
+  .form-intro,
+  .field-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
 
-.acciones-formulario button.secondary {
-  background: linear-gradient(135deg, #ccd5ae, #b8c493);
-  color: #5f4b3a;
-  box-shadow: 0 14px 24px rgba(179, 192, 136, 0.22);
+  .acciones-formulario {
+    flex-direction: column;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>
