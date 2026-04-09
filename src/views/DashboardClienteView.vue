@@ -12,14 +12,14 @@ function cerrarSesion() {
 }
 
 const imagenesGaleria = [
-  { src: new URL('@/assets/galeria1.jpg', import.meta.url).href, alt: 'Galería 1' },
-  { src: new URL('@/assets/galeria2.jpg', import.meta.url).href, alt: 'Galería 2' },
-  { src: new URL('@/assets/galeria3.jpg', import.meta.url).href, alt: 'Galería 3' },
-  { src: new URL('@/assets/galeria4.jpg', import.meta.url).href, alt: 'Galería 4' },
-  { src: new URL('@/assets/galeria5.jpg', import.meta.url).href, alt: 'Galería 5' },
-  { src: new URL('@/assets/galeria6.jpg', import.meta.url).href, alt: 'Galería 6' },
-  { src: new URL('@/assets/galeria7.jpg', import.meta.url).href, alt: 'Galería 7' },
-  { src: new URL('@/assets/galeria8.jpg', import.meta.url).href, alt: 'Galería 8' },
+  { src: new URL('@/assets/galeria1.jpg', import.meta.url).href, alt: 'Galería 1', position: 'center top' },
+  { src: new URL('@/assets/galeria2.jpg', import.meta.url).href, alt: 'Galería 2', position: 'center 30%' },
+  { src: new URL('@/assets/galeria3.jpg', import.meta.url).href, alt: 'Galería 3', position: 'center 40%' },
+  { src: new URL('@/assets/galeria4.jpg', import.meta.url).href, alt: 'Galería 4', position: 'center 25%' },
+  { src: new URL('@/assets/galeria5.jpg', import.meta.url).href, alt: 'Galería 5', position: 'center center' },
+  { src: new URL('@/assets/galeria6.jpg', import.meta.url).href, alt: 'Galería 6', position: '70% center' },
+  { src: new URL('@/assets/galeria7.jpg', import.meta.url).href, alt: 'Galería 7', position: 'center center' },
+  { src: new URL('@/assets/galeria8.jpg', import.meta.url).href, alt: 'Galería 8', position: '40% 30%' },
 ]
 
 const visiblesPorVista = 4
@@ -145,7 +145,11 @@ onUnmounted(() => {
                 :key="`${indiceActual}-${imagen.src}`"
                 class="gallery-card"
               >
-                <img :src="imagen.src" :alt="imagen.alt" />
+                <img
+                :src="imagen.src"
+                :alt="imagen.alt"
+                :style="{ objectPosition: imagen.position }"
+                />
               </div>
             </div>
           </transition>
@@ -372,7 +376,7 @@ onUnmounted(() => {
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
   background: #FAEDCD;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  aspect-ratio: 1 / 1.08;
+  aspect-ratio: 3 / 4;
   width: 100%;
 }
 
