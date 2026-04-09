@@ -47,10 +47,7 @@ onMounted(async () => {
   const clienteId = Number(route.query.cliente_id)
 
   if (!Number.isNaN(clienteId) && clienteId > 0) {
-    modeloFormulario.value = {
-      ...modeloFormulario.value,
-      cliente_id: clienteId,
-    }
+    modeloFormulario.value.cliente_id = clienteId
   }
 })
 
@@ -82,15 +79,15 @@ async function guardarCita(payload: FormularioCitaEscritorio) {
   try {
     await citaStore.crearCita(payloadFinal)
     limpiarFormulario()
-  } catch (err: any) {
-    console.error('Error al guardar cita:', err)
-    citaStore.error = err?.message || citaStore.error || 'No se pudo crear la cita'
+  } catch (error) {
+    console.error('Error al guardar cita:', error)
   }
 }
 
 function limpiarFormulario() {
   modeloFormulario.value = crearFormularioVacio()
 }
+
 </script>
 
 <template>

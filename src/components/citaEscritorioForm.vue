@@ -174,15 +174,6 @@ function enviarFormulario() {
           </option>
         </select>
 
-        <input
-          v-model.number="detalle.subtotal"
-          type="number"
-          min="0"
-          step="0.01"
-          placeholder="Subtotal"
-          required
-        />
-
         <button type="button" class="btn remove-btn" @click="eliminarDetalle(index)">
           Quitar
         </button>
@@ -246,7 +237,7 @@ function enviarFormulario() {
 
 .detalle-row {
   display: grid;
-  grid-template-columns: 2fr 1fr auto;
+  grid-template-columns: 2fr auto;
   gap: 0.75rem;
   align-items: center;
 }
