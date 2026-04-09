@@ -188,7 +188,9 @@ export interface AdminPersonalPayload {
 export interface AdminPersonalUpdatePayload {
   nombre?: string
   descripcion?: string
+  user_id?: number
 }
+
 
 
 // a ver q onda con esto, de una vez lo pongo pq no va a ser el diabolo

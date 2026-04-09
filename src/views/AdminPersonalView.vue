@@ -147,13 +147,18 @@ async function guardarPersonalEditado(payload: { nombre: string; descripcion: st
   if (!personalSeleccionado.value?.id) return
 
   try {
-    await adminPersonalStore.actualizarPersonal(personalSeleccionado.value.id, payload)
+    await adminPersonalStore.actualizarPersonal(personalSeleccionado.value.id, {
+      ...payload,
+      user_id: personalSeleccionado.value.user_id,
+    })
+
     cerrarModalEditar()
     await cargarTodo()
   } catch (error) {
     console.error('Error al actualizar personal:', error)
   }
 }
+
 
 
 async function toggleUsuario(userId?: number) {
