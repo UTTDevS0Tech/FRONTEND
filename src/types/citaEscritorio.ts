@@ -39,14 +39,23 @@ export interface FormularioCitaEscritorio {
   personal_id: number | null
   hora_c: string
   fecha_c: string
-  estado: string
+  estado: EstadoCitaEscritorio
   cliente_id: number | null
   detalles: FormularioDetalleCita[]
 }
 
 export interface DetalleCitaTicket {
   servicio: string
-  precio_capturado: string
+  precio_capturado: string | number
+}
+
+export type EstadoCitaEscritorio = 'pendiente' | 'confirmada' | 'cancelada' | 'completada'
+
+export interface DetalleCitaEditable {
+  servicio_id: number
+  subtotal: number
+  servicio?: string
+  precio_capturado?: string | number
 }
 
 export interface CitaEscritorioResponse {
@@ -54,10 +63,12 @@ export interface CitaEscritorioResponse {
   apartado: string
   total: string
   personal: string
+  personal_id: number
   hora_c: string
   hora_fin?: string
   fecha_c: string
-  estado: string
+  estado: EstadoCitaEscritorio
   cliente: string
-  detalle_cita: DetalleCitaTicket[]
+  cliente_id: number
+  detalles: DetalleCitaEditable[]
 }

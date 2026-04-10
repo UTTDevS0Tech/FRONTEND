@@ -177,6 +177,41 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     }
   }
 
+
+  //cambiar estado ok?
+  async function cambiarEstado(id:number, accion: 'confirmar' | 'cancelar' | 'completar', mensajeExito: string) {
+    loading.value = true
+    error.value = ''
+    mensaje.value = ''
+
+    try{
+      const {data, error: fetchError} = await useApiFetchDiego(`/citas-escritorio/${id}/${accion}`).patch().json()
+      if(fetchError.value){
+        throw new Error(fetchError.value.message || `No se pudo ${accion} la cita`)
+      }
+      mensaje.value = data.value?.message || mensajeExito
+      await obtenerCitas()
+      return data.value
+
+    }catch (err: any) {
+        error.value = err.message || `Error al ${accion} la cita`
+        throw err 
+    }finally {
+        loading.value = false
+    }
+  }
+  async function confirmarCita(id: number) {
+  return cambiarEstado(id, 'confirmar', 'Cita confirmada correctamente')
+}
+
+async function cancelarCita(id: number) {
+  return cambiarEstado(id, 'cancelar', 'Cita cancelada correctamente')
+}
+
+async function completarCita(id: number) {
+  return cambiarEstado(id, 'completar', 'Cita completada correctamente')
+}
+
   function limpiarMensajes() {
     error.value = ''
     mensaje.value = ''
@@ -191,6 +226,10 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
     crearCita,
     actualizarCita,
     eliminarCita,
+    confirmarCita,
+    cancelarCita,
+    completarCita,
+    cambiarEstado,
     limpiarMensajes,
   }
 })
