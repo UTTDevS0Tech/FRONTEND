@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
-import type { Cita, DetalleCita, ServicioSeleccionado} from '@/types'
+import type { Cita, DetalleCita, ServicioSeleccionado, DisponibilidadResponse} from '@/types'
 import { useApiFetchDiego } from '@/composables/useApi'
-
+import { watch } from 'vue'
 export const useCitaStore = defineStore('citas', () =>  {
 
-
+const horasDisponibles = ref<DisponibilidadResponse[]>([])
+const cargarHoras = ref(false)
 //nos traermos del bakend a los servicios y al peronal por q tenemos que hacer la cita, acuerdense
 const {data:serviciosData, isFetching: cargandoServicios} = useApiFetchDiego('tipo-servicios').get().json()
 const { data:personalData, isFetching: cargandoPersonal } = useApiFetchDiego('estilistas').get().json()
@@ -85,20 +86,61 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
         nuevaCita.value.total = totalCita.value;
         nuevaCita.value.apartado = totalCita.value * 0.20;
         
-        const {data, error} = await useApiFetchDiego('citas').post(nuevaCita.value).json()
+        const {data, error, response} = await useApiFetchDiego('citas').post(nuevaCita.value).json()
 
-        if(!error.value) {
-            console.log("SI JALO FELICIDADES SI GUARDO", data.value)
+        if(response.value?.ok &&!error.value) {
+            console.log("SI JALO FELICIDADES SI GUARDA", data.value)
             alert('cita agendada con exito')
             limpiarCita()
             return true;
 
 
         } else{
-            console.log("no jalo ", error.value)
-            alert(' no se pudo agendar su cita porfavor intentelo mas tarde')
+
+            const mensajeDelServiod = data.value?.message || 'Error al agendar la cita'
+            console.log("ESTO ES EL ERROR", error.value)
+            alert("no se pudo agendar la cita" + mensajeDelServiod)
             return false;
         }
+    }
+
+    watch (() => [nuevaCita.value.personal_id, nuevaCita.value.fecha_c], () => {
+
+        if(nuevaCita.value.personal_id && nuevaCita.value.fecha_c) {
+            obtenerDisponibilidad()
+            
+        } else {
+            horasDisponibles.value = [];
+
+        }
+    });
+
+    const obtenerDisponibilidad = async () => {
+        if(!nuevaCita.value.personal_id || !nuevaCita.value.fecha_c) {
+            return;
+        }
+
+        cargarHoras.value = true;
+        nuevaCita.value.hora_c = '';
+
+        try {
+            const url = `citas/disponibilidad?personal_id=${nuevaCita.value.personal_id}&fecha=${nuevaCita.value.fecha_c}`;
+            const { data, error } = await useApiFetchDiego(url).get().json();
+       if(!error.value) {
+        horasDisponibles.value = data.value.data
+            cargarHoras.value = false;
+       } else {
+        horasDisponibles.value = []
+console.log("ESTO ES EL ERROR AL OBTENER LA DISPONIBILIDAD", error.value)
+        cargarHoras.value = false;
+
+       }
+        } catch (error) {
+            console.log("ESTO ES EL ERROR AL OBTENER LA DISPONIBILIDAD", error)
+            alert('Error al cargar las horas disponibles')
+                cargarHoras.value = false;
+        }
+
     }
 
     return {
@@ -110,7 +152,10 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
         nuevaCita,
         gestionarServicio,
         totalCita,
-        enviarCita
+        enviarCita,
+        horasDisponibles,
+        obtenerDisponibilidad,
+        cargarHoras
     }
 
 })

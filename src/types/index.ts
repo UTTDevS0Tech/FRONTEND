@@ -103,6 +103,12 @@ public function up(): void
 
 */
 
+
+export interface DisponibilidadResponse {
+    hora: string;        
+    formato_12h: string;
+}
+
 export interface Servicio {
   id?: number
   nombre: string
