@@ -40,8 +40,7 @@ const submitiarlacita = async () => {
       <label>¿Quién te va a atender?</label>
       <select v-model="citaStore.nuevaCita.personal_id">
         <option :value="null" disabled>Selecciona un estilista</option>
-        
-        <option v-for="p in citaStore.personalData?.data || citaStore.personalData || []" :key="p?.id" :value="p?.id">
+        <option v-for="p in citaStore.personalData?.data || []" :key="p?.id" :value="p?.id">
           {{ p?.nombre }}
         </option>
       </select>
@@ -53,12 +52,30 @@ const submitiarlacita = async () => {
     </div>
 
     <div class="field">
-      <label>Hora:</label>
-      <input type="time" v-model="citaStore.nuevaCita.hora_c">
+      <label>Hora seleccionada: {{ citaStore.nuevaCita.hora_c || 'Ninguna' }}</label>
+      
+      <div v-if="citaStore.cargarHoras" class="info-texto">Buscando horarios disponibles...</div>
+      
+      <div v-else-if="citaStore.horasDisponibles.length > 0" class="botones-horas">
+        <button 
+          v-for="h in citaStore.horasDisponibles" 
+          :key="h.hora"
+          type="button"
+          class="btn-hora"
+          :class="{ 'seleccionado-negro': citaStore.nuevaCita.hora_c === h.hora }"
+          @click="citaStore.nuevaCita.hora_c = h.hora"
+        >
+          {{ h.formato_12h }}
+        </button>
+      </div>
+
+      <div v-else-if="citaStore.nuevaCita.fecha_c && citaStore.nuevaCita.personal_id" class="info-texto">
+        No hay horarios disponibles para este día.
+      </div>
     </div>
 
     <div class="servicios-grid">
-      <label>Selecciona tus servicios:</label>
+      <label>Selecciona tus servicios (Máx. 3):</label>
       <div v-if="citaStore.cargandoServicios">Cargando servicios...</div>
       
       <div v-else class="botones-servicios">
@@ -80,9 +97,10 @@ const submitiarlacita = async () => {
       <button @click="submitiarlacita" class="btn-agendar">Confirmar Cita</button>
     </div>
   </div>
-  <!-- QUIERO VER Q PEDO  -->
-  <pre>ID Personal seleccionado: {{ citaStore.nuevaCita.personal_id }}</pre>
-<pre>Servicios en el carrito: {{ citaStore.nuevaCita.detalle_cita }}</pre>
+
+  <pre>ID Personal: {{ citaStore.nuevaCita.personal_id }}</pre>
+  <pre>Hora: {{ citaStore.nuevaCita.hora_c }}</pre>
+  <pre>Servicios: {{ citaStore.nuevaCita.detalle_cita }}</pre>
 </template>
 <style scoped>
 /* Contenedor principal con un toque más elegante */
