@@ -14,6 +14,7 @@ const props = defineProps<{
   clientes: ClienteOption[]
   modelo?: FormularioCitaEscritorio | null
   editando?: boolean
+  permitirEditarCliente?: boolean
   loading?: boolean
 }>()
 
@@ -118,12 +119,21 @@ function enviarFormulario() {
   <form class="cita-form" @submit.prevent="enviarFormulario">
     <div class="grid">
 
-  <div class="field">
-      <label>Cliente</label>
-  <input
-    type="text"
-    :value="clientes.find(c => c.id === formulario.cliente_id)?.nombre || 'Cliente seleccionado'" disabled/>
-</div>
+      <div class="field">
+        <label>Cliente</label>
+        <select v-if="permitirEditarCliente" v-model="formulario.cliente_id" required>
+          <option :value="null" disabled>Selecciona cliente</option>
+          <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
+            {{ cliente.nombre }}
+          </option>
+        </select>
+        <input
+          v-else
+          type="text"
+          :value="clientes.find((c) => c.id === formulario.cliente_id)?.nombre || 'Cliente seleccionado'"
+          disabled
+        />
+      </div>
 
       <div class="field">
         <label>Personal</label>

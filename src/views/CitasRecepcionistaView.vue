@@ -1,40 +1,62 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
+import { useClienteStore } from '@/stores/cliente'
 import { usePersonalStore } from '@/stores/personal'
-import type { CitaEscritorioResponse, DetalleCitaEditable } from '@/types/citaEscritorio'
+import { useTipoServiciosStore } from '@/stores/tipoServicios'
+import type {
+  CitaEscritorioPayload,
+  CitaEscritorioResponse,
+  DetalleCitaEditable,
+  FormularioCitaEscritorio,
+} from '@/types/citaEscritorio'
 
 const citaStore = useCitaEscritorioStore()
+const clienteStore = useClienteStore()
 const personalStore = usePersonalStore()
+const tipoServicioStore = useTipoServiciosStore()
 const search = ref('')
 
 const modalReagendarAbierto = ref(false)
 const citaEditando = ref<CitaEscritorioResponse | null>(null)
-const formReagendar = reactive({
-  fecha_c: '',
-  hora_c: '',
-  personal_id: null as number | null,
-})
+const modeloFormularioEdicion = ref<FormularioCitaEscritorio | null>(null)
 
 onMounted(() => {
   citaStore.obtenerCitas()
+  clienteStore.obtenerClientes()
   personalStore.obtenerPersonales()
+  tipoServicioStore.obtenerTiposServicio()
 })
 
 function abrirModalReagendar(cita: CitaEscritorioResponse) {
   citaStore.limpiarMensajes()
   citaEditando.value = cita
-  formReagendar.fecha_c = cita.fecha_c
-  formReagendar.hora_c = cita.hora_c
-  formReagendar.personal_id = cita.personal_id
+  modeloFormularioEdicion.value = {
+    total: Number(cita.total),
+    personal_id: cita.personal_id,
+    hora_c: cita.hora_c,
+    fecha_c: cita.fecha_c,
+    estado: cita.estado,
+    cliente_id: cita.cliente_id,
+    detalles: cita.detalles.length
+      ? cita.detalles.map((detalle) => ({
+          servicio_id: detalle.servicio_id,
+          subtotal: obtenerSubtotalDetalle(detalle),
+        }))
+      : [
+          {
+            servicio_id: null,
+            subtotal: 0,
+          },
+        ],
+  }
   modalReagendarAbierto.value = true
 }
 
 function cerrarModalReagendar() {
   citaEditando.value = null
-  formReagendar.fecha_c = ''
-  formReagendar.hora_c = ''
-  formReagendar.personal_id = null
+  modeloFormularioEdicion.value = null
   modalReagendarAbierto.value = false
 }
 
@@ -50,23 +72,30 @@ function obtenerSubtotalDetalle(detalle: DetalleCitaEditable) {
   return Number(detalle.subtotal ?? detalle.precio_capturado ?? 0)
 }
 
-async function guardarReagendado() {
-  if (!citaEditando.value || !formReagendar.personal_id) return
-
-  const payload = {
-    total: Number(citaEditando.value.total),
-    personal_id: Number(formReagendar.personal_id),
-    hora_c: formReagendar.hora_c,
-    fecha_c: formReagendar.fecha_c,
-    estado: citaEditando.value.estado,
-    cliente_id: citaEditando.value.cliente_id,
-    detalles: citaEditando.value.detalles.map((detalle) => ({
-      servicio_id: detalle.servicio_id,
-      subtotal: obtenerSubtotalDetalle(detalle),
-    })),
+async function guardarReagendado(payload: FormularioCitaEscritorio) {
+  if (!citaEditando.value || payload.personal_id === null || payload.cliente_id === null) {
+    citaStore.error = 'Selecciona cliente y personal'
+    return
   }
 
-  await citaStore.actualizarCita(citaEditando.value.id, payload)
+  const detallesValidos = payload.detalles
+    .filter((detalle) => detalle.servicio_id !== null)
+    .map((detalle) => ({
+      servicio_id: Number(detalle.servicio_id),
+      subtotal: Number(detalle.subtotal),
+    }))
+
+  const payloadFinal: CitaEscritorioPayload = {
+    total: Number(payload.total),
+    personal_id: Number(payload.personal_id),
+    hora_c: payload.hora_c,
+    fecha_c: payload.fecha_c,
+    estado: payload.estado,
+    cliente_id: Number(payload.cliente_id),
+    detalles: detallesValidos,
+  }
+
+  await citaStore.actualizarCita(citaEditando.value.id, payloadFinal)
   cerrarModalReagendar()
 }
 
@@ -198,44 +227,42 @@ async function cambiarEstado(cita: CitaEscritorioResponse, accion: 'confirmar' |
       <div class="modal-card">
         <h3>Reagendar cita</h3>
 
-        <label class="modal-field">
-          <span>Fecha</span>
-          <input v-model="formReagendar.fecha_c" type="date" />
-        </label>
-
-        <label class="modal-field">
-          <span>Hora</span>
-          <input v-model="formReagendar.hora_c" type="time" />
-        </label>
-
-        <label class="modal-field">
-          <span>Estilista</span>
-          <select v-model.number="formReagendar.personal_id">
-            <option :value="null" disabled>Selecciona un estilista</option>
-            <option
-              v-for="personal in personalStore.personales"
-              :key="personal.id"
-              :value="personal.id"
-            >
-              {{ personal.nombre }}
-            </option>
-          </select>
-        </label>
+        <p v-if="clienteStore.error" class="modal-feedback error-text">
+          {{ clienteStore.error }}
+        </p>
 
         <p v-if="personalStore.error" class="modal-feedback error-text">
           {{ personalStore.error }}
+        </p>
+
+        <p v-if="tipoServicioStore.error" class="modal-feedback error-text">
+          {{ tipoServicioStore.error }}
         </p>
 
         <p v-if="citaStore.error" class="modal-feedback error-text">
           {{ citaStore.error }}
         </p>
 
+        <CitaEscritorioForm
+          v-if="modeloFormularioEdicion"
+          :modelo="modeloFormularioEdicion"
+          :editando="true"
+          :permitir-editar-cliente="true"
+          :loading="
+            citaStore.loading ||
+            clienteStore.loading ||
+            personalStore.loading ||
+            tipoServicioStore.cargando
+          "
+          :clientes="clienteStore.clientes"
+          :personales="personalStore.personales"
+          :servicios="tipoServicioStore.tipoServicios"
+          @submit="guardarReagendado"
+        />
+
         <div class="modal-actions">
           <button type="button" @click="cerrarModalReagendar">
-            Cancelar
-          </button>
-          <button type="button" :disabled="citaStore.loading" @click="guardarReagendado">
-            Guardar cambios
+            Cerrar
           </button>
         </div>
       </div>
@@ -444,7 +471,7 @@ async function cambiarEstado(cita: CitaEscritorioResponse, accion: 'confirmar' |
 }
 
 .modal-card {
-  width: min(100%, 440px);
+  width: min(100%, 880px);
   display: grid;
   gap: 14px;
   padding: 24px;
