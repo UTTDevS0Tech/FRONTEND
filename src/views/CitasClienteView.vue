@@ -84,7 +84,6 @@ import CitasClienteForm from '@/components/CitasClienteForm.vue'
   background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
 }
 
 .panel-tag {
@@ -144,15 +143,12 @@ import CitasClienteForm from '@/components/CitasClienteForm.vue'
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow: hidden;
 }
 
 .top-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
 }
 
 .back-btn {
@@ -198,6 +194,230 @@ import CitasClienteForm from '@/components/CitasClienteForm.vue'
   min-height: 620px;
 }
 
+/* AQUI ESTA LA MAGIA */
+.content-card :deep(.cita-form) {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.content-card :deep(.form-section),
+.content-card :deep(.resumen) {
+  background: #f6f4ec;
+  border: 1px solid rgba(212, 163, 115, 0.16);
+  border-radius: 24px;
+  padding: 1.2rem;
+}
+
+.content-card :deep(.section-title) {
+  margin-bottom: 1rem;
+}
+
+.content-card :deep(.section-title h3) {
+  margin: 0.35rem 0 0.35rem;
+  color: #6b5440;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.content-card :deep(.section-title p) {
+  margin: 0;
+  color: #9a826f;
+  line-height: 1.55;
+  font-size: 0.95rem;
+}
+
+.content-card :deep(.section-badge) {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.38rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.14);
+  color: #c27d42;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.content-card :deep(.field-grid) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.content-card :deep(.field),
+.content-card :deep(.servicios-grid) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.content-card :deep(label) {
+  font-weight: 800;
+  color: #5f4b3a;
+  font-size: 0.92rem;
+}
+
+.content-card :deep(.selected-value) {
+  color: #d09a67;
+  font-weight: 700;
+}
+
+.content-card :deep(input),
+.content-card :deep(select) {
+  width: 100%;
+  padding: 0.92rem 1rem;
+  border: 1px solid rgba(212, 163, 115, 0.2);
+  border-radius: 14px;
+  background: #fbfaf6;
+  color: #6a5644;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.content-card :deep(input:focus),
+.content-card :deep(select:focus) {
+  border-color: #d4a373;
+  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+  background: #fff;
+}
+
+.content-card :deep(.info-box) {
+  padding: 0.95rem 1rem;
+  border-radius: 16px;
+  background: rgba(250, 237, 205, 0.6);
+  color: #7b6652;
+  border: 1px dashed rgba(212, 163, 115, 0.28);
+  font-size: 0.92rem;
+}
+
+.content-card :deep(.info-box.empty) {
+  background: rgba(255, 243, 243, 0.72);
+  color: #9d5b5b;
+}
+
+.content-card :deep(.botones-horas) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.content-card :deep(.btn-hora) {
+  min-width: 90px;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 163, 115, 0.18);
+  background: #fbfaf7;
+  color: #7b6652;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.content-card :deep(.btn-hora:hover) {
+  background: #fff;
+  border-color: rgba(212, 163, 115, 0.35);
+}
+
+.content-card :deep(.seleccionado-negro) {
+  background: #6b5440 !important;
+  color: #fff !important;
+  border-color: #6b5440 !important;
+  box-shadow: 0 10px 22px rgba(95, 75, 58, 0.14);
+}
+
+.content-card :deep(.botones-servicios) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.content-card :deep(.btn-servicio) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 1rem;
+  text-align: left;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 163, 115, 0.16);
+  background: #fbfaf7;
+  color: #5f4b3a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.content-card :deep(.btn-servicio:hover) {
+  border-color: rgba(212, 163, 115, 0.35);
+  background: #fff;
+}
+
+.content-card :deep(.btn-servicio.seleccionado) {
+  background: linear-gradient(135deg, #faedcd, #fefae0);
+  border-color: #d4a373;
+}
+
+.content-card :deep(.servicio-nombre) {
+  font-weight: 800;
+}
+
+.content-card :deep(.servicio-precio) {
+  color: #c27d42;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.content-card :deep(.resumen-header) {
+  margin-bottom: 0.9rem;
+}
+
+.content-card :deep(.resumen-header h3) {
+  margin: 0 0 0.3rem;
+  color: #5f4b3a;
+  font-size: 1.1rem;
+}
+
+.content-card :deep(.resumen-header p) {
+  margin: 0;
+  color: #8a725c;
+  font-size: 0.92rem;
+}
+
+.content-card :deep(.resumen-card) {
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(250, 237, 205, 0.68), rgba(255, 255, 255, 0.92));
+  border: 1px solid rgba(212, 163, 115, 0.18);
+}
+
+.content-card :deep(.resumen-row) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #5f4b3a;
+  padding: 0.42rem 0;
+}
+
+.content-card :deep(.btn-agendar) {
+  width: 100%;
+  margin-top: 0.9rem;
+  border: none;
+  border-radius: 16px;
+  padding: 0.95rem 1.1rem;
+  background: linear-gradient(135deg, #d4a373, #bf8c5a);
+  color: white;
+  font-weight: 900;
+  font-size: 0.96rem;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  box-shadow: 0 12px 24px rgba(212, 163, 115, 0.2);
+}
+
+.content-card :deep(.btn-agendar:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px rgba(212, 163, 115, 0.28);
+}
+
 @keyframes pageEnter {
   from {
     opacity: 0;
@@ -213,9 +433,12 @@ import CitasClienteForm from '@/components/CitasClienteForm.vue'
   .citas-layout {
     grid-template-columns: 1fr;
   }
+}
 
-  .citas-sidebar {
-    padding-bottom: 24px;
+@media (max-width: 900px) {
+  .content-card :deep(.field-grid),
+  .content-card :deep(.botones-servicios) {
+    grid-template-columns: 1fr;
   }
 }
 
