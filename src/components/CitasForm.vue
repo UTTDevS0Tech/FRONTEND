@@ -147,6 +147,38 @@ input, select {
   font-size: 1rem;
 }
 
+/* --- SECCIÓN DE HORARIOS (SLOTS) --- */
+.botones-horas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-hora {
+  padding: 8px;
+  font-size: 0.9rem;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  transition: all 0.2s ease;
+}
+
+/* Clase que activa el botón seleccionado en negro */
+.seleccionado-negro {
+  background-color: #000 !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.info-texto {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+/* --- SECCIÓN DE SERVICIOS --- */
 .servicios-grid {
   margin-top: 20px;
 }
@@ -158,12 +190,12 @@ input, select {
   margin-top: 10px;
 }
 
-/* Botones de servicios */
+/* Botones base */
 button {
   padding: 12px;
   border: 1px solid #000;
   background: #fff;
-  color: #000; /* Letra negra */
+  color: #000; 
   cursor: pointer;
   border-radius: 5px;
   font-weight: 500;
@@ -174,15 +206,15 @@ button:hover {
   background-color: #f0f0f0;
 }
 
-/* El verde del seleccionado lo dejamos para que resalte, pero con letra negra o blanca */
+/* Verde para servicios seleccionados */
 button.seleccionado {
   background-color: #4ade80; 
   border-color: #000;
-  color: #000; /* Letra negra sobre el verde para que combine */
+  color: #000; 
   font-weight: bold;
 }
 
-/* Sección de resumen */
+/* --- RESUMEN Y ACCIÓN --- */
 .resumen {
   margin-top: 30px;
   padding-top: 20px;
@@ -196,11 +228,10 @@ button.seleccionado {
   justify-content: space-between;
 }
 
-/* Botón de acción principal */
 .btn-agendar {
   width: 100%;
-  background-color: #000; /* Botón negro para que se vea elegante */
-  color: #fff; /* Letra blanca para que resalte en el fondo negro */
+  background-color: #000; 
+  color: #fff; 
   font-weight: bold;
   margin-top: 20px;
   padding: 15px;
@@ -213,7 +244,7 @@ button.seleccionado {
   background-color: #333;
 }
 
-/* Estilo para los pre de debug (negro sobre gris clarito) */
+/* Debug styles */
 pre {
   background: #f4f4f4;
   padding: 10px;
