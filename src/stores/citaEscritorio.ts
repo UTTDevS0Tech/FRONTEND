@@ -12,6 +12,19 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
   const error = ref('')
   const mensaje = ref('')
 
+  function sincronizarCitaEnLista(citaActualizada?: CitaEscritorioResponse | null) {
+    if (!citaActualizada) return
+
+    const indice = citas.value.findIndex((cita) => cita.id === citaActualizada.id)
+
+    if (indice >= 0) {
+      citas.value[indice] = citaActualizada
+      return
+    }
+
+    citas.value.unshift(citaActualizada)
+  }
+
   function validarPayload(payload: CitaEscritorioPayload) {
     if (!payload.cliente_id) {
       throw new Error('Debes seleccionar un cliente')
@@ -116,7 +129,7 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
       }
 
       mensaje.value = data.value?.message || 'Cita creada correctamente'
-      await obtenerCitas()
+      sincronizarCitaEnLista(data.value?.data ?? null)
       return data.value
     } catch (err: any) {
       error.value = err.message || 'Error al crear la cita'
@@ -143,7 +156,7 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
       }
 
       mensaje.value = data.value?.message || 'Cita actualizada correctamente'
-      await obtenerCitas()
+      sincronizarCitaEnLista(data.value?.data ?? null)
       return data.value
     } catch (err: any) {
       error.value = err.message || 'Error al actualizar la cita'
@@ -190,7 +203,7 @@ export const useCitaEscritorioStore = defineStore('citaEscritorio', () => {
         throw new Error(fetchError.value.message || `No se pudo ${accion} la cita`)
       }
       mensaje.value = data.value?.message || mensajeExito
-      await obtenerCitas()
+      sincronizarCitaEnLista(data.value?.data ?? null)
       return data.value
 
     }catch (err: any) {
