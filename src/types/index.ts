@@ -208,4 +208,27 @@ export interface HorarioPersonal {
 }
 
 
+export interface PerfilCliente{
+email: string,
+cliente: {
+    nom: string,
+    apellido_p: string,
+    apellido_m: string,
+    nombre_completo: string,
+  }
+}
 
+export interface PerfilClientePayload{
+
+  nom?:string,
+  apellido_p?:string,
+  apellido_m?:string,
+  email?: string,
+}
+
+export interface FormularioPerfilCliente{
+nom: string,
+apellido_p: string,
+apellido_m: string,
+email: string,
+}
