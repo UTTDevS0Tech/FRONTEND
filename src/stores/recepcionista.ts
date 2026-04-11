@@ -10,6 +10,13 @@ export interface CrearClientePayload {
   tel?: string
 }
 
+export interface ActualizarClientePayload {
+  nom: string
+  apellido_p: string
+  apellido_m: string
+  tel?: string
+}
+
 export const useRecepcionistaStore = defineStore('recepcionista', () => {
   const clientes = ref<Cliente[]>([])
   const citasCliente = ref<any[]>([])
@@ -106,6 +113,31 @@ export const useRecepcionistaStore = defineStore('recepcionista', () => {
     clienteSeleccionado.value = cliente
   }
 
+  async function actualizarCliente(id: number, payload: ActualizarClientePayload) {
+    loading.value = true
+    error.value = ''
+    mensaje.value = ''
+
+    try {
+      const { data, error: fetchError } = await useApiFetchDiego(`/clientes/${id}`)
+        .put(payload)
+        .json()
+
+      if (fetchError.value) {
+        throw new Error(fetchError.value.message || 'No se pudo actualizar el cliente')
+      }
+
+      mensaje.value = data.value?.message || 'Cliente actualizado correctamente'
+      await buscarClientes()
+      return data.value?.data as Cliente | undefined
+    } catch (err: any) {
+      error.value = err.message || 'Error al actualizar cliente'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   function limpiarClienteSeleccionado() {
     clienteSeleccionado.value = null
   }
@@ -119,6 +151,7 @@ export const useRecepcionistaStore = defineStore('recepcionista', () => {
     mensaje,
     buscarClientes,
     crearCliente,
+    actualizarCliente,
     buscarCitasPorCliente,
     seleccionarCliente,
     limpiarClienteSeleccionado,

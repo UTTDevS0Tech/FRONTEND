@@ -15,11 +15,13 @@ const props = defineProps<{
   modelo?: FormularioCitaEscritorio | null
   editando?: boolean
   permitirEditarCliente?: boolean
+  mostrarBotonEditarCliente?: boolean
   loading?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'submit', payload: FormularioCitaEscritorio): void
+  (e: 'edit-client'): void
 }>()
 
 function crearDetalleVacio(): FormularioDetalleCita {
@@ -121,18 +123,28 @@ function enviarFormulario() {
 
       <div class="field">
         <label>Cliente</label>
-        <select v-if="permitirEditarCliente" v-model="formulario.cliente_id" required>
-          <option :value="null" disabled>Selecciona cliente</option>
-          <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
-            {{ cliente.nombre }}
-          </option>
-        </select>
-        <input
-          v-else
-          type="text"
-          :value="clientes.find((c) => c.id === formulario.cliente_id)?.nombre || 'Cliente seleccionado'"
-          disabled
-        />
+        <div class="cliente-field">
+          <select v-if="permitirEditarCliente" v-model="formulario.cliente_id" required>
+            <option :value="null" disabled>Selecciona cliente</option>
+            <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
+              {{ cliente.nombre }}
+            </option>
+          </select>
+          <input
+            v-else
+            type="text"
+            :value="clientes.find((c) => c.id === formulario.cliente_id)?.nombre || 'Cliente seleccionado'"
+            disabled
+          />
+          <button
+            v-if="mostrarBotonEditarCliente"
+            type="button"
+            class="btn edit-client-btn"
+            @click="emit('edit-client')"
+          >
+            Editar
+          </button>
+        </div>
       </div>
 
       <div class="field">
@@ -221,6 +233,13 @@ function enviarFormulario() {
 .field {
   display: grid;
   gap: 0.45rem;
+}
+
+.cliente-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
 }
 
 .field label,
@@ -385,7 +404,18 @@ span {
   box-shadow: 0 10px 20px rgba(174, 77, 77, 0.12);
 }
 
+.edit-client-btn {
+  padding: 12px 16px;
+  background: rgba(204, 213, 174, 0.55);
+  color: #4f5f38;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
 .remove-btn:hover {
+  transform: translateY(-2px);
+}
+
+.edit-client-btn:hover {
   transform: translateY(-2px);
 }
 

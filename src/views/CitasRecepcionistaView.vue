@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import ClienteRecepcionistaForm from '@/components/ClienteRecepcionistaForm.vue'
 import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import { useClienteStore } from '@/stores/cliente'
 import { usePersonalStore } from '@/stores/personal'
+import { useRecepcionistaStore } from '@/stores/recepcionista'
 import { useTipoServiciosStore } from '@/stores/tipoServicios'
 import type {
   CitaEscritorioPayload,
@@ -11,21 +13,32 @@ import type {
   DetalleCitaEditable,
   FormularioCitaEscritorio,
 } from '@/types/citaEscritorio'
+import type { Cliente } from '@/types'
 
 const citaStore = useCitaEscritorioStore()
 const clienteStore = useClienteStore()
 const personalStore = usePersonalStore()
+const recepcionistaStore = useRecepcionistaStore()
 const tipoServicioStore = useTipoServiciosStore()
 const search = ref('')
 
 const modalReagendarAbierto = ref(false)
+const modalEditarClienteAbierto = ref(false)
 const citaEditando = ref<CitaEscritorioResponse | null>(null)
+const clienteEditando = ref<Cliente | null>(null)
 const modeloFormularioEdicion = ref<FormularioCitaEscritorio | null>(null)
+const formularioCliente = reactive({
+  nom: '',
+  apellido_p: '',
+  apellido_m: '',
+  tel: '',
+})
 
 onMounted(() => {
   citaStore.obtenerCitas()
   clienteStore.obtenerClientes()
   personalStore.obtenerPersonales()
+  recepcionistaStore.buscarClientes()
   tipoServicioStore.obtenerTiposServicio()
 })
 
@@ -58,6 +71,33 @@ function cerrarModalReagendar() {
   citaEditando.value = null
   modeloFormularioEdicion.value = null
   modalReagendarAbierto.value = false
+}
+
+function abrirModalEditarCliente() {
+  if (!citaEditando.value) return
+
+  const cliente = recepcionistaStore.clientes.find((item) => item.id === citaEditando.value?.cliente_id)
+
+  if (!cliente) {
+    recepcionistaStore.error = 'No se encontraron los datos del cliente para editar'
+    return
+  }
+
+  clienteEditando.value = cliente
+  formularioCliente.nom = cliente.nom
+  formularioCliente.apellido_p = cliente.apellido_p
+  formularioCliente.apellido_m = cliente.apellido_m
+  formularioCliente.tel = cliente.tel || ''
+  modalEditarClienteAbierto.value = true
+}
+
+function cerrarModalEditarCliente() {
+  clienteEditando.value = null
+  formularioCliente.nom = ''
+  formularioCliente.apellido_p = ''
+  formularioCliente.apellido_m = ''
+  formularioCliente.tel = ''
+  modalEditarClienteAbierto.value = false
 }
 
 function obtenerNombreCliente(cita: CitaEscritorioResponse) {
@@ -97,6 +137,33 @@ async function guardarReagendado(payload: FormularioCitaEscritorio) {
 
   await citaStore.actualizarCita(citaEditando.value.id, payloadFinal)
   cerrarModalReagendar()
+}
+
+async function guardarClienteEditado() {
+  if (!clienteEditando.value?.id) return
+
+  await recepcionistaStore.actualizarCliente(clienteEditando.value.id, {
+    nom: formularioCliente.nom,
+    apellido_p: formularioCliente.apellido_p,
+    apellido_m: formularioCliente.apellido_m,
+    tel: formularioCliente.tel,
+  })
+
+  await Promise.all([
+    recepcionistaStore.buscarClientes(),
+    clienteStore.obtenerClientes(),
+    citaStore.obtenerCitas(),
+  ])
+
+  if (citaEditando.value) {
+    const nombreActualizado = `${formularioCliente.nom} ${formularioCliente.apellido_p} ${formularioCliente.apellido_m}`.trim()
+    citaEditando.value = {
+      ...citaEditando.value,
+      cliente: nombreActualizado,
+    }
+  }
+
+  cerrarModalEditarCliente()
 }
 
 const citasFiltradas = computed(() => {
@@ -248,6 +315,7 @@ async function cambiarEstado(cita: CitaEscritorioResponse, accion: 'confirmar' |
           :modelo="modeloFormularioEdicion"
           :editando="true"
           :permitir-editar-cliente="true"
+          :mostrar-boton-editar-cliente="true"
           :loading="
             citaStore.loading ||
             clienteStore.loading ||
@@ -257,11 +325,38 @@ async function cambiarEstado(cita: CitaEscritorioResponse, accion: 'confirmar' |
           :clientes="clienteStore.clientes"
           :personales="personalStore.personales"
           :servicios="tipoServicioStore.tipoServicios"
+          @edit-client="abrirModalEditarCliente"
           @submit="guardarReagendado"
         />
 
         <div class="modal-actions">
           <button type="button" @click="cerrarModalReagendar">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="modalEditarClienteAbierto" class="modal-backdrop secondary-backdrop">
+      <div class="modal-card client-modal-card">
+        <h3>Editar cliente</h3>
+
+        <p v-if="recepcionistaStore.error" class="modal-feedback error-text">
+          {{ recepcionistaStore.error }}
+        </p>
+
+        <p v-if="recepcionistaStore.mensaje" class="modal-feedback success-text">
+          {{ recepcionistaStore.mensaje }}
+        </p>
+
+        <ClienteRecepcionistaForm
+          :formulario="formularioCliente"
+          submit-label="Guardar cliente"
+          @submit="guardarClienteEditado"
+        />
+
+        <div class="modal-actions">
+          <button type="button" @click="cerrarModalEditarCliente">
             Cerrar
           </button>
         </div>
@@ -514,6 +609,18 @@ async function cambiarEstado(cita: CitaEscritorioResponse, accion: 'confirmar' |
 
 .error-text {
   color: #ae4d4d;
+}
+
+.success-text {
+  color: #536437;
+}
+
+.secondary-backdrop {
+  background: rgba(45, 34, 24, 0.58);
+}
+
+.client-modal-card {
+  width: min(100%, 720px);
 }
 
 @media (max-width: 768px) {

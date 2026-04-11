@@ -9,6 +9,7 @@ interface ClienteFormData {
 
 defineProps<{
   formulario: ClienteFormData
+  submitLabel?: string
 }>()
 
 const emit = defineEmits<{
@@ -27,7 +28,7 @@ const emit = defineEmits<{
 
     <div class="acciones">
       <button type="submit" class="btn primary">
-        Crear cliente
+        {{ submitLabel || 'Crear cliente' }}
       </button>
     </div>
   </form>
