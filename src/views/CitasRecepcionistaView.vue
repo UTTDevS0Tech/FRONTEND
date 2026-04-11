@@ -34,6 +34,14 @@ const formularioCliente = reactive({
   tel: '',
 })
 
+function normalizarHora(valor: string) {
+  return valor ? valor.slice(0, 5) : ''
+}
+
+function normalizarFecha(valor: string) {
+  return valor ? valor.slice(0, 10) : ''
+}
+
 onMounted(() => {
   citaStore.obtenerCitas()
   clienteStore.obtenerClientes()
@@ -48,8 +56,8 @@ function abrirModalReagendar(cita: CitaEscritorioResponse) {
   modeloFormularioEdicion.value = {
     total: Number(cita.total),
     personal_id: cita.personal_id,
-    hora_c: cita.hora_c,
-    fecha_c: cita.fecha_c,
+    hora_c: normalizarHora(cita.hora_c),
+    fecha_c: normalizarFecha(cita.fecha_c),
     estado: cita.estado,
     cliente_id: cita.cliente_id,
     detalles: cita.detalles.length
@@ -128,8 +136,8 @@ async function guardarReagendado(payload: FormularioCitaEscritorio) {
   const payloadFinal: CitaEscritorioPayload = {
     total: Number(payload.total),
     personal_id: Number(payload.personal_id),
-    hora_c: payload.hora_c,
-    fecha_c: payload.fecha_c,
+    hora_c: normalizarHora(payload.hora_c),
+    fecha_c: normalizarFecha(payload.fecha_c),
     estado: payload.estado,
     cliente_id: Number(payload.cliente_id),
     detalles: detallesValidos,
