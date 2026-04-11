@@ -160,114 +160,104 @@ const submitiarlacita = async () => {
         </button>
       </div>
     </div>
-
-    <!-- Debug -->
-    <div class="debug-box">
-      <pre>ID Personal: {{ citaStore.nuevaCita.personal_id }}</pre>
-      <pre>Hora: {{ citaStore.nuevaCita.hora_c }}</pre>
-      <pre>Servicios: {{ citaStore.nuevaCita.detalle_cita }}</pre>
-    </div>
   </div>
 </template>
 
 <style scoped>
 .cita-form {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .form-section,
 .resumen {
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(212, 163, 115, 0.22);
-  border-radius: 28px;
-  padding: 1.5rem;
-  box-shadow: 0 18px 40px rgba(95, 75, 58, 0.08);
-  backdrop-filter: blur(10px);
+  background: #f6f4ec;
+  border: 1px solid rgba(212, 163, 115, 0.16);
+  border-radius: 24px;
+  padding: 1rem;
 }
 
 .section-title {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .section-title h3 {
   margin: 0.35rem 0 0.35rem;
-  color: #5f4b3a;
-  font-size: 1.35rem;
+  color: #6b5440;
+  font-size: 1.15rem;
+  font-weight: 500;
 }
 
 .section-title p {
   margin: 0;
-  color: #8a725c;
-  line-height: 1.6;
+  color: #9a826f;
+  line-height: 1.55;
+  font-size: 0.92rem;
 }
 
 .section-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.42rem 0.8rem;
+  padding: 0.38rem 0.75rem;
   border-radius: 999px;
-  background: rgba(212, 163, 115, 0.16);
-  color: #b9793f;
-  font-size: 0.82rem;
+  background: rgba(212, 163, 115, 0.14);
+  color: #c27d42;
+  font-size: 0.78rem;
   font-weight: 800;
 }
 
 .field-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
 .field,
 .servicios-grid {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.65rem;
 }
 
 label {
   font-weight: 800;
   color: #5f4b3a;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .selected-value {
-  color: #b9793f;
-}
-
-.input-shell {
-  position: relative;
+  color: #d09a67;
+  font-weight: 700;
 }
 
 input,
 select {
   width: 100%;
-  padding: 0.95rem 1rem;
-  border: 1px solid rgba(212, 163, 115, 0.28);
-  border-radius: 16px;
-  background: #fffdf8;
-  color: #5f4b3a;
-  font-size: 0.98rem;
+  padding: 0.92rem 1rem;
+  border: 1px solid rgba(212, 163, 115, 0.2);
+  border-radius: 14px;
+  background: #fbfaf6;
+  color: #6a5644;
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 input:focus,
 select:focus {
   border-color: #d4a373;
-  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.12);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+  background: #fff;
 }
 
 .info-box {
-  padding: 1rem 1.1rem;
-  border-radius: 18px;
-  background: rgba(250, 237, 205, 0.65);
+  padding: 0.95rem 1rem;
+  border-radius: 16px;
+  background: rgba(250, 237, 205, 0.6);
   color: #7b6652;
-  border: 1px dashed rgba(212, 163, 115, 0.35);
-  font-size: 0.95rem;
+  border: 1px dashed rgba(212, 163, 115, 0.28);
+  font-size: 0.92rem;
 }
 
 .info-box.empty {
@@ -276,66 +266,64 @@ select:focus {
 }
 
 .botones-horas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
-  gap: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
 }
 
 .btn-hora {
-  padding: 0.85rem 0.9rem;
-  border-radius: 16px;
-  border: 1px solid rgba(212, 163, 115, 0.22);
-  background: #fff;
-  color: #5f4b3a;
-  font-weight: 700;
+  min-width: 78px;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 163, 115, 0.18);
+  background: #fbfaf7;
+  color: #7b6652;
+  font-weight: 800;
   cursor: pointer;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-hora:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(95, 75, 58, 0.08);
-  background: #fef7ed;
+  background: #fff;
+  border-color: rgba(212, 163, 115, 0.35);
 }
 
 .seleccionado-negro {
-  background: #5f4b3a !important;
+  background: #6b5440 !important;
   color: #fff !important;
-  border-color: #5f4b3a !important;
-  box-shadow: 0 12px 24px rgba(95, 75, 58, 0.18);
+  border-color: #6b5440 !important;
+  box-shadow: 0 10px 22px rgba(95, 75, 58, 0.14);
 }
 
 .botones-servicios {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.9rem;
+  gap: 0.75rem;
 }
 
 .btn-servicio {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.35rem;
-  padding: 1rem;
+  gap: 0.25rem;
+  padding: 0.95rem 1rem;
   text-align: left;
-  border-radius: 18px;
-  border: 1px solid rgba(212, 163, 115, 0.22);
-  background: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 163, 115, 0.16);
+  background: #fbfaf7;
   color: #5f4b3a;
   cursor: pointer;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-servicio:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 22px rgba(95, 75, 58, 0.08);
-  border-color: rgba(212, 163, 115, 0.4);
+  border-color: rgba(212, 163, 115, 0.35);
+  background: #fff;
 }
 
 .btn-servicio.seleccionado {
   background: linear-gradient(135deg, #faedcd, #fefae0);
   border-color: #d4a373;
-  box-shadow: 0 14px 28px rgba(212, 163, 115, 0.18);
 }
 
 .servicio-nombre {
@@ -343,30 +331,32 @@ select:focus {
 }
 
 .servicio-precio {
-  color: #b9793f;
-  font-weight: 700;
-  font-size: 0.92rem;
+  color: #c27d42;
+  font-weight: 800;
+  font-size: 0.9rem;
 }
 
 .resumen-header {
-  margin-bottom: 1rem;
+  margin-bottom: 0.9rem;
 }
 
 .resumen-header h3 {
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.3rem;
   color: #5f4b3a;
+  font-size: 1.1rem;
 }
 
 .resumen-header p {
   margin: 0;
   color: #8a725c;
+  font-size: 0.92rem;
 }
 
 .resumen-card {
-  padding: 1.2rem;
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(250, 237, 205, 0.72), rgba(255, 255, 255, 0.9));
-  border: 1px solid rgba(212, 163, 115, 0.22);
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(250, 237, 205, 0.68), rgba(255, 255, 255, 0.92));
+  border: 1px solid rgba(212, 163, 115, 0.18);
 }
 
 .resumen-row {
@@ -374,47 +364,30 @@ select:focus {
   justify-content: space-between;
   align-items: center;
   color: #5f4b3a;
-  padding: 0.45rem 0;
+  padding: 0.42rem 0;
 }
 
 .btn-agendar {
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 0.9rem;
   border: none;
-  border-radius: 18px;
-  padding: 1rem 1.2rem;
-  background: linear-gradient(135deg, #d4a373, #c38b5d);
+  border-radius: 16px;
+  padding: 0.95rem 1.1rem;
+  background: linear-gradient(135deg, #d4a373, #bf8c5a);
   color: white;
   font-weight: 900;
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   cursor: pointer;
-  box-shadow: 0 16px 30px rgba(212, 163, 115, 0.22);
   transition: transform 0.22s ease, box-shadow 0.22s ease;
+  box-shadow: 0 12px 24px rgba(212, 163, 115, 0.2);
 }
 
 .btn-agendar:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 34px rgba(212, 163, 115, 0.3);
+  box-shadow: 0 16px 28px rgba(212, 163, 115, 0.28);
 }
 
-.debug-box {
-  display: grid;
-  gap: 0.7rem;
-}
-
-pre {
-  margin: 0;
-  padding: 0.9rem 1rem;
-  border-radius: 16px;
-  background: rgba(95, 75, 58, 0.06);
-  border: 1px dashed rgba(95, 75, 58, 0.2);
-  color: #5f4b3a;
-  font-size: 0.82rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-@media (max-width: 820px) {
+@media (max-width: 900px) {
   .field-grid,
   .botones-servicios {
     grid-template-columns: 1fr;
@@ -422,20 +395,12 @@ pre {
 }
 
 @media (max-width: 640px) {
-  .form-section,
-  .resumen {
-    padding: 1.1rem;
-    border-radius: 22px;
-  }
-
   .botones-horas {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
   }
 
-  .btn-hora,
-  .btn-servicio,
-  .btn-agendar {
-    font-size: 0.94rem;
+  .btn-hora {
+    min-width: calc(50% - 0.3rem);
   }
 }
 </style>
