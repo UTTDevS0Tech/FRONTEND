@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import CitasClienteForm from '@/components/CitasClienteForm.vue'
+import CitasClienteForm from '@/components/CitasForm.vue'
 import { useCitaStore } from '@/stores/cita'
 
 const router = useRouter()
