@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import ClienteRecepcionistaForm from '@/components/ClienteRecepcionistaForm.vue'
-import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
+import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import { useClienteStore } from '@/stores/cliente'
 import { usePersonalStore } from '@/stores/personal'

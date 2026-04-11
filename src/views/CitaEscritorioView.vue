@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import CitaEscritorioForm from '@/components/citaEscritorioForm.vue'
+import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
 import { useTipoServiciosStore } from '@/stores/tipoServicios'
 import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
 import { useClienteStore } from '@/stores/cliente'
