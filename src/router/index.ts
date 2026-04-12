@@ -114,20 +114,20 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 2 }
     },
     {
-    path: '/dashboard/personal/citas-pendientes',
-    name: 'dashboard/personal/citas-pendientes',
-    component: CitasRecepcionistaView,
-    meta: { requiresAuth: true, role: 4 }
+      path: '/dashboard/personal/citas-pendientes',
+      name: 'dashboard/personal/citas-pendientes',
+      component: CitasRecepcionistaView,
+      meta: { requiresAuth: true, role: 4 }
     },
     {
-    path: '/dashboard/cliente/perfil',
-    name: 'dashboard/cliente/perfil',
-    component: PerfilClienteView,
-    meta: { requiresAuth: true, role: 3 }
+      path: '/dashboard/cliente/perfil',
+      name: 'dashboard/cliente/perfil',
+      component: PerfilClienteView,
+      meta: { requiresAuth: true, role: 3 }
     },
     {
-      path: '/galeria',
-      name: 'galeria',
+      path: '/dashboard/cliente/galeria',
+      name: 'galeria-cliente',
       component: GaleriaView,
     }
 

@@ -92,10 +92,11 @@ onUnmounted(() => {
       </div>
 
       <nav class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">Estilistas</a>
-        <a href="#">Servicios</a>
-        <a href="#">Perfil</a>
+        <router-link to="/dashboard/cliente">Home</router-link>
+        <router-link to="/dashboard/cliente/estilistas">Estilistas</router-link>
+        <router-link to="/dashboard/cliente/servicios">Servicios</router-link>
+        <router-link to="/dashboard/cliente/galeria">Galería</router-link>
+        <router-link to="/dashboard/cliente/perfil">Perfil</router-link>
       </nav>
 
       <button class="logout-btn" @click="cerrarSesion">
@@ -169,6 +170,9 @@ onUnmounted(() => {
           @click="irAPagina(index)"
         ></button>
       </div>
+      <button class="hero-btn" @click="router.push('/dashboard/cliente/galeria')">
+        Ver galería completa
+      </button>
     </section>
 
     <footer class="about-bar">
@@ -230,8 +234,9 @@ onUnmounted(() => {
 
 .nav-links {
   display: flex;
-  gap: 1.4rem;
+  gap: 0.9rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .nav-links a {

@@ -217,11 +217,6 @@ async function cambiarEstado(cita: CitaEscritorioResponse, accion: 'confirmar' |
               <strong>{{ totalPendientes }}</strong>
               <span>Pendientes</span>
             </div>
-
-            <div class="stat-card">
-              <strong>{{ citasFiltradas.length }}</strong>
-              <span>Resultados visibles</span>
-            </div>
           </div>
         </aside>
 
