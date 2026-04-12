@@ -149,8 +149,13 @@ export interface RegisterData {
 export interface Galeria {
   id?: number
   titulo: string
-  imagen?: string
-  imagen_url?: string | null
+  imagen: string
+  imagen_url: string | null
+  categoria_id?: number | null
+  categoria?: {
+    id: number
+    nombre: string
+  } | null
   created_at?: string
   updated_at?: string
 }

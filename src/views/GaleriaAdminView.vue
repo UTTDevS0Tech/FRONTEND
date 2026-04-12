@@ -11,19 +11,19 @@ import GaleriaAdminForm from '@/components/GaleriaAdminForm.vue'
           <span class="panel-tag">Administración</span>
           <h1>Galería</h1>
           <p>
-            Gestiona las imágenes que se mostrarán en la galería principal de la estética.
-            Aquí puedes subir nuevas imágenes, editarlas o eliminarlas.
+            Gestiona las categorías e imágenes que se mostrarán en la galería principal de la estética.
+            Aquí puedes crear categorías, subir nuevas imágenes, editarlas o eliminarlas.
           </p>
 
           <div class="sidebar-stats">
             <div class="stat-card">
               <strong>Galería</strong>
-              <span>Administración visual del contenido</span>
+              <span>Organización visual por categorías</span>
             </div>
 
             <div class="stat-card">
               <strong>Imágenes</strong>
-              <span>Organiza el material que verá el cliente</span>
+              <span>Clasifica y administra el material del cliente</span>
             </div>
           </div>
         </aside>
@@ -37,7 +37,7 @@ import GaleriaAdminForm from '@/components/GaleriaAdminForm.vue'
 
           <div class="page-header">
             <h2>Galería registrada</h2>
-            <p>Consulta, actualiza y administra las imágenes del sistema.</p>
+            <p>Consulta, clasifica y administra las categorías e imágenes del sistema.</p>
           </div>
 
           <!-- Aquí el form también mostrará su lista -->

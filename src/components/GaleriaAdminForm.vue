@@ -3,13 +3,27 @@ import { onMounted, ref } from 'vue'
 import { useApiGaleria } from '@/composables/useApiGaleria'
 import type { Galeria } from '@/types'
 
+interface CategoriaGaleria {
+  id: number
+  nombre: string
+}
+
 const imagenes = ref<Galeria[]>([])
+const categorias = ref<CategoriaGaleria[]>([])
+
 const cargando = ref(false)
+const cargandoCategorias = ref(false)
+
 const mensaje = ref('')
 const error = ref('')
+const mensajeCategoria = ref('')
+const errorCategoria = ref('')
 
 const titulo = ref('')
 const imagenArchivo = ref<File | null>(null)
+const categoriaId = ref('')
+
+const nuevaCategoria = ref('')
 
 const editando = ref(false)
 const idEditando = ref<number | null>(null)
@@ -17,6 +31,7 @@ const idEditando = ref<number | null>(null)
 function limpiarFormulario() {
   titulo.value = ''
   imagenArchivo.value = null
+  categoriaId.value = ''
   editando.value = false
   idEditando.value = null
 
@@ -24,9 +39,76 @@ function limpiarFormulario() {
   if (input) input.value = ''
 }
 
+function limpiarCategoria() {
+  nuevaCategoria.value = ''
+}
+
 function seleccionarImagen(event: Event) {
   const target = event.target as HTMLInputElement
   imagenArchivo.value = target.files?.[0] || null
+}
+
+function obtenerCategorias() {
+  cargandoCategorias.value = true
+  mensajeCategoria.value = ''
+  errorCategoria.value = ''
+
+  const { data, onFetchResponse, onFetchError } = useApiGaleria('/categorias-galeria')
+    .get()
+    .json()
+
+  onFetchResponse(() => {
+    if (data.value?.data) {
+      categorias.value = data.value.data
+    } else {
+      categorias.value = []
+    }
+
+    cargandoCategorias.value = false
+  })
+
+  onFetchError((err) => {
+    console.error('Error al obtener categorías:', err)
+    errorCategoria.value = 'No se pudieron obtener las categorías.'
+    cargandoCategorias.value = false
+  })
+}
+
+function crearCategoria() {
+  mensajeCategoria.value = ''
+  errorCategoria.value = ''
+
+  if (!nuevaCategoria.value.trim()) {
+    errorCategoria.value = 'El nombre de la categoría es obligatorio.'
+    return
+  }
+
+  const { data, onFetchResponse, onFetchError } = useApiGaleria('/categorias-galeria')
+    .post({
+      nombre: nuevaCategoria.value.trim(),
+    })
+    .json()
+
+  onFetchResponse(() => {
+    mensajeCategoria.value = data.value?.message || 'Categoría creada correctamente.'
+
+    const categoriaNueva = data.value?.data
+    if (categoriaNueva?.id) {
+      categorias.value = [...categorias.value, categoriaNueva].sort((a, b) =>
+        a.nombre.localeCompare(b.nombre)
+      )
+      categoriaId.value = String(categoriaNueva.id)
+    } else {
+      obtenerCategorias()
+    }
+
+    limpiarCategoria()
+  })
+
+  onFetchError((err) => {
+    console.error('Error al crear categoría:', err)
+    errorCategoria.value = data.value?.message || 'No se pudo crear la categoría.'
+  })
 }
 
 function obtenerGaleria() {
@@ -68,13 +150,19 @@ function crearImagen() {
     return
   }
 
+  if (!categoriaId.value) {
+    error.value = 'La categoría es obligatoria.'
+    return
+  }
+
   if (!imagenArchivo.value) {
     error.value = 'La imagen es obligatoria.'
     return
   }
 
   const formData = new FormData()
-  formData.append('titulo', titulo.value)
+  formData.append('titulo', titulo.value.trim())
+  formData.append('categoria_id', categoriaId.value)
   formData.append('imagen', imagenArchivo.value)
 
   const { data, onFetchResponse, onFetchError } = useApiGaleria('/galeria')
@@ -84,16 +172,18 @@ function crearImagen() {
   onFetchResponse(() => {
     console.log('Imagen creada:', data.value)
     mensaje.value = data.value?.message || 'Imagen subida correctamente.'
+
     if (props.modoModal) {
-        emit('cerrar-modal')
+      emit('cerrar-modal')
     }
+
     limpiarFormulario()
     obtenerGaleria()
   })
 
   onFetchError((err) => {
     console.error('Error al subir imagen:', err)
-    error.value = 'No se pudo subir la imagen.'
+    error.value = data.value?.message || 'No se pudo subir la imagen.'
   })
 }
 
@@ -101,6 +191,7 @@ function cargarParaEditar(imagen: Galeria) {
   titulo.value = imagen.titulo
   imagenArchivo.value = null
   idEditando.value = imagen.id || null
+  categoriaId.value = imagen.categoria_id ? String(imagen.categoria_id) : ''
   editando.value = true
   mensaje.value = ''
   error.value = ''
@@ -118,7 +209,11 @@ function actualizarImagen() {
   const formData = new FormData()
 
   if (titulo.value.trim()) {
-    formData.append('titulo', titulo.value)
+    formData.append('titulo', titulo.value.trim())
+  }
+
+  if (categoriaId.value) {
+    formData.append('categoria_id', categoriaId.value)
   }
 
   if (imagenArchivo.value) {
@@ -134,16 +229,18 @@ function actualizarImagen() {
   onFetchResponse(() => {
     console.log('Imagen actualizada:', data.value)
     mensaje.value = data.value?.message || 'Imagen actualizada correctamente.'
+
     if (props.modoModal) {
-        emit('cerrar-modal')
+      emit('cerrar-modal')
     }
+
     limpiarFormulario()
     obtenerGaleria()
   })
 
   onFetchError((err) => {
     console.error('Error al actualizar imagen:', err)
-    error.value = 'No se pudo actualizar la imagen.'
+    error.value = data.value?.message || 'No se pudo actualizar la imagen.'
   })
 }
 
@@ -189,6 +286,7 @@ const emit = defineEmits<{
 }>()
 
 onMounted(() => {
+  obtenerCategorias()
   obtenerGaleria()
 })
 </script>
@@ -203,37 +301,122 @@ onMounted(() => {
       {{ error }}
     </div>
 
-    <form class="galeria-form" @submit.prevent="guardar">
-      <div class="form-group">
-        <label for="titulo">Título</label>
-        <input
-          id="titulo"
-          v-model="titulo"
-          type="text"
-          placeholder="Título de la imagen"
-        />
+    <div class="panel-seccion">
+      <div class="panel-seccion-header">
+        <div>
+          <span class="section-badge">Paso 1</span>
+          <h3>Crear categoría</h3>
+          <p>Registra primero las categorías que usarás para organizar la galería.</p>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="imagen">Imagen</label>
-        <input
-          id="imagen"
-          type="file"
-          accept=".jpg,.jpeg,.png,.webp"
-          @change="seleccionarImagen"
-        />
+      <div v-if="mensajeCategoria" class="mensaje-exito">
+        {{ mensajeCategoria }}
       </div>
 
-      <div class="acciones-formulario">
-        <button type="submit" class="btn primary">
-          {{ editando ? 'Actualizar imagen' : 'Subir imagen' }}
-        </button>
-
-        <button type="button" class="btn secondary" @click="limpiarFormulario">
-          Limpiar
-        </button>
+      <div v-if="errorCategoria" class="mensaje-error">
+        {{ errorCategoria }}
       </div>
-    </form>
+
+      <form class="galeria-form" @submit.prevent="crearCategoria">
+        <div class="form-group">
+          <label for="nuevaCategoria">Nombre de la categoría</label>
+          <input
+            id="nuevaCategoria"
+            v-model="nuevaCategoria"
+            type="text"
+            placeholder="Ej. Peinados, Tintes, Maquillaje..."
+          />
+        </div>
+
+        <div class="acciones-formulario">
+          <button type="submit" class="btn primary">
+            Crear categoría
+          </button>
+
+          <button type="button" class="btn secondary" @click="limpiarCategoria">
+            Limpiar
+          </button>
+        </div>
+      </form>
+
+      <div class="categorias-resumen">
+        <div class="tabla-header">
+          <h4>Categorías registradas</h4>
+          <span>{{ cargandoCategorias ? 'Cargando...' : `${categorias.length} categorías` }}</span>
+        </div>
+
+        <div v-if="categorias.length" class="chips-wrap">
+          <span
+            v-for="categoria in categorias"
+            :key="categoria.id"
+            class="categoria-chip"
+          >
+            {{ categoria.nombre }}
+          </span>
+        </div>
+
+        <p v-else class="helper-text">
+          Aún no hay categorías registradas.
+        </p>
+      </div>
+    </div>
+
+    <div class="panel-seccion">
+      <div class="panel-seccion-header">
+        <div>
+          <span class="section-badge">Paso 2</span>
+          <h3>{{ editando ? 'Editar imagen' : 'Subir nueva imagen' }}</h3>
+          <p>Selecciona la categoría correspondiente antes de guardar la imagen.</p>
+        </div>
+      </div>
+
+      <form class="galeria-form" @submit.prevent="guardar">
+        <div class="form-group">
+          <label for="titulo">Título</label>
+          <input
+            id="titulo"
+            v-model="titulo"
+            type="text"
+            placeholder="Título de la imagen"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="categoria">Categoría</label>
+          <select id="categoria" v-model="categoriaId">
+            <option value="">Selecciona una categoría</option>
+            <option
+              v-for="categoria in categorias"
+              :key="categoria.id"
+              :value="String(categoria.id)"
+            >
+              {{ categoria.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="imagen">Imagen</label>
+          <input
+            id="imagen"
+            type="file"
+            accept=".jpg,.jpeg,.png,.webp"
+            @change="seleccionarImagen"
+          />
+        </div>
+
+        <div class="acciones-formulario">
+          <button type="submit" class="btn primary">
+            {{ editando ? 'Actualizar imagen' : 'Subir imagen' }}
+          </button>
+
+          <button type="button" class="btn secondary" @click="limpiarFormulario">
+            Limpiar
+          </button>
+        </div>
+      </form>
+    </div>
 
     <div v-if="!modoModal">
       <div class="tabla-header">
@@ -260,6 +443,9 @@ onMounted(() => {
           <div class="imagen-info">
             <h4>{{ imagen.titulo }}</h4>
             <p>ID #{{ imagen.id }}</p>
+            <p v-if="imagen.categoria?.nombre" class="categoria-texto">
+              Categoría: {{ imagen.categoria.nombre }}
+            </p>
           </div>
 
           <div class="acciones-tabla">
@@ -275,12 +461,13 @@ onMounted(() => {
 
         <div v-if="!imagenes.length" class="empty-state">
           <h4>No hay imágenes registradas</h4>
-          <p>Haz clic en “Nueva imagen” para subir la primera.</p>
+          <p>Haz clic en “Subir imagen” para agregar la primera.</p>
         </div>
       </div>
     </div>
   </section>
 </template>
+
 <style scoped>
 :global(*) {
   box-sizing: border-box;
@@ -290,6 +477,40 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.panel-seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(236, 231, 216, 0.85);
+  box-shadow: 0 12px 24px rgba(92, 75, 59, 0.06);
+}
+
+.panel-seccion-header h3 {
+  margin: 6px 0 6px;
+  color: #5f4b3a;
+  font-size: 1.2rem;
+}
+
+.panel-seccion-header p {
+  margin: 0;
+  color: #8a7764;
+  font-size: 0.94rem;
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.16);
+  color: #8d633c;
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .galeria-form {
@@ -311,7 +532,8 @@ onMounted(() => {
 }
 
 input[type="text"],
-input[type="file"] {
+input[type="file"],
+select {
   width: 100%;
   min-width: 0;
   padding: 14px 16px;
@@ -331,12 +553,14 @@ input[type="text"]::placeholder {
 }
 
 input[type="text"]:hover,
-input[type="file"]:hover {
+input[type="file"]:hover,
+select:hover {
   border-color: rgba(212, 163, 115, 0.5);
 }
 
 input[type="text"]:focus,
-input[type="file"]:focus {
+input[type="file"]:focus,
+select:focus {
   border-color: #D4A373;
   box-shadow:
     0 0 0 4px rgba(212, 163, 115, 0.15),
@@ -409,15 +633,45 @@ input[type="file"]:focus {
   margin-top: 8px;
 }
 
-.tabla-header h3 {
+.tabla-header h3,
+.tabla-header h4 {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: #5f4b3a;
 }
 
 .tabla-header span {
   color: #8a7764;
   font-weight: 700;
+}
+
+.categorias-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.categoria-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(204, 213, 174, 0.42);
+  color: #5f4b3a;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.helper-text {
+  margin: 0;
+  color: #8a7764;
+  font-size: 0.94rem;
 }
 
 .galeria-grid {
@@ -464,6 +718,12 @@ input[type="file"]:focus {
   margin: 0;
   color: #8a7764;
   font-size: 0.92rem;
+}
+
+.categoria-texto {
+  margin-top: 6px !important;
+  color: #8d633c !important;
+  font-weight: 700;
 }
 
 .acciones-tabla {
