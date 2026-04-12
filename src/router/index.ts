@@ -17,6 +17,7 @@ import GaleriaAdminView from '@/views/GaleriaAdminView.vue'
 import AdminPersonalView from '@/views/AdminPersonalView.vue'
 import CitasRecepcionistaView from '@/views/CitasRecepcionistaView.vue'
 import PerfilClienteView from '@/views/PerfilClienteView.vue'
+import GaleriaView from '@/views/GaleriaView.vue'
 
 
 
@@ -123,7 +124,12 @@ const router = createRouter({
     name: 'dashboard/cliente/perfil',
     component: PerfilClienteView,
     meta: { requiresAuth: true, role: 3 }
-  }
+    },
+    {
+      path: '/galeria',
+      name: 'galeria',
+      component: GaleriaView,
+    }
 
 
 
