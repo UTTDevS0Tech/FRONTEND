@@ -42,6 +42,24 @@ function obtenerGaleriaPublica() {
   })
 }
 
+const categoriaRows = ref<Record<number, HTMLDivElement | null>>({})
+
+function setCategoriaRef(id: number, el: HTMLDivElement | null) {
+  categoriaRows.value[id] = el
+}
+
+function scrollCategoria(id: number, direccion: 'left' | 'right') {
+  const contenedor = categoriaRows.value[id]
+  if (!contenedor) return
+
+  const distancia = 260
+
+  contenedor.scrollBy({
+    left: direccion === 'right' ? distancia : -distancia,
+    behavior: 'smooth',
+  })
+}
+
 onMounted(() => {
   obtenerGaleriaPublica()
 })
@@ -102,31 +120,47 @@ onMounted(() => {
                   </p>
                 </div>
               </div>
-
-              <div v-if="categoria.imagenes.length" class="galeria-grid">
-                <article
-                  v-for="imagen in categoria.imagenes"
-                  :key="imagen.id"
-                  class="imagen-card"
+              <div v-if="categoria.imagenes.length" class="galeria-carousel">
+                <button
+                    type="button"
+                    class="carousel-btn"
+                    @click="scrollCategoria(categoria.id, 'left')"
                 >
-                  <div class="imagen-frame">
-                    <img
-                      v-if="imagen.imagen_url"
-                      :src="imagen.imagen_url"
-                      :alt="imagen.titulo"
-                    />
-                    <div v-else class="sin-imagen">Sin imagen</div>
-                  </div>
+                    ‹
+                </button>
 
-                  <div class="imagen-info">
-                    <h4>{{ imagen.titulo }}</h4>
-                  </div>
-                </article>
-              </div>
+                <div
+                    class="galeria-row"
+                    :ref="(el) => setCategoriaRef(categoria.id, el as HTMLDivElement | null)"
+                >
+                    <article
+                    v-for="imagen in categoria.imagenes"
+                    :key="imagen.id"
+                    class="imagen-card"
+                    >
+                    <div class="imagen-frame">
+                        <img
+                        v-if="imagen.imagen_url"
+                        :src="imagen.imagen_url"
+                        :alt="imagen.titulo"
+                        />
+                        <div v-else class="sin-imagen">Sin imagen</div>
+                    </div>
 
-              <div v-else class="empty-category">
-                <p>No hay imágenes disponibles en esta categoría por el momento.</p>
-              </div>
+                    <div class="imagen-info">
+                        <h4>{{ imagen.titulo }}</h4>
+                    </div>
+                    </article>
+                </div>
+
+                <button
+                    type="button"
+                    class="carousel-btn"
+                    @click="scrollCategoria(categoria.id, 'right')"
+                >
+                    ›
+                </button>
+             </div>
             </section>
           </div>
         </section>
@@ -315,21 +349,66 @@ onMounted(() => {
   font-weight: 700;
 }
 
-.galeria-grid {
+.galeria-carousel {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.galeria-row {
+  display: flex;
   gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 4px 2px 10px;
+}
+
+.galeria-row::-webkit-scrollbar {
+  display: none;
 }
 
 .imagen-card {
+  flex: 0 0 180px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .imagen-frame {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
+  max-height: 190px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(250, 237, 205, 0.8);
+  box-shadow: 0 12px 24px rgba(92, 75, 59, 0.08);
+}
+
+.carousel-btn {
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(212, 163, 115, 0.18);
+  color: #8d633c;
+  font-size: 1.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.carousel-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(212, 163, 115, 0.28);
+}
+
+.imagen-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 200px;
   border-radius: 22px;
   overflow: hidden;
   background: rgba(250, 237, 205, 0.8);
