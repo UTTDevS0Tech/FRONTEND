@@ -58,13 +58,6 @@ onMounted(() => {
             Explora algunos de nuestros trabajos más recientes organizados por categoría.
             Inspírate y conoce un poco más de lo que podemos hacer por ti.
           </p>
-
-          <div class="sidebar-stats">
-            <div class="stat-card">
-              <strong>{{ categorias.length }}</strong>
-              <span>Categorías disponibles</span>
-            </div>
-          </div>
         </aside>
 
         <section class="galeria-content">
