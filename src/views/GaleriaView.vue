@@ -64,13 +64,6 @@ onMounted(() => {
               <strong>{{ categorias.length }}</strong>
               <span>Categorías disponibles</span>
             </div>
-
-            <div class="stat-card">
-              <strong>
-                {{ categorias.reduce((acc, categoria) => acc + categoria.imagenes.length, 0) }}
-              </strong>
-              <span>Imágenes en galería</span>
-            </div>
           </div>
         </aside>
 
