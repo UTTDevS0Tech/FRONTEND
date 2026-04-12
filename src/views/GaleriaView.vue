@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { useApiGaleria } from '@/composables/useApiGaleria'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 interface ImagenGaleria {
   id: number
@@ -60,8 +60,29 @@ function scrollCategoria(id: number, direccion: 'left' | 'right') {
   })
 }
 
+const imagenSeleccionada = ref<ImagenGaleria | null>(null)
+
+function abrirImagen(imagen: ImagenGaleria) {
+  imagenSeleccionada.value = imagen
+}
+
+function cerrarImagen() {
+  imagenSeleccionada.value = null
+}
+
+function manejarTecla(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    cerrarImagen()
+  }
+}
+
 onMounted(() => {
   obtenerGaleriaPublica()
+  window.addEventListener('keydown', manejarTecla)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', manejarTecla)
 })
 </script>
 
@@ -83,11 +104,6 @@ onMounted(() => {
             <router-link to="/dashboard/cliente" class="back-btn">
               ← Volver a la página principal
             </router-link>
-          </div>
-
-          <div class="page-header">
-            <h2>Galería de inspiración</h2>
-            <p>Descubre estilos, acabados y resultados en cada una de nuestras categorías.</p>
           </div>
 
           <div v-if="cargando" class="empty-state">
@@ -137,6 +153,7 @@ onMounted(() => {
                     v-for="imagen in categoria.imagenes"
                     :key="imagen.id"
                     class="imagen-card"
+                    @click="abrirImagen(imagen)"
                     >
                     <div class="imagen-frame">
                         <img
@@ -145,10 +162,6 @@ onMounted(() => {
                         :alt="imagen.titulo"
                         />
                         <div v-else class="sin-imagen">Sin imagen</div>
-                    </div>
-
-                    <div class="imagen-info">
-                        <h4>{{ imagen.titulo }}</h4>
                     </div>
                     </article>
                 </div>
@@ -166,6 +179,32 @@ onMounted(() => {
         </section>
       </div>
     </section>
+    <div
+        v-if="imagenSeleccionada"
+        class="image-modal-overlay"
+        @click="cerrarImagen"
+        >
+        <div class="image-modal-card" @click.stop>
+            <button
+            type="button"
+            class="image-modal-close"
+            @click="cerrarImagen"
+            >
+            ✕
+            </button>
+
+            <img
+            v-if="imagenSeleccionada.imagen_url"
+            :src="imagenSeleccionada.imagen_url"
+            :alt="imagenSeleccionada.titulo"
+            class="image-modal-img"
+            />
+
+            <div class="image-modal-info">
+            <h4>{{ imagenSeleccionada.titulo }}</h4>
+            </div>
+        </div>
+    </div>
   </main>
 </template>
 
@@ -517,5 +556,69 @@ onMounted(() => {
   .page-header h2 {
     font-size: 1.5rem;
   }
+}
+
+.imagen-card {
+  cursor: pointer;
+}
+
+.image-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 34, 24, 0.7);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 300;
+}
+
+.image-modal-card {
+  position: relative;
+  width: min(92vw, 900px);
+  max-height: 90vh;
+  padding: 18px 18px 14px;
+  border-radius: 28px;
+  background: rgba(255, 250, 240, 0.98);
+  box-shadow: 0 28px 60px rgba(45, 34, 24, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-modal-img {
+  width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: 20px;
+  background: rgba(250, 237, 205, 0.55);
+}
+
+.image-modal-info h4 {
+  margin: 0;
+  color: #5f4b3a;
+  font-size: 1rem;
+}
+
+.image-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 900;
+  background: rgba(255, 226, 226, 0.96);
+  color: #a14444;
+  box-shadow: 0 10px 18px rgba(161, 68, 68, 0.12);
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.image-modal-close:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 214, 214, 1);
 }
 </style>
