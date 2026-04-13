@@ -96,18 +96,6 @@ onMounted(() => {
             Conoce al equipo que hará de tu visita una experiencia especial.
             Descubre su estilo de trabajo y sus horarios disponibles.
           </p>
-
-          <div class="sidebar-stats">
-            <div class="stat-card">
-              <strong>{{ estilistas.length }}</strong>
-              <span>Estilistas disponibles</span>
-            </div>
-
-            <div class="stat-card">
-              <strong>{{ totalHorariosActivos }}</strong>
-              <span>Horarios activos registrados</span>
-            </div>
-          </div>
         </aside>
 
         <section class="estilistas-content">
