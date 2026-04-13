@@ -28,6 +28,8 @@ const nuevaCategoria = ref('')
 const editando = ref(false)
 const idEditando = ref<number | null>(null)
 
+const modalCategoriaAbierto = ref(false)
+
 function limpiarFormulario() {
   titulo.value = ''
   imagenArchivo.value = null
@@ -41,6 +43,18 @@ function limpiarFormulario() {
 
 function limpiarCategoria() {
   nuevaCategoria.value = ''
+}
+
+function abrirModalCategoria() {
+  mensajeCategoria.value = ''
+  errorCategoria.value = ''
+  nuevaCategoria.value = ''
+  modalCategoriaAbierto.value = true
+}
+
+function cerrarModalCategoria() {
+  modalCategoriaAbierto.value = false
+  limpiarCategoria()
 }
 
 function seleccionarImagen(event: Event) {
@@ -102,7 +116,7 @@ function crearCategoria() {
       obtenerCategorias()
     }
 
-    limpiarCategoria()
+    cerrarModalCategoria()
   })
 
   onFetchError((err) => {
@@ -304,70 +318,9 @@ onMounted(() => {
     <div class="panel-seccion">
       <div class="panel-seccion-header">
         <div>
-          <span class="section-badge">Paso 1</span>
-          <h3>Crear categoría</h3>
-          <p>Registra primero las categorías que usarás para organizar la galería.</p>
-        </div>
-      </div>
-
-      <div v-if="mensajeCategoria" class="mensaje-exito">
-        {{ mensajeCategoria }}
-      </div>
-
-      <div v-if="errorCategoria" class="mensaje-error">
-        {{ errorCategoria }}
-      </div>
-
-      <form class="galeria-form" @submit.prevent="crearCategoria">
-        <div class="form-group">
-          <label for="nuevaCategoria">Nombre de la categoría</label>
-          <input
-            id="nuevaCategoria"
-            v-model="nuevaCategoria"
-            type="text"
-            placeholder="Ej. Peinados, Tintes, Maquillaje..."
-          />
-        </div>
-
-        <div class="acciones-formulario">
-          <button type="submit" class="btn primary">
-            Crear categoría
-          </button>
-
-          <button type="button" class="btn secondary" @click="limpiarCategoria">
-            Limpiar
-          </button>
-        </div>
-      </form>
-
-      <div class="categorias-resumen">
-        <div class="tabla-header">
-          <h4>Categorías registradas</h4>
-          <span>{{ cargandoCategorias ? 'Cargando...' : `${categorias.length} categorías` }}</span>
-        </div>
-
-        <div v-if="categorias.length" class="chips-wrap">
-          <span
-            v-for="categoria in categorias"
-            :key="categoria.id"
-            class="categoria-chip"
-          >
-            {{ categoria.nombre }}
-          </span>
-        </div>
-
-        <p v-else class="helper-text">
-          Aún no hay categorías registradas.
-        </p>
-      </div>
-    </div>
-
-    <div class="panel-seccion">
-      <div class="panel-seccion-header">
-        <div>
-          <span class="section-badge">Paso 2</span>
+          <span class="section-badge">Galería</span>
           <h3>{{ editando ? 'Editar imagen' : 'Subir nueva imagen' }}</h3>
-          <p>Selecciona la categoría correspondiente antes de guardar la imagen.</p>
+          <p>Selecciona o crea una categoría antes de guardar la imagen.</p>
         </div>
       </div>
 
@@ -384,16 +337,27 @@ onMounted(() => {
 
         <div class="form-group">
           <label for="categoria">Categoría</label>
-          <select id="categoria" v-model="categoriaId">
-            <option value="">Selecciona una categoría</option>
-            <option
-              v-for="categoria in categorias"
-              :key="categoria.id"
-              :value="String(categoria.id)"
+
+          <div class="categoria-select-row">
+            <select id="categoria" v-model="categoriaId">
+              <option value="">Selecciona una categoría</option>
+              <option
+                v-for="categoria in categorias"
+                :key="categoria.id"
+                :value="String(categoria.id)"
+              >
+                {{ categoria.nombre }}
+              </option>
+            </select>
+
+            <button
+              type="button"
+              class="btn secondary nueva-categoria-btn"
+              @click="abrirModalCategoria"
             >
-              {{ categoria.nombre }}
-            </option>
-          </select>
+              + Nueva categoría
+            </button>
+          </div>
         </div>
 
         <div class="form-group">
@@ -465,6 +429,61 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <transition name="fade">
+      <div
+        v-if="modalCategoriaAbierto"
+        class="modal-overlay"
+        @click.self="cerrarModalCategoria"
+      >
+        <div class="modal-card modal-card-small">
+          <div class="modal-header">
+            <div>
+              <h3>Nueva categoría</h3>
+              <p>Crea una categoría para organizar las imágenes de la galería.</p>
+            </div>
+
+            <button type="button" class="close-btn" @click="cerrarModalCategoria">
+              ✕
+            </button>
+          </div>
+
+          <div v-if="mensajeCategoria" class="mensaje-exito">
+            {{ mensajeCategoria }}
+          </div>
+
+          <div v-if="errorCategoria" class="mensaje-error">
+            {{ errorCategoria }}
+          </div>
+
+          <form class="galeria-form" @submit.prevent="crearCategoria">
+            <div class="form-group">
+              <label for="nuevaCategoriaModal">Nombre de la categoría</label>
+              <input
+                id="nuevaCategoriaModal"
+                v-model="nuevaCategoria"
+                type="text"
+                placeholder="Ej. Peinados, Tintes, Maquillaje..."
+              />
+            </div>
+
+            <div class="acciones-formulario">
+              <button type="submit" class="btn primary">
+                Crear categoría
+              </button>
+
+              <button
+                type="button"
+                class="btn secondary"
+                @click="cerrarModalCategoria"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -568,6 +587,17 @@ select:focus {
   transform: translateY(-1px);
 }
 
+.categoria-select-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.nueva-categoria-btn {
+  white-space: nowrap;
+}
+
 .acciones-formulario {
   display: flex;
   gap: 12px;
@@ -643,35 +673,6 @@ select:focus {
 .tabla-header span {
   color: #8a7764;
   font-weight: 700;
-}
-
-.categorias-resumen {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.chips-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.categoria-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(204, 213, 174, 0.42);
-  color: #5f4b3a;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.helper-text {
-  margin: 0;
-  color: #8a7764;
-  font-size: 0.94rem;
 }
 
 .galeria-grid {
@@ -782,9 +783,89 @@ select:focus {
   animation: spin 0.8s linear infinite;
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(71, 58, 45, 0.35);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 200;
+}
+
+.modal-card {
+  width: min(760px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 28px;
+  background: rgba(254, 250, 224, 0.98);
+  box-shadow: 0 28px 60px rgba(92, 75, 59, 0.22);
+  padding: 24px;
+}
+
+.modal-card-small {
+  width: min(560px, 100%);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-header h3 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+  color: #5f4b3a;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #8a7764;
+}
+
+.close-btn {
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: rgba(255, 226, 226, 0.95);
+  color: #a14444;
+}
+
+.close-btn:hover {
+  transform: translateY(-2px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 700px) {
+  .categoria-select-row {
+    grid-template-columns: 1fr;
+  }
+
+  .nueva-categoria-btn {
+    width: 100%;
   }
 }
 </style>

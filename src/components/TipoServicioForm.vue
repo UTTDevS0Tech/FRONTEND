@@ -171,16 +171,7 @@ function guardarTipoServicio() {
           />
         </div>
       </div>
-
-      <div class="form-group">
-        <label>Imagen</label>
-        <input
-          type="file"
-          accept="image/*"
-          @change="manejarArchivo"
-        />
-      </div>
-
+      
       <div class="form-group check-group">
         <label class="checkbox-wrap">
           <input

@@ -105,20 +105,6 @@ onMounted(() => {
             Explora nuestras áreas principales y conoce los servicios específicos
             disponibles en cada una.
           </p>
-
-          <div class="sidebar-stats">
-            <div class="stat-card">
-              <strong>{{ serviciosAgrupados.length }}</strong>
-              <span>Secciones disponibles</span>
-            </div>
-
-            <div class="stat-card">
-              <strong>
-                {{ serviciosAgrupados.reduce((acc, servicio) => acc + servicio.tipos.length, 0) }}
-              </strong>
-              <span>Servicios específicos</span>
-            </div>
-          </div>
         </aside>
 
         <section class="servicios-content">
