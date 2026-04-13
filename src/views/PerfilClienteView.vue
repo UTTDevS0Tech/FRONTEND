@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { usePerfilStore } from '@/stores/perfil'
 import type { PerfilClienteCita } from '@/types'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const perfilStore = usePerfilStore()
+
+const mostrarAjustes = ref(false)
+const mostrarFormularioEdicion = ref(false)
 
 const formulario = reactive({
   nom: '',
@@ -107,6 +112,26 @@ function claseEstado(estado: PerfilClienteCita['estado']) {
   return `estado-${estado}`
 }
 
+function toggleAjustes() {
+  mostrarAjustes.value = !mostrarAjustes.value
+}
+
+function abrirEdicionPerfil() {
+  mostrarFormularioEdicion.value = true
+  mostrarAjustes.value = false
+  hidratarFormulario()
+}
+
+function cancelarEdicion() {
+  mostrarFormularioEdicion.value = false
+  hidratarFormulario()
+}
+
+function cerrarSesion() {
+  authStore.logout()
+  router.push('/login')
+}
+
 async function cargarPerfilYCitas() {
   const resultados = await Promise.allSettled([
     perfilStore.obtenerPerfil(),
@@ -127,6 +152,8 @@ async function guardarCambios() {
   })
 
   hidratarFormulario()
+  mostrarFormularioEdicion.value = false
+  mostrarAjustes.value = false
 }
 
 onMounted(async () => {
@@ -152,8 +179,8 @@ onMounted(async () => {
           <span class="hero-tag">Mi perfil</span>
           <h1>{{ bienvenida }}</h1>
           <p>
-            Desde aquí puedes actualizar tu información personal y revisar el
-            historial de tus citas sin salir del mismo espacio.
+            Desde aqui puedes revisar tu historial, ver tus proximas citas y abrir
+            ajustes solo cuando necesites editar tus datos.
           </p>
         </div>
 
@@ -174,10 +201,29 @@ onMounted(async () => {
         <section class="info-card">
           <div class="section-head">
             <div>
-              <span class="section-tag">Mi información</span>
+              <span class="section-tag">Mi informacion</span>
               <h2>Datos personales</h2>
             </div>
-            <p>Actualiza solo lo que necesites. El resto de tu cuenta permanece igual.</p>
+
+            <div class="settings-wrap">
+              <p>Abre ajustes para editar tu perfil o cerrar sesion.</p>
+
+              <div class="settings-menu">
+                <button type="button" class="ghost-btn settings-btn" @click="toggleAjustes">
+                  Ajustes
+                </button>
+
+                <div v-if="mostrarAjustes" class="settings-dropdown">
+                  <button type="button" class="settings-option" @click="abrirEdicionPerfil">
+                    Editar datos del perfil
+                  </button>
+
+                  <button type="button" class="settings-option danger" @click="cerrarSesion">
+                    Cerrar sesion
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div v-if="perfilStore.errorPerfil" class="alert error">
@@ -188,7 +234,29 @@ onMounted(async () => {
             {{ perfilStore.mensaje }}
           </div>
 
-          <form class="perfil-form" @submit.prevent="guardarCambios">
+          <div v-if="!mostrarFormularioEdicion" class="profile-summary">
+            <div class="summary-row">
+              <span>Nombre</span>
+              <strong>{{ formulario.nom || 'Sin definir' }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Apellido paterno</span>
+              <strong>{{ formulario.apellido_p || 'Sin definir' }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Apellido materno</span>
+              <strong>{{ formulario.apellido_m || 'Sin definir' }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Correo electronico</span>
+              <strong>{{ formulario.email || 'Sin definir' }}</strong>
+            </div>
+          </div>
+
+          <form v-else class="perfil-form" @submit.prevent="guardarCambios">
             <div class="grid">
               <div class="field">
                 <label>Nombre</label>
@@ -206,14 +274,20 @@ onMounted(async () => {
               </div>
 
               <div class="field">
-                <label>Correo electrónico</label>
+                <label>Correo electronico</label>
                 <input v-model="formulario.email" type="email" autocomplete="email" />
               </div>
             </div>
 
-            <button type="submit" class="primary-btn wide" :disabled="perfilStore.loadingPerfil">
-              {{ perfilStore.loadingPerfil ? 'Guardando...' : 'Guardar cambios' }}
-            </button>
+            <div class="form-actions">
+              <button type="button" class="ghost-btn wide" @click="cancelarEdicion">
+                Cancelar
+              </button>
+
+              <button type="submit" class="primary-btn wide" :disabled="perfilStore.loadingPerfil">
+                {{ perfilStore.loadingPerfil ? 'Guardando...' : 'Guardar cambios' }}
+              </button>
+            </div>
           </form>
         </section>
 
@@ -224,7 +298,7 @@ onMounted(async () => {
                 <span class="section-tag">Agenda activa</span>
                 <h2>Citas pendientes</h2>
               </div>
-              <p>Tus próximos espacios reservados y citas aún vigentes.</p>
+              <p>Tus proximos espacios reservados y citas aun vigentes.</p>
             </div>
 
             <div v-if="perfilStore.loadingCitas" class="empty-state loading">
@@ -284,7 +358,7 @@ onMounted(async () => {
                 <span class="section-tag">Historial</span>
                 <h2>Citas pasadas</h2>
               </div>
-              <p>Aquí verás las citas que ya vencieron o fueron canceladas.</p>
+              <p>Aqui veras las citas que ya vencieron o fueron canceladas.</p>
             </div>
 
             <div v-if="perfilStore.loadingCitas" class="empty-state loading">
@@ -296,7 +370,7 @@ onMounted(async () => {
             </div>
 
             <div v-else-if="perfilStore.citasPasadas.length === 0" class="empty-state">
-              Aún no tienes citas en tu historial.
+              Aun no tienes citas en tu historial.
             </div>
 
             <div v-else class="cards-grid">
@@ -491,6 +565,83 @@ onMounted(async () => {
   line-height: 1.7;
 }
 
+.settings-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.settings-menu {
+  position: relative;
+}
+
+.settings-btn {
+  min-width: 120px;
+}
+
+.settings-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 240px;
+  padding: 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(212, 163, 115, 0.18);
+  box-shadow: 0 18px 34px rgba(92, 75, 59, 0.14);
+  display: grid;
+  gap: 8px;
+  z-index: 5;
+}
+
+.settings-option {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 800;
+  color: #5f4b3a;
+  background: rgba(250, 237, 205, 0.42);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.settings-option:hover {
+  transform: translateY(-1px);
+  background: rgba(250, 237, 205, 0.7);
+}
+
+.settings-option.danger {
+  background: rgba(255, 228, 228, 0.8);
+  color: #9d3e3e;
+}
+
+.profile-summary {
+  display: grid;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(212, 163, 115, 0.14);
+}
+
+.summary-row span {
+  color: #8a7764;
+  font-weight: 700;
+}
+
+.summary-row strong {
+  text-align: right;
+}
+
 .perfil-form {
   display: grid;
   gap: 18px;
@@ -527,6 +678,12 @@ onMounted(async () => {
   border-color: #d4a373;
   box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
   transform: translateY(-1px);
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .cards-grid {
@@ -647,7 +804,8 @@ onMounted(async () => {
   box-shadow: 0 14px 28px rgba(212, 163, 115, 0.26);
 }
 
-.primary-btn.wide {
+.primary-btn.wide,
+.ghost-btn.wide {
   width: 100%;
 }
 
@@ -710,12 +868,15 @@ onMounted(async () => {
   }
 
   .grid,
-  .cita-meta {
+  .cita-meta,
+  .form-actions {
     grid-template-columns: 1fr;
   }
 
   .cita-top,
-  .top-actions {
+  .top-actions,
+  .summary-row,
+  .settings-wrap {
     flex-direction: column;
     align-items: stretch;
   }
@@ -723,6 +884,16 @@ onMounted(async () => {
   .ghost-btn,
   .primary-btn {
     width: 100%;
+  }
+
+  .summary-row strong {
+    text-align: left;
+  }
+
+  .settings-dropdown {
+    position: static;
+    width: 100%;
+    margin-top: 10px;
   }
 }
 </style>
