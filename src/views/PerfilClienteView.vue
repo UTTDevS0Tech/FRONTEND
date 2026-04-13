@@ -34,18 +34,14 @@ function normalizarHora(valor?: string | null) {
 }
 
 function formatearFecha(valor: string) {
-  if (!valor) {
-    return 'Fecha pendiente'
-  }
+  if (!valor) return 'Fecha pendiente'
 
   const partes = valor.slice(0, 10).split('-')
   const anio = Number(partes[0])
   const mes = Number(partes[1])
   const dia = Number(partes[2])
 
-  if (!anio || !mes || !dia) {
-    return valor
-  }
+  if (!anio || !mes || !dia) return valor
 
   return new Intl.DateTimeFormat('es-MX', {
     weekday: 'long',
@@ -58,17 +54,13 @@ function formatearFecha(valor: string) {
 function formatearHora(valor?: string | null) {
   const horaNormalizada = normalizarHora(valor)
 
-  if (!horaNormalizada) {
-    return 'Por definir'
-  }
+  if (!horaNormalizada) return 'Por definir'
 
   const partes = horaNormalizada.split(':')
   const hora = Number(partes[0])
   const minuto = Number(partes[1])
 
-  if (Number.isNaN(hora) || Number.isNaN(minuto)) {
-    return horaNormalizada
-  }
+  if (Number.isNaN(hora) || Number.isNaN(minuto)) return horaNormalizada
 
   const fecha = new Date()
   fecha.setHours(hora, minuto, 0, 0)
@@ -82,15 +74,11 @@ function formatearHora(valor?: string | null) {
 function resumenHorario(cita: PerfilClienteCita) {
   const inicio = formatearHora(cita.hora_c)
   const fin = cita.hora_fin ? formatearHora(cita.hora_fin) : ''
-
   return fin ? `${inicio} - ${fin}` : inicio
 }
 
 function serviciosTexto(cita: PerfilClienteCita) {
-  if (!cita.detalles?.length) {
-    return 'Sin servicios registrados'
-  }
-
+  if (!cita.detalles?.length) return 'Sin servicios registrados'
   return cita.detalles.map((detalle) => detalle.servicio || 'Servicio').join(', ')
 }
 
@@ -100,10 +88,7 @@ function totalTexto(cita: PerfilClienteCita) {
   }
 
   const total = Number(cita.total)
-
-  if (Number.isNaN(total)) {
-    return String(cita.total)
-  }
+  if (Number.isNaN(total)) return String(cita.total)
 
   return `$${total.toFixed(2)}`
 }
@@ -164,253 +149,265 @@ onMounted(async () => {
 <template>
   <main class="perfil-page">
     <section class="perfil-shell">
-      <div class="top-actions">
-        <button type="button" class="ghost-btn" @click="router.push('/dashboard/cliente')">
-          Volver al dashboard
-        </button>
-
-        <button type="button" class="primary-btn" @click="router.push('/dashboard/cliente/cita')">
-          Agendar nueva cita
-        </button>
-      </div>
-
-      <section class="hero-card">
-        <div class="hero-copy">
-          <span class="hero-tag">Mi perfil</span>
-          <h1>{{ bienvenida }}</h1>
+      <div class="perfil-layout">
+        <aside class="perfil-sidebar">
+          <span class="panel-tag">Cliente</span>
+          <h1>Mi perfil</h1>
           <p>
-            Desde aqui puedes revisar tu historial, ver tus proximas citas y abrir
-            ajustes solo cuando necesites editar tus datos.
+            Revisa tu información personal, consulta tus próximas citas y mantén
+            tu historial organizado desde una sola pantalla.
           </p>
-        </div>
 
-        <div class="hero-stats">
-          <article class="stat-card">
-            <strong>{{ perfilStore.citasPendientes.length }}</strong>
-            <span>Citas pendientes</span>
-          </article>
-
-          <article class="stat-card">
-            <strong>{{ perfilStore.citasPasadas.length }}</strong>
-            <span>Citas pasadas</span>
-          </article>
-        </div>
-      </section>
-
-      <div class="layout">
-        <section class="info-card">
-          <div class="section-head">
-            <div>
-              <span class="section-tag">Mi informacion</span>
-              <h2>Datos personales</h2>
+          <div class="sidebar-stats">
+            <div class="stat-card">
+              <strong>{{ perfilStore.citasPendientes.length }}</strong>
+              <span>Citas pendientes</span>
             </div>
 
-            <div class="settings-wrap">
-              <p>Abre ajustes para editar tu perfil o cerrar sesion.</p>
+            <div class="stat-card">
+              <strong>{{ perfilStore.citasPasadas.length }}</strong>
+              <span>Citas pasadas</span>
+            </div>
+          </div>
+        </aside>
 
-              <div class="settings-menu">
-                <button type="button" class="ghost-btn settings-btn" @click="toggleAjustes">
-                  Ajustes
-                </button>
+        <section class="perfil-content">
+          <div class="top-actions">
+            <button type="button" class="back-btn" @click="router.push('/dashboard/cliente')">
+              ← Volver al dashboard
+            </button>
 
-                <div v-if="mostrarAjustes" class="settings-dropdown">
-                  <button type="button" class="settings-option" @click="abrirEdicionPerfil">
-                    Editar datos del perfil
+            <button type="button" class="new-btn" @click="router.push('/dashboard/cliente/cita')">
+              + Agendar nueva cita
+            </button>
+          </div>
+
+          <section class="hero-card">
+            <div class="hero-copy">
+              <span class="hero-tag">Mi perfil</span>
+              <h2>{{ bienvenida }}</h2>
+              <p>
+                Desde aquí puedes revisar tu historial, ver tus próximas citas y
+                abrir ajustes solo cuando necesites editar tus datos.
+              </p>
+            </div>
+          </section>
+
+          <div class="content-grid">
+            <section class="content-card info-card">
+              <div class="section-head">
+                <div>
+                  <span class="section-tag">Información</span>
+                  <h3>Datos personales</h3>
+                  <p>Administra tu información de perfil y opciones de cuenta.</p>
+                </div>
+
+                <div class="settings-wrap">
+                  <div class="settings-menu">
+                    <button type="button" class="ghost-btn settings-btn" @click="toggleAjustes">
+                      Ajustes
+                    </button>
+
+                    <div v-if="mostrarAjustes" class="settings-dropdown">
+                      <button type="button" class="settings-option" @click="abrirEdicionPerfil">
+                        Editar datos del perfil
+                      </button>
+
+                      <button type="button" class="settings-option danger" @click="cerrarSesion">
+                        Cerrar sesión
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="perfilStore.errorPerfil" class="alert error">
+                {{ perfilStore.errorPerfil }}
+              </div>
+
+              <div v-if="perfilStore.mensaje" class="alert success">
+                {{ perfilStore.mensaje }}
+              </div>
+
+              <div v-if="!mostrarFormularioEdicion" class="profile-summary">
+                <div class="summary-row">
+                  <span>Nombre</span>
+                  <strong>{{ formulario.nom || 'Sin definir' }}</strong>
+                </div>
+
+                <div class="summary-row">
+                  <span>Apellido paterno</span>
+                  <strong>{{ formulario.apellido_p || 'Sin definir' }}</strong>
+                </div>
+
+                <div class="summary-row">
+                  <span>Apellido materno</span>
+                  <strong>{{ formulario.apellido_m || 'Sin definir' }}</strong>
+                </div>
+
+                <div class="summary-row">
+                  <span>Correo electrónico</span>
+                  <strong>{{ formulario.email || 'Sin definir' }}</strong>
+                </div>
+              </div>
+
+              <form v-else class="perfil-form" @submit.prevent="guardarCambios">
+                <div class="grid">
+                  <div class="field">
+                    <label>Nombre</label>
+                    <input v-model="formulario.nom" type="text" autocomplete="given-name" />
+                  </div>
+
+                  <div class="field">
+                    <label>Apellido paterno</label>
+                    <input v-model="formulario.apellido_p" type="text" autocomplete="family-name" />
+                  </div>
+
+                  <div class="field">
+                    <label>Apellido materno</label>
+                    <input v-model="formulario.apellido_m" type="text" />
+                  </div>
+
+                  <div class="field">
+                    <label>Correo electrónico</label>
+                    <input v-model="formulario.email" type="email" autocomplete="email" />
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="ghost-btn wide" @click="cancelarEdicion">
+                    Cancelar
                   </button>
 
-                  <button type="button" class="settings-option danger" @click="cerrarSesion">
-                    Cerrar sesion
+                  <button type="submit" class="new-btn wide" :disabled="perfilStore.loadingPerfil">
+                    {{ perfilStore.loadingPerfil ? 'Guardando...' : 'Guardar cambios' }}
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
+              </form>
+            </section>
 
-          <div v-if="perfilStore.errorPerfil" class="alert error">
-            {{ perfilStore.errorPerfil }}
-          </div>
-
-          <div v-if="perfilStore.mensaje" class="alert success">
-            {{ perfilStore.mensaje }}
-          </div>
-
-          <div v-if="!mostrarFormularioEdicion" class="profile-summary">
-            <div class="summary-row">
-              <span>Nombre</span>
-              <strong>{{ formulario.nom || 'Sin definir' }}</strong>
-            </div>
-
-            <div class="summary-row">
-              <span>Apellido paterno</span>
-              <strong>{{ formulario.apellido_p || 'Sin definir' }}</strong>
-            </div>
-
-            <div class="summary-row">
-              <span>Apellido materno</span>
-              <strong>{{ formulario.apellido_m || 'Sin definir' }}</strong>
-            </div>
-
-            <div class="summary-row">
-              <span>Correo electronico</span>
-              <strong>{{ formulario.email || 'Sin definir' }}</strong>
-            </div>
-          </div>
-
-          <form v-else class="perfil-form" @submit.prevent="guardarCambios">
-            <div class="grid">
-              <div class="field">
-                <label>Nombre</label>
-                <input v-model="formulario.nom" type="text" autocomplete="given-name" />
-              </div>
-
-              <div class="field">
-                <label>Apellido paterno</label>
-                <input v-model="formulario.apellido_p" type="text" autocomplete="family-name" />
-              </div>
-
-              <div class="field">
-                <label>Apellido materno</label>
-                <input v-model="formulario.apellido_m" type="text" />
-              </div>
-
-              <div class="field">
-                <label>Correo electronico</label>
-                <input v-model="formulario.email" type="email" autocomplete="email" />
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="ghost-btn wide" @click="cancelarEdicion">
-                Cancelar
-              </button>
-
-              <button type="submit" class="primary-btn wide" :disabled="perfilStore.loadingPerfil">
-                {{ perfilStore.loadingPerfil ? 'Guardando...' : 'Guardar cambios' }}
-              </button>
-            </div>
-          </form>
-        </section>
-
-        <section class="timeline-column">
-          <article class="timeline-card">
-            <div class="section-head compact">
-              <div>
-                <span class="section-tag">Agenda activa</span>
-                <h2>Citas pendientes</h2>
-              </div>
-              <p>Tus proximos espacios reservados y citas aun vigentes.</p>
-            </div>
-
-            <div v-if="perfilStore.loadingCitas" class="empty-state loading">
-              Cargando tus citas...
-            </div>
-
-            <div v-else-if="perfilStore.errorCitas" class="alert error">
-              {{ perfilStore.errorCitas }}
-            </div>
-
-            <div v-else-if="perfilStore.citasPendientes.length === 0" class="empty-state">
-              No tienes citas pendientes por ahora.
-            </div>
-
-            <div v-else class="cards-grid">
-              <article
-                v-for="cita in perfilStore.citasPendientes"
-                :key="`pendiente-${cita.id}`"
-                class="cita-card"
-              >
-                <div class="cita-top">
+            <section class="timeline-column">
+              <article class="content-card">
+                <div class="section-head compact">
                   <div>
-                    <h3>Cita #{{ cita.id }}</h3>
-                    <p>{{ formatearFecha(cita.fecha_c) }}</p>
+                    <span class="section-tag">Agenda activa</span>
+                    <h3>Citas pendientes</h3>
                   </div>
-
-                  <span class="estado-pill" :class="claseEstado(cita.estado)">
-                    {{ cita.estado }}
-                  </span>
+                  <p>Tus próximos espacios reservados y citas aún vigentes.</p>
                 </div>
 
-                <dl class="cita-meta">
-                  <div>
-                    <dt>Horario</dt>
-                    <dd>{{ resumenHorario(cita) }}</dd>
-                  </div>
-                  <div>
-                    <dt>Estilista</dt>
-                    <dd>{{ cita.personal || 'Sin asignar' }}</dd>
-                  </div>
-                  <div>
-                    <dt>Servicios</dt>
-                    <dd>{{ serviciosTexto(cita) }}</dd>
-                  </div>
-                  <div>
-                    <dt>Total</dt>
-                    <dd>{{ totalTexto(cita) }}</dd>
-                  </div>
-                </dl>
-              </article>
-            </div>
-          </article>
-
-          <article class="timeline-card">
-            <div class="section-head compact">
-              <div>
-                <span class="section-tag">Historial</span>
-                <h2>Citas pasadas</h2>
-              </div>
-              <p>Aqui veras las citas que ya vencieron o fueron canceladas.</p>
-            </div>
-
-            <div v-if="perfilStore.loadingCitas" class="empty-state loading">
-              Cargando tus citas...
-            </div>
-
-            <div v-else-if="perfilStore.errorCitas" class="alert error">
-              {{ perfilStore.errorCitas }}
-            </div>
-
-            <div v-else-if="perfilStore.citasPasadas.length === 0" class="empty-state">
-              Aun no tienes citas en tu historial.
-            </div>
-
-            <div v-else class="cards-grid">
-              <article
-                v-for="cita in perfilStore.citasPasadas"
-                :key="`pasada-${cita.id}`"
-                class="cita-card muted"
-              >
-                <div class="cita-top">
-                  <div>
-                    <h3>Cita #{{ cita.id }}</h3>
-                    <p>{{ formatearFecha(cita.fecha_c) }}</p>
-                  </div>
-
-                  <span class="estado-pill" :class="claseEstado(cita.estado)">
-                    {{ cita.estado }}
-                  </span>
+                <div v-if="perfilStore.loadingCitas" class="empty-state loading">
+                  Cargando tus citas...
                 </div>
 
-                <dl class="cita-meta">
-                  <div>
-                    <dt>Horario</dt>
-                    <dd>{{ resumenHorario(cita) }}</dd>
-                  </div>
-                  <div>
-                    <dt>Estilista</dt>
-                    <dd>{{ cita.personal || 'Sin asignar' }}</dd>
-                  </div>
-                  <div>
-                    <dt>Servicios</dt>
-                    <dd>{{ serviciosTexto(cita) }}</dd>
-                  </div>
-                  <div>
-                    <dt>Total</dt>
-                    <dd>{{ totalTexto(cita) }}</dd>
-                  </div>
-                </dl>
+                <div v-else-if="perfilStore.errorCitas" class="alert error">
+                  {{ perfilStore.errorCitas }}
+                </div>
+
+                <div v-else-if="perfilStore.citasPendientes.length === 0" class="empty-state">
+                  No tienes citas pendientes por ahora.
+                </div>
+
+                <div v-else class="cards-grid">
+                  <article
+                    v-for="cita in perfilStore.citasPendientes"
+                    :key="`pendiente-${cita.id}`"
+                    class="cita-card"
+                  >
+                    <div class="cita-top">
+                      <div>
+                        <h4>Cita #{{ cita.id }}</h4>
+                        <p>{{ formatearFecha(cita.fecha_c) }}</p>
+                      </div>
+
+                      <span class="estado-pill" :class="claseEstado(cita.estado)">
+                        {{ cita.estado }}
+                      </span>
+                    </div>
+
+                    <dl class="cita-meta">
+                      <div>
+                        <dt>Horario</dt>
+                        <dd>{{ resumenHorario(cita) }}</dd>
+                      </div>
+                      <div>
+                        <dt>Estilista</dt>
+                        <dd>{{ cita.personal || 'Sin asignar' }}</dd>
+                      </div>
+                      <div>
+                        <dt>Servicios</dt>
+                        <dd>{{ serviciosTexto(cita) }}</dd>
+                      </div>
+                      <div>
+                        <dt>Total</dt>
+                        <dd>{{ totalTexto(cita) }}</dd>
+                      </div>
+                    </dl>
+                  </article>
+                </div>
               </article>
-            </div>
-          </article>
+
+              <article class="content-card">
+                <div class="section-head compact">
+                  <div>
+                    <span class="section-tag">Historial</span>
+                    <h3>Citas pasadas</h3>
+                  </div>
+                  <p>Aquí verás las citas que ya vencieron o fueron canceladas.</p>
+                </div>
+
+                <div v-if="perfilStore.loadingCitas" class="empty-state loading">
+                  Cargando tus citas...
+                </div>
+
+                <div v-else-if="perfilStore.errorCitas" class="alert error">
+                  {{ perfilStore.errorCitas }}
+                </div>
+
+                <div v-else-if="perfilStore.citasPasadas.length === 0" class="empty-state">
+                  Aún no tienes citas en tu historial.
+                </div>
+
+                <div v-else class="cards-grid">
+                  <article
+                    v-for="cita in perfilStore.citasPasadas"
+                    :key="`pasada-${cita.id}`"
+                    class="cita-card muted"
+                  >
+                    <div class="cita-top">
+                      <div>
+                        <h4>Cita #{{ cita.id }}</h4>
+                        <p>{{ formatearFecha(cita.fecha_c) }}</p>
+                      </div>
+
+                      <span class="estado-pill" :class="claseEstado(cita.estado)">
+                        {{ cita.estado }}
+                      </span>
+                    </div>
+
+                    <dl class="cita-meta">
+                      <div>
+                        <dt>Horario</dt>
+                        <dd>{{ resumenHorario(cita) }}</dd>
+                      </div>
+                      <div>
+                        <dt>Estilista</dt>
+                        <dd>{{ cita.personal || 'Sin asignar' }}</dd>
+                      </div>
+                      <div>
+                        <dt>Servicios</dt>
+                        <dd>{{ serviciosTexto(cita) }}</dd>
+                      </div>
+                      <div>
+                        <dt>Total</dt>
+                        <dd>{{ totalTexto(cita) }}</dd>
+                      </div>
+                    </dl>
+                  </article>
+                </div>
+              </article>
+            </section>
+          </div>
         </section>
       </div>
     </section>
@@ -423,66 +420,184 @@ onMounted(async () => {
 }
 
 .perfil-page {
+  width: 100%;
   min-height: 100vh;
-  padding: 28px;
-  background:
-    radial-gradient(circle at top left, rgba(204, 213, 174, 0.6), transparent 28%),
-    linear-gradient(135deg, #fefae0 0%, #faedcd 55%, #e9edc9 100%);
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
   color: #5f4b3a;
 }
 
 .perfil-shell {
-  width: min(1480px, 100%);
-  margin: 0 auto;
+  width: min(1680px, 100%);
+  animation: pageEnter 0.8s ease;
+}
+
+.perfil-layout {
   display: grid;
-  gap: 22px;
-  animation: pageEnter 0.7s ease;
+  grid-template-columns: 270px 1fr;
+  min-height: 780px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+.perfil-sidebar {
+  padding: 34px 24px;
+  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.panel-tag {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 24px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d5844;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.perfil-sidebar h1 {
+  margin: 0 0 16px;
+  font-size: 2.3rem;
+  line-height: 1.05;
+  color: #5f4b3a;
+}
+
+.perfil-sidebar p {
+  margin: 0 0 24px;
+  color: #7b6a58;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.sidebar-stats {
+  display: grid;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.stat-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
+}
+
+.perfil-content {
+  padding: 24px 28px;
+  background: rgba(254, 250, 224, 0.88);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
 }
 
 .top-actions {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
-.hero-card,
-.info-card,
-.timeline-card {
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 20px 45px rgba(92, 75, 59, 0.12);
-  backdrop-filter: blur(14px);
+.back-btn,
+.new-btn,
+.ghost-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border: none;
+  text-decoration: none;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer;
 }
 
-.hero-card {
-  border-radius: 32px;
-  padding: 28px;
-  display: grid;
-  grid-template-columns: 1.5fr minmax(260px, 0.85fr);
-  gap: 18px;
-  align-items: stretch;
+.back-btn,
+.ghost-btn {
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
+.back-btn:hover,
+.new-btn:hover,
+.ghost-btn:hover {
+  transform: translateY(-2px);
+}
+
+.back-btn:hover,
+.ghost-btn:hover {
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.new-btn {
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
+  color: white;
+  box-shadow: 0 12px 24px rgba(212, 163, 115, 0.22);
+}
+
+.new-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
+}
+
+.hero-card,
+.content-card {
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.7);
 }
 
 .hero-copy {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
-.hero-copy h1,
+.hero-copy h2,
 .hero-copy p {
   margin: 0;
 }
 
-.hero-copy h1 {
-  font-size: clamp(2.1rem, 4vw, 3.4rem);
-  line-height: 1.02;
+.hero-copy h2 {
+  font-size: 1.9rem;
+  color: #5f4b3a;
 }
 
 .hero-copy p {
-  max-width: 760px;
-  color: #7b6a58;
-  line-height: 1.8;
+  color: #8a7764;
+  line-height: 1.7;
 }
 
 .hero-tag,
@@ -490,50 +605,19 @@ onMounted(async () => {
   width: fit-content;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
+  padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(204, 213, 174, 0.34);
-  color: #6d5844;
+  background: rgba(212, 163, 115, 0.16);
+  color: #8d633c;
+  font-size: 0.82rem;
   font-weight: 800;
-  font-size: 0.92rem;
 }
 
-.hero-stats {
-  display: grid;
-  gap: 14px;
-}
-
-.stat-card {
-  border-radius: 24px;
-  padding: 20px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(250, 237, 205, 0.82));
-  display: grid;
-  gap: 8px;
-  justify-items: start;
-}
-
-.stat-card strong {
-  font-size: 2.3rem;
-  line-height: 1;
-}
-
-.stat-card span {
-  color: #7b6a58;
-  font-weight: 700;
-}
-
-.layout {
+.content-grid {
   display: grid;
   grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.35fr);
   gap: 22px;
   align-items: start;
-}
-
-.info-card,
-.timeline-card {
-  border-radius: 30px;
-  padding: 24px;
 }
 
 .timeline-column {
@@ -542,38 +626,35 @@ onMounted(async () => {
 }
 
 .section-head {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
   margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 
 .section-head.compact {
   margin-bottom: 16px;
 }
 
-.section-head h2,
+.section-head h3,
 .section-head p {
   margin: 0;
 }
 
-.section-head h2 {
-  font-size: 1.7rem;
+.section-head h3 {
+  font-size: 1.45rem;
+  color: #5f4b3a;
 }
 
 .section-head p {
   color: #8a7764;
-  line-height: 1.7;
+  line-height: 1.6;
+  max-width: 420px;
 }
 
 .settings-wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.settings-menu {
   position: relative;
 }
 
@@ -660,23 +741,28 @@ onMounted(async () => {
 
 .field label {
   font-weight: 800;
+  color: #5f4b3a;
 }
 
 .field input {
   width: 100%;
   min-width: 0;
   padding: 14px 16px;
-  border-radius: 18px;
-  border: 1px solid rgba(212, 163, 115, 0.24);
-  background: rgba(255, 255, 255, 0.94);
+  border-radius: 16px;
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  background: rgba(255, 255, 255, 0.95);
   color: #5f4b3a;
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+  transition: all 0.25s ease;
+  font-family: inherit;
 }
 
 .field input:focus {
-  border-color: #d4a373;
-  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
+  border-color: #D4A373;
+  box-shadow:
+    0 0 0 4px rgba(212, 163, 115, 0.15),
+    0 6px 12px rgba(212, 163, 115, 0.15);
   transform: translateY(-1px);
 }
 
@@ -701,7 +787,7 @@ onMounted(async () => {
 }
 
 .cita-card.muted {
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .cita-top {
@@ -711,9 +797,14 @@ onMounted(async () => {
   align-items: flex-start;
 }
 
-.cita-top h3,
+.cita-top h4,
 .cita-top p {
   margin: 0;
+}
+
+.cita-top h4 {
+  color: #5f4b3a;
+  font-size: 1.1rem;
 }
 
 .cita-top p {
@@ -743,6 +834,7 @@ onMounted(async () => {
   margin: 0;
   font-weight: 700;
   line-height: 1.5;
+  color: #5f4b3a;
 }
 
 .estado-pill {
@@ -777,44 +869,6 @@ onMounted(async () => {
   color: #355886;
 }
 
-.ghost-btn,
-.primary-btn {
-  border: none;
-  border-radius: 16px;
-  padding: 12px 18px;
-  font-weight: 900;
-  cursor: pointer;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-}
-
-.ghost-btn {
-  background: rgba(255, 255, 255, 0.72);
-  color: #5f4b3a;
-  box-shadow: 0 10px 22px rgba(92, 75, 59, 0.08);
-}
-
-.ghost-btn:hover,
-.primary-btn:hover {
-  transform: translateY(-2px);
-}
-
-.primary-btn {
-  background: #d4a373;
-  color: white;
-  box-shadow: 0 14px 28px rgba(212, 163, 115, 0.26);
-}
-
-.primary-btn.wide,
-.ghost-btn.wide {
-  width: 100%;
-}
-
-.primary-btn:disabled {
-  opacity: 0.7;
-  cursor: wait;
-  transform: none;
-}
-
 .alert,
 .empty-state {
   border-radius: 18px;
@@ -844,10 +898,14 @@ onMounted(async () => {
   background: rgba(250, 237, 205, 0.55);
 }
 
+.wide {
+  width: 100%;
+}
+
 @keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(22px);
   }
   to {
     opacity: 1;
@@ -855,16 +913,29 @@ onMounted(async () => {
   }
 }
 
-@media (max-width: 1120px) {
-  .layout,
-  .hero-card {
+@media (max-width: 1250px) {
+  .perfil-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .content-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .perfil-page {
     padding: 16px;
+  }
+
+  .perfil-content {
+    padding: 18px;
+  }
+
+  .hero-card,
+  .content-card {
+    padding: 18px;
+    border-radius: 22px;
   }
 
   .grid,
@@ -873,16 +944,17 @@ onMounted(async () => {
     grid-template-columns: 1fr;
   }
 
-  .cita-top,
   .top-actions,
   .summary-row,
-  .settings-wrap {
+  .cita-top,
+  .section-head {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .ghost-btn,
-  .primary-btn {
+  .back-btn,
+  .new-btn,
+  .ghost-btn {
     width: 100%;
   }
 
@@ -894,6 +966,10 @@ onMounted(async () => {
     position: static;
     width: 100%;
     margin-top: 10px;
+  }
+
+  .hero-copy h2 {
+    font-size: 1.5rem;
   }
 }
 </style>
