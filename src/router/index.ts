@@ -18,6 +18,7 @@ import AdminPersonalView from '@/views/AdminPersonalView.vue'
 import CitasRecepcionistaView from '@/views/CitasRecepcionistaView.vue'
 import PerfilClienteView from '@/views/PerfilClienteView.vue'
 import GaleriaView from '@/views/GaleriaView.vue'
+import ServiciosView from '@/views/ServiciosView.vue'
 
 
 
@@ -129,6 +130,11 @@ const router = createRouter({
       path: '/dashboard/cliente/galeria',
       name: 'galeria-cliente',
       component: GaleriaView,
+    },
+    {
+      path: '/dashboard/cliente/servicios',
+      name: 'servicios-cliente',
+      component: ServiciosView,
     }
 
 
