@@ -2,8 +2,10 @@
 import { computed, onMounted, ref } from 'vue'
 import { useAdminUserStore } from '../stores/adminUser'
 import { useAdminPersonalStore } from '@/stores/adminPersonal'
+import { useAdminHorarioStore } from '@/stores/adminHorario'
 import AdminUserForm from '@/components/AdminUserForm.vue'
 import AdminPersonalForm from '@/components/AdminPersonalForm.vue'
+import AdminHorarioForm from '@/components/AdminHorarioForm.vue'
 import type { AdminUserPayload, AdminUserUpdatePayload } from '@/types'
 
 type RegistroAdminPersonal = {
@@ -21,10 +23,12 @@ type RegistroAdminPersonal = {
 
 const adminUserStore = useAdminUserStore()
 const adminPersonalStore = useAdminPersonalStore()
+const adminHorarioStore = useAdminHorarioStore()
 
 const modalCrearAbierto = ref(false)
 const modalEditarAbierto = ref(false)
 const modalSeleccionEditarAbierto = ref(false)
+const modalHorarioAbierto = ref(false)
 const personalSeleccionado = ref<RegistroAdminPersonal | null>(null)
 const tipoEdicion = ref<'credenciales' | 'personal' | null>(null)
 const usuarioCreadoId = ref<number | null>(null)
@@ -82,6 +86,18 @@ function cerrarModalEditar() {
   modalEditarAbierto.value = false
   personalSeleccionado.value = null
   tipoEdicion.value = null
+}
+
+async function abrirModalHorario(registro: RegistroAdminPersonal) {
+  personalSeleccionado.value = registro
+  modalHorarioAbierto.value = true
+  adminHorarioStore.limpiarMensajes()
+  await adminHorarioStore.obtenerHorarios(registro.id)
+}
+
+function cerrarModalHorario() {
+  modalHorarioAbierto.value = false
+  adminHorarioStore.limpiarMensajes()
 }
 
 function abrirSeleccionEdicion(registro: RegistroAdminPersonal) {
@@ -165,6 +181,18 @@ async function guardarPersonalEditado(payload: { nombre: string; descripcion: st
     await cargarTodo()
   } catch (error) {
     console.error('Error al actualizar personal:', error)
+  }
+}
+
+async function guardarHorario(payload: { horarios: any[] }) {
+  if (!personalSeleccionado.value?.id) return
+
+  try {
+    await adminHorarioStore.guardarHorarios(personalSeleccionado.value.id, payload)
+    await adminPersonalStore.obtenerPersonales()
+    cerrarModalHorario()
+  } catch (error) {
+    console.error('Error al guardar horarios:', error)
   }
 }
 
@@ -296,6 +324,14 @@ onMounted(() => {
 
                         <button
                           type="button"
+                          class="table-btn schedule"
+                          @click="abrirModalHorario(registro)"
+                        >
+                          Asignar horario
+                        </button>
+
+                        <button
+                          type="button"
                           class="table-btn toggle"
                           @click="toggleUsuario(registro.user?.id)"
                         >
@@ -391,6 +427,41 @@ onMounted(() => {
             :cargando="adminPersonalStore.cargando"
             @submit="guardarNuevoPersonal"
             @cancel="cerrarModalCrear"
+          />
+        </div>
+      </div>
+    </transition>
+
+    <transition name="fade">
+      <div v-if="modalHorarioAbierto" class="modal-overlay" @click.self="cerrarModalHorario">
+        <div class="modal-card wide-card">
+          <div class="modal-header">
+            <div>
+              <h3>Asignar horario</h3>
+              <p>
+                Configura la semana laboral de
+                <strong>{{ personalSeleccionado?.nombre || 'este estilista' }}</strong>.
+              </p>
+            </div>
+
+            <button type="button" class="close-btn" @click="cerrarModalHorario">
+              âœ•
+            </button>
+          </div>
+
+          <div v-if="adminHorarioStore.error" class="mensaje-error">
+            {{ adminHorarioStore.error }}
+          </div>
+
+          <div v-if="adminHorarioStore.mensaje" class="mensaje-exito">
+            {{ adminHorarioStore.mensaje }}
+          </div>
+
+          <AdminHorarioForm
+            :model-value="adminHorarioStore.horarios"
+            :cargando="adminHorarioStore.cargando"
+            @submit="guardarHorario"
+            @cancel="cerrarModalHorario"
           />
         </div>
       </div>
@@ -726,9 +797,25 @@ onMounted(() => {
   color: #55653a;
 }
 
+.table-btn.schedule {
+  background: rgba(220, 232, 250, 0.9);
+  color: #355886;
+}
+
 .table-btn.danger {
   background: rgba(255, 226, 226, 0.95);
   color: #ae4d4d;
+}
+
+.mensaje-exito {
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease;
+  background: rgba(204, 213, 174, 0.38);
+  color: #436132;
+  border: 1px solid rgba(92, 75, 59, 0.08);
 }
 
 .loading-state,

@@ -212,6 +212,19 @@ export interface HorarioPersonal {
   activo: boolean
 }
 
+export interface AdminHorario {
+  id?: number
+  dia_semana: string
+  hora_inicio: string
+  hora_fin: string
+  activo: boolean
+  personal_id?: number
+}
+
+export interface AdminHorarioSemanaPayload {
+  horarios: AdminHorario[]
+}
+
 
 export interface PerfilCliente{
 email: string,
