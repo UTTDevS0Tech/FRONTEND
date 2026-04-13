@@ -50,7 +50,7 @@ export interface Cita {
     personal_id: number;
     hora_c: string;
     fecha_c: string;
-    estado: 'pendiente' | 'confirmada' | 'cancelada';
+    estado: 'pendiente' | 'confirmada' | 'cancelada' | 'completada';
     cliente_id?: number;
     detalle_cita: DetalleCita[];
 
@@ -236,4 +236,25 @@ nom: string,
 apellido_p: string,
 apellido_m: string,
 email: string,
+}
+
+export interface PerfilClienteCitaDetalle {
+  servicio_id: number
+  subtotal: number
+  servicio?: string
+}
+
+export interface PerfilClienteCita {
+  id: number
+  apartado?: number | string | null
+  total?: number | string | null
+  personal_id?: number | null
+  personal?: string
+  hora_c: string
+  hora_fin?: string | null
+  fecha_c: string
+  estado: 'pendiente' | 'confirmada' | 'cancelada' | 'completada'
+  cliente_id?: number | null
+  cliente?: string
+  detalles: PerfilClienteCitaDetalle[]
 }
