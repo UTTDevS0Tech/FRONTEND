@@ -19,6 +19,7 @@ import CitasRecepcionistaView from '@/views/CitasRecepcionistaView.vue'
 import PerfilClienteView from '@/views/PerfilClienteView.vue'
 import GaleriaView from '@/views/GaleriaView.vue'
 import ServiciosView from '@/views/ServiciosView.vue'
+import EstilistasView from '@/views/EstilistasView.vue'
 
 
 
@@ -135,6 +136,11 @@ const router = createRouter({
       path: '/dashboard/cliente/servicios',
       name: 'servicios-cliente',
       component: ServiciosView,
+    },
+    {
+      path: '/dashboard/cliente/estilistas',
+      name: 'estilistas-cliente',
+      component: EstilistasView,
     }
 
 
