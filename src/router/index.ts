@@ -145,7 +145,7 @@ const router = createRouter({
     {
     path: '/dashboard/estilista/citas',
     name: 'estilista-citas',
-   component: () => import('@/components/EstilistasCitasView.vue') 
+   component: () => import('@/views/EstilistasCitasView.vue') 
     }
 
 
