@@ -10,9 +10,7 @@ function cerrarSesion() {
   router.push('/login')
 }
 
-function irAgenda(){
-  router.push('/dashboard/estilista/citas')
-}
+
 
 function irCrearCitaEscritorio() {
   router.push({ name: 'dashboard/personal/cliente-cita' })
@@ -59,7 +57,7 @@ function irVerCitasPendientes() {
               <span>Registra nuevas citas para clientes directamente desde recepción.</span>
             </button>
 
-          <button class="action-card secondary" @click="irAgenda">
+          <button class="action-card secondary" @click="irVerCitasPendientes">
             <strong>Ver Citas Pendientes</strong>
             <span>Consulta las citas próximas y mantén el control de la agenda.</span>
           </button>
