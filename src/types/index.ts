@@ -117,6 +117,28 @@ export interface Servicio {
   created_at?: string
   updated_at?: string
 }
+/* 
+   "cita_id": 1,
+            "fecha_c": "2026-04-13",
+            "hora_c": "15:30:00",
+            "hora_fin": "17:00:00",
+            "estado": "pendiente",
+            "total": "720.00",
+            "nombre_cliente": "Juan",
+            "user_id": 5
+*/
+export interface EstilistaCita {
+  cita_id:number,
+  fecha_c: string,
+  hora_c: string,
+  hora_fin: string,
+  estado: string,
+  total: number,
+  nombre_cliente: string,
+  user_id?: number 
+
+}
+  
 
 export interface ApiResponse<T> {
   status: string

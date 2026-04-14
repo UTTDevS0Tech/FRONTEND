@@ -141,6 +141,11 @@ const router = createRouter({
       path: '/dashboard/cliente/estilistas',
       name: 'estilistas-cliente',
       component: EstilistasView,
+    },
+    {
+    path: '/dashboard/estilista/citas',
+    name: 'estilista-citas',
+   component: () => import('@/components/EstilistaCitas.vue') 
     }
 
 
