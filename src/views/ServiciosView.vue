@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useApiCliente } from '@/composables/useApiCliente'
 
+
+//tipo servicio (Apa)
 interface Servicio {
   id: number
   nombre: string
@@ -10,6 +12,8 @@ interface Servicio {
   updated_at: string | null
 }
 
+
+//tipo servicio hijo
 interface TipoServicio {
   id: number
   nombre: string
@@ -21,16 +25,28 @@ interface TipoServicio {
   servicio_id: number
 }
 
+
+//este ya es servicio + tipos
 interface ServicioConTipos extends Servicio {
   tipos: TipoServicio[]
 }
 
+
+//lista base
 const servicios = ref<Servicio[]>([])
+
+//lista de tipos
 const tiposServicio = ref<TipoServicio[]>([])
 
+
+//carga
 const cargando = ref(false)
+
+//error 
 const error = ref('')
 
+
+//trae servicios
 function obtenerServicios(callback?: () => void) {
   const { data, onFetchResponse, onFetchError } = useApiCliente('/servicios')
     .get()
@@ -38,16 +54,21 @@ function obtenerServicios(callback?: () => void) {
 
   onFetchResponse(() => {
     servicios.value = data.value?.data || []
+
+    //ejecuta callback si existe (para sincronizar)
     callback?.()
   })
 
   onFetchError((err) => {
     console.error('Error al obtener servicios:', err)
     error.value = 'No se pudieron cargar los servicios.'
+
     callback?.()
   })
 }
 
+
+//trae tipos de servicio
 function obtenerTiposServicio(callback?: () => void) {
   const { data, onFetchResponse, onFetchError } = useApiCliente('/tipo-servicios')
     .get()
@@ -55,40 +76,56 @@ function obtenerTiposServicio(callback?: () => void) {
 
   onFetchResponse(() => {
     tiposServicio.value = data.value?.data || []
+
     callback?.()
   })
 
   onFetchError((err) => {
     console.error('Error al obtener tipo-servicios:', err)
     error.value = 'No se pudieron cargar los detalles de los servicios.'
+
     callback?.()
   })
 }
 
+
+//arma los servicios con sus tipos
 const serviciosAgrupados = computed<ServicioConTipos[]>(() => {
   return servicios.value
+    //solo servicios activos
     .filter((servicio) => servicio.activo === 1)
+
+    //transformamos cada servicio
     .map((servicio) => ({
       ...servicio,
+
+      //le metemos sus tipos relacionados
       tipos: tiposServicio.value.filter(
-        (tipo) => tipo.servicio_id === servicio.id && tipo.activo === 1
+        (tipo) =>
+          tipo.servicio_id === servicio.id && tipo.activo === 1
       ),
     }))
 })
 
+
+//cuando carga el componente
 onMounted(() => {
   cargando.value = true
   error.value = ''
 
+  //contador pa saber cuándo terminaron ambas peticiones
   let completadas = 0
 
   const finalizarCarga = () => {
     completadas++
+
+    //cuando ya terminaron las 2 (servicios + tipos)
     if (completadas === 2) {
       cargando.value = false
     }
   }
 
+  //dispara ambas peticiones
   obtenerServicios(finalizarCarga)
   obtenerTiposServicio(finalizarCarga)
 })

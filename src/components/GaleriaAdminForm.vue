@@ -3,47 +3,72 @@ import { onMounted, ref } from 'vue'
 import { useApiGaleria } from '@/composables/useApiGaleria'
 import type { Galeria } from '@/types'
 
+
+//este es un tipo local pa categorías
 interface CategoriaGaleria {
   id: number
   nombre: string
 }
 
+
+//lista de imágenes de la galería
 const imagenes = ref<Galeria[]>([])
+
+//lista de categorías
 const categorias = ref<CategoriaGaleria[]>([])
 
+
+//banderas de carga (una pa cada cosa)
 const cargando = ref(false)
 const cargandoCategorias = ref(false)
 
+
+//mensajes pa usuario 
 const mensaje = ref('')
 const error = ref('')
 const mensajeCategoria = ref('')
 const errorCategoria = ref('')
 
-const titulo = ref('')
-const imagenArchivo = ref<File | null>(null)
-const categoriaId = ref('')
 
+//campos del formulario
+const titulo = ref('')
+const imagenArchivo = ref<File | null>(null) //aquí guardamos el archivo real
+const categoriaId = ref('') //id de la categoría seleccionada
+
+
+//para crear categoría nueva
 const nuevaCategoria = ref('')
 
+
+//control de edición
 const editando = ref(false)
 const idEditando = ref<number | null>(null)
 
+
+//control del modal de categorías
 const modalCategoriaAbierto = ref(false)
 
+
+//limpia el formulario principal
 function limpiarFormulario() {
   titulo.value = ''
   imagenArchivo.value = null
   categoriaId.value = ''
+
   editando.value = false
   idEditando.value = null
 
+  //esto limpia el input file manualmente (porque vue no lo hace solo alm)
   const input = document.getElementById('imagen') as HTMLInputElement | null
   if (input) input.value = ''
 }
 
+
+//limpia input de categoría
 function limpiarCategoria() {
   nuevaCategoria.value = ''
 }
+
 
 function abrirModalCategoria() {
   mensajeCategoria.value = ''
@@ -57,11 +82,17 @@ function cerrarModalCategoria() {
   limpiarCategoria()
 }
 
+
+//cuando el usuario selecciona una imagen
 function seleccionarImagen(event: Event) {
   const target = event.target as HTMLInputElement
+
+  //agarra el primer archivo
   imagenArchivo.value = target.files?.[0] || null
 }
 
+
+//trae las categorías de la API
 function obtenerCategorias() {
   cargandoCategorias.value = true
   mensajeCategoria.value = ''
@@ -72,6 +103,7 @@ function obtenerCategorias() {
     .json()
 
   onFetchResponse(() => {
+    //si hay la guarda
     if (data.value?.data) {
       categorias.value = data.value.data
     } else {
@@ -88,10 +120,13 @@ function obtenerCategorias() {
   })
 }
 
+
+//nueva categoría
 function crearCategoria() {
   mensajeCategoria.value = ''
   errorCategoria.value = ''
 
+  //validación
   if (!nuevaCategoria.value.trim()) {
     errorCategoria.value = 'El nombre de la categoría es obligatorio.'
     return
@@ -107,12 +142,18 @@ function crearCategoria() {
     mensajeCategoria.value = data.value?.message || 'Categoría creada correctamente.'
 
     const categoriaNueva = data.value?.data
+
+    //si el backend regresó la categoría nueva
     if (categoriaNueva?.id) {
+      //la metemos a la lista local sin volver a pedir todo
       categorias.value = [...categorias.value, categoriaNueva].sort((a, b) =>
         a.nombre.localeCompare(b.nombre)
       )
+
+      //la selecciona automáticamente
       categoriaId.value = String(categoriaNueva.id)
     } else {
+      //si no recarga todo
       obtenerCategorias()
     }
 
@@ -125,6 +166,8 @@ function crearCategoria() {
   })
 }
 
+
+//trae todas las imágenes
 function obtenerGaleria() {
   cargando.value = true
   mensaje.value = ''
@@ -137,11 +180,15 @@ function obtenerGaleria() {
   onFetchResponse(() => {
     console.log('Galería obtenida:', data.value)
 
+    //un "por si acaso" dependiendo de cómo venga APIc
     if (data.value?.data?.data) {
+      //x si es data data
       imagenes.value = data.value.data.data
     } else if (data.value?.data) {
+      //x si es solo data
       imagenes.value = data.value.data
     } else {
+      //asi nomas
       imagenes.value = []
     }
 
@@ -155,10 +202,13 @@ function obtenerGaleria() {
   })
 }
 
+
+//nueva imagen
 function crearImagen() {
   mensaje.value = ''
   error.value = ''
 
+  //validacion
   if (!titulo.value.trim()) {
     error.value = 'El título es obligatorio.'
     return
@@ -174,6 +224,7 @@ function crearImagen() {
     return
   }
 
+  //formData porque esta subiendo archivo
   const formData = new FormData()
   formData.append('titulo', titulo.value.trim())
   formData.append('categoria_id', categoriaId.value)
@@ -185,8 +236,10 @@ function crearImagen() {
 
   onFetchResponse(() => {
     console.log('Imagen creada:', data.value)
+
     mensaje.value = data.value?.message || 'Imagen subida correctamente.'
 
+    //si andamos dentro de un modal
     if (props.modoModal) {
       emit('cerrar-modal')
     }
@@ -194,26 +247,32 @@ function crearImagen() {
     limpiarFormulario()
     obtenerGaleria()
   })
-
+//si algo truena otra vez AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA YAAAAAAAAAAA
   onFetchError((err) => {
     console.error('Error al subir imagen:', err)
     error.value = data.value?.message || 'No se pudo subir la imagen.'
   })
 }
 
+
+//carga una imagen al form para editar
 function cargarParaEditar(imagen: Galeria) {
   titulo.value = imagen.titulo
-  imagenArchivo.value = null
+  imagenArchivo.value = null //ALV la imagen anterior 
   idEditando.value = imagen.id || null
   categoriaId.value = imagen.categoria_id ? String(imagen.categoria_id) : ''
+
   editando.value = true
   mensaje.value = ''
   error.value = ''
 
+  //limpia el input file 
   const input = document.getElementById('imagen') as HTMLInputElement | null
   if (input) input.value = ''
 }
 
+
+//actualiza imagen 
 function actualizarImagen() {
   mensaje.value = ''
   error.value = ''
@@ -222,6 +281,7 @@ function actualizarImagen() {
 
   const formData = new FormData()
 
+  //solo manda lo que cambie
   if (titulo.value.trim()) {
     formData.append('titulo', titulo.value.trim())
   }
@@ -234,6 +294,7 @@ function actualizarImagen() {
     formData.append('imagen', imagenArchivo.value)
   }
 
+  //hack d laravel pa PUT con formData porque no soporta PUT/PATCH directo con archivos
   formData.append('_method', 'PUT')
 
   const { data, onFetchResponse, onFetchError } = useApiGaleria(`/galeria/${idEditando.value}`)
@@ -242,6 +303,7 @@ function actualizarImagen() {
 
   onFetchResponse(() => {
     console.log('Imagen actualizada:', data.value)
+
     mensaje.value = data.value?.message || 'Imagen actualizada correctamente.'
 
     if (props.modoModal) {
@@ -258,6 +320,8 @@ function actualizarImagen() {
   })
 }
 
+
+//decide si crear o actualizar
 function guardar() {
   if (editando.value) {
     actualizarImagen()
@@ -266,6 +330,8 @@ function guardar() {
   }
 }
 
+
+//elimina imagen
 function eliminarImagen(id?: number) {
   if (!id) return
 
@@ -275,13 +341,16 @@ function eliminarImagen(id?: number) {
   mensaje.value = ''
   error.value = ''
 
+  //usa el endpoint de galería directo porque ahí está el delete, no en el de servicios
   const { data, onFetchResponse, onFetchError } = useApiGaleria(`/galeria/${id}`)
     .delete()
     .json()
 
   onFetchResponse(() => {
     console.log('Imagen eliminada:', data.value)
+
     mensaje.value = data.value?.message || 'Imagen eliminada correctamente.'
+
     obtenerGaleria()
   })
 
@@ -291,14 +360,19 @@ function eliminarImagen(id?: number) {
   })
 }
 
+
+//props (por si esto anda dentro de un modal)
 const props = defineProps<{
   modoModal?: boolean
 }>()
 
+//evento pa cerrar modal desde el papá porque no sabe quien lo abrio el wey
 const emit = defineEmits<{
   (e: 'cerrar-modal'): void
 }>()
 
+
+//cuando carga el componente, trae todo
 onMounted(() => {
   obtenerCategorias()
   obtenerGaleria()

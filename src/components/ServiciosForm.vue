@@ -4,59 +4,93 @@ import { useFetch } from '@vueuse/core'
 import { useApiFetchDiego } from '@/composables/useApi'
 import type { Servicio } from '@/types'
 
+
+//aquí guardamos la lista de servicios que vienen de la API
 const servicios = ref<Servicio[]>([])
+
+//bandera pa saber si está cargando (para loaders y evitar spam de clicks)
 const cargando = ref(false)
+
+//mensajitos bonitos de éxito
 const mensaje = ref('')
+
+//mensajitos feos de error 
 const error = ref('')
 
+
+//este es el formulario, reactivo gracias a ref
+//es lo que el usuario va llenando
 const formulario = ref<Servicio>({
   nombre: '',
   activo: true
 })
 
+
+//esto es para saber si estamos editando o creando
 const editando = ref(false)
+
+//guardamos el id del servicio que se está editando
 const idEditando = ref<number | null>(null)
+
+//controla si el modal está abierto o cerrado
 const modalAbierto = ref(false)
 
+
+//esto limpia el formulario, básicamente lo deja como nuevo
 function limpiarFormulario() {
   formulario.value = {
     nombre: '',
     activo: true
   }
+
+  //reiniciamos estado de edición
   editando.value = false
   idEditando.value = null
 }
 
+
+//abre el modal en modo "crear"
 function abrirModalNuevo() {
-  limpiarFormulario()
+  limpiarFormulario() //por si traía basura antes
   modalAbierto.value = true
 }
 
+
+//cierra el modal y limpia todo
 function cerrarModal() {
   modalAbierto.value = false
   limpiarFormulario()
 }
 
+
+//esto trae los servicios desde la API
 function obtenerServicios() {
   cargando.value = true
   error.value = ''
   mensaje.value = ''
 
+  //useFetch hace la petición GET
   const { data, onFetchResponse, onFetchError } = useFetch('https://api.carlosd-dev.me/api/servicios')
     .get()
     .json()
 
+  //cuando la respuesta llega bien
   onFetchResponse(() => {
     console.log('Servicios obtenidos:', data.value)
 
+    //checamos que sí haya data
     if (data.value) {
+      //guardamos la lista (ojo: viene dentro de data.data)
       servicios.value = data.value.data
+
+      //mensaje opcional del backend
       mensaje.value = data.value.message || ''
     }
 
     cargando.value = false
   })
 
+  //si algo truena (no porfa)
   onFetchError((err) => {
     console.error('Error al obtener servicios:', err)
     error.value = 'No se pudieron obtener los servicios.'
@@ -64,15 +98,19 @@ function obtenerServicios() {
   })
 }
 
+
+//esta función decide si crear o actualizar
 function guardarServicio() {
   error.value = ''
   mensaje.value = ''
 
+  //si estamos editando, nos vamos pa actualizar
   if (editando.value && idEditando.value) {
     actualizarServicio(idEditando.value)
     return
   }
 
+  //si no uno nuevo w
   const { data, onFetchResponse, onFetchError } = useApiFetchDiego('/servicios')
     .post(formulario.value)
     .json()
@@ -81,8 +119,9 @@ function guardarServicio() {
     console.log('Servicio creado:', data.value)
 
     mensaje.value = data.value?.message || 'Servicio creado correctamente.'
+
     cerrarModal()
-    obtenerServicios()
+    obtenerServicios() //recargamos lista
   })
 
   onFetchError((err) => {
@@ -91,19 +130,31 @@ function guardarServicio() {
   })
 }
 
+
+//esto carga un servicio al formulario para editarlo
 function cargarServicioParaEditar(servicio: Servicio) {
+  //copiamos los datos al formulario
   formulario.value = {
     nombre: servicio.nombre,
     activo: servicio.activo
   }
 
+  //guardamos el id que vamos a editar
   idEditando.value = servicio.id || null
+
+  //activamos modo edición
   editando.value = true
+
+  //limpiamos mensajes por si acaso
   mensaje.value = ''
   error.value = ''
+
+  //abrimos el modal ya con los datos cargados
   modalAbierto.value = true
 }
 
+
+//actualiza un servicio existente
 function actualizarServicio(id: number) {
   error.value = ''
   mensaje.value = ''
@@ -116,6 +167,7 @@ function actualizarServicio(id: number) {
     console.log('Servicio actualizado:', data.value)
 
     mensaje.value = data.value?.message || 'Servicio actualizado correctamente.'
+
     cerrarModal()
     obtenerServicios()
   })
@@ -126,9 +178,12 @@ function actualizarServicio(id: number) {
   })
 }
 
-function eliminarServicio(id?: number) {
-  if (!id) return
 
+//elimina un servicio (con confirmación pa no regarla)
+function eliminarServicio(id?: number) {
+  if (!id) return //por si llega undefined
+
+  //confirmación clásica jsjsjsj
   const confirmar = confirm('¿Seguro que deseas eliminar este servicio?')
   if (!confirmar) return
 
@@ -143,6 +198,7 @@ function eliminarServicio(id?: number) {
     console.log('Servicio eliminado:', data.value)
 
     mensaje.value = data.value?.message || 'Servicio eliminado correctamente.'
+
     obtenerServicios()
   })
 
@@ -152,12 +208,15 @@ function eliminarServicio(id?: number) {
   })
 }
 
+
+//esto cambia el estado activo/inactivo (toggle)
 function toggleServicio(id?: number) {
   if (!id) return
 
   error.value = ''
   mensaje.value = ''
 
+  //usamos PATCH porque solo cambiamos un campo (toggle)
   const { data, onFetchResponse, onFetchError } = useApiFetchDiego(`/servicios/${id}/toggle`)
     .patch({})
     .json()
@@ -166,6 +225,7 @@ function toggleServicio(id?: number) {
     console.log('Estado actualizado:', data.value)
 
     mensaje.value = data.value?.message || 'Estado del servicio actualizado correctamente.'
+
     obtenerServicios()
   })
 
@@ -175,6 +235,9 @@ function toggleServicio(id?: number) {
   })
 }
 
+
+//esto se ejecuta cuando el componente se monta
+//es como decir: "apenas cargue la vista, tráete los servicios"
 onMounted(() => {
   obtenerServicios()
 })

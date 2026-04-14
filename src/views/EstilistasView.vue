@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useApiCliente } from '@/composables/useApiCliente'
 
+
+//horario de estilista
 interface HorarioEstilista {
   dia: string
   inicio: string
@@ -9,6 +11,8 @@ interface HorarioEstilista {
   activo: boolean
 }
 
+
+// estilista
 interface Estilista {
   id: number
   nombre: string
@@ -17,70 +21,99 @@ interface Estilista {
   horarios: HorarioEstilista[]
 }
 
+
+//lista de estilistas
 const estilistas = ref<Estilista[]>([])
+
+//estado de carga
 const cargando = ref(false)
+
+//mensaje de error
 const error = ref('')
 
+
+//esto solo recorta la hora ej: 08:00:00 a 08:00 pq no sirven los seg 
 function formatearHora(hora: string) {
   return hora.slice(0, 5)
 }
 
+
+//filtra solo los horarios activos
 function obtenerHorariosActivos(horarios: HorarioEstilista[]) {
   return horarios.filter((horario) => horario.activo)
 }
 
+
+//resumen de disponibilidad
 function resumenDisponibilidad(horarios: HorarioEstilista[]) {
   const activos = obtenerHorariosActivos(horarios)
 
+  //si no hay horarios activos
   if (!activos.length) {
     return 'Sin horarios disponibles'
   }
 
+  //agarramos el primer horario de ref
   const primerHorario = activos[0]
-    if (!primerHorario) {
+
+  if (!primerHorario) {
     return 'Sin horarios disponibles'
-    }
-    
+  }
+
+  //checa si todos tienen el mismo horario
   const todosIguales = activos.every(
     (horario) =>
       horario.inicio === primerHorario.inicio &&
       horario.fin === primerHorario.fin
   )
 
+  //si smn da rango de horas y cantidad de días
   if (todosIguales) {
     return `${activos.length} días disponibles · ${formatearHora(primerHorario.inicio)} - ${formatearHora(primerHorario.fin)}`
   }
 
+  //si no solo mostramos cuántos días hay
   return `${activos.length} días disponibles`
 }
 
+
+//trae los estilistas desde la API
 function obtenerEstilistas() {
   const { data, onFetchResponse, onFetchError } = useApiCliente('/estilistas')
     .get()
     .json()
 
   onFetchResponse(() => {
+    //guarda lista
     estilistas.value = data.value?.data || []
+
     cargando.value = false
   })
 
   onFetchError((err) => {
     console.error('Error al obtener estilistas:', err)
     error.value = 'No se pudieron cargar los estilistas.'
+
     cargando.value = false
   })
 }
 
+
+//esto calcula el total de horarios activos de TOOOOOOOODOS los estilistas
 const totalHorariosActivos = computed(() =>
   estilistas.value.reduce(
-    (acc, estilista) => acc + obtenerHorariosActivos(estilista.horarios).length,
+    (acc, estilista) =>
+      acc + obtenerHorariosActivos(estilista.horarios).length,
     0
   )
 )
 
+
+//cuando carga el componente
 onMounted(() => {
   cargando.value = true
   error.value = ''
+
   obtenerEstilistas()
 })
 </script>

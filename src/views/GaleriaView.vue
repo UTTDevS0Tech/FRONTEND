@@ -2,6 +2,8 @@
 import { useApiGaleria } from '@/composables/useApiGaleria'
 import { onMounted, onUnmounted, ref } from 'vue'
 
+
+//tipo de imagen (lo que viene del backend)
 interface ImagenGaleria {
   id: number
   titulo: string
@@ -12,16 +14,26 @@ interface ImagenGaleria {
   updated_at?: string
 }
 
+
+//tipo de categoría con sus imágenes
 interface CategoriaGaleria {
   id: number
   nombre: string
   imagenes: ImagenGaleria[]
 }
 
+
+//aquí guarda todas las categorías con sus imágenes
 const categorias = ref<CategoriaGaleria[]>([])
+
+//estado de carga
 const cargando = ref(false)
+
+//mensaje de error
 const error = ref('')
 
+
+//trae la galería pública (lo que vería cliente)
 function obtenerGaleriaPublica() {
   cargando.value = true
   error.value = ''
@@ -31,7 +43,9 @@ function obtenerGaleriaPublica() {
     .json()
 
   onFetchResponse(() => {
+    //guardamos categorías (cada una ya trae sus imágenes)
     categorias.value = data.value?.data || []
+
     cargando.value = false
   })
 
@@ -42,16 +56,23 @@ function obtenerGaleriaPublica() {
   })
 }
 
+
+//obj q guarda referencias a los contenedores de scroll
+//ej{1: div, 2: div, 3: div}
 const categoriaRows = ref<Record<number, HTMLDivElement | null>>({})
 
+
+//esto guarda la referencia de cada fila de categoría
 function setCategoriaRef(id: number, el: HTMLDivElement | null) {
   categoriaRows.value[id] = el
 }
 
+
+//esto mueve el scroll horizontal de la cat
 function scrollCategoria(id: number, direccion: 'left' | 'right') {
   const contenedor = categoriaRows.value[id]
-  if (!contenedor) return
 
+  if (!contenedor) return
   const distancia = 260
 
   contenedor.scrollBy({
@@ -60,8 +81,12 @@ function scrollCategoria(id: number, direccion: 'left' | 'right') {
   })
 }
 
+
+//esto guarda la imagen selec
 const imagenSeleccionada = ref<ImagenGaleria | null>(null)
 
+
+//abre la imagen bn aca ya pro full resolution
 function abrirImagen(imagen: ImagenGaleria) {
   imagenSeleccionada.value = imagen
 }
@@ -70,18 +95,26 @@ function cerrarImagen() {
   imagenSeleccionada.value = null
 }
 
+
+//esto anda al tiro de las teclas del teclado
 function manejarTecla(event: KeyboardEvent) {
+  //si el usuario presiona ESC se chingo
   if (event.key === 'Escape') {
     cerrarImagen()
   }
 }
 
+
+//cuando carga el componente
 onMounted(() => {
   obtenerGaleriaPublica()
   window.addEventListener('keydown', manejarTecla)
 })
 
+
+//cuando se destruye el comp
 onUnmounted(() => {
+  // quita el event para no romper todo
   window.removeEventListener('keydown', manejarTecla)
 })
 </script>
