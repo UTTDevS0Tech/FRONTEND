@@ -9,7 +9,9 @@ function cerrarSesion() {
   authStore.logout()
   router.push('/login')
 }
-
+function irAgenda(){
+  router.push('/dashboard/estilista/citas')
+}
 </script>
 
 <template>
@@ -36,7 +38,7 @@ function cerrarSesion() {
   </div>
           <div class="right-header">
             <h2>Acciones disponibles</h2>
-           <button class="action-card">
+           <button class="action-card" @click="irAgenda">
               <strong>Ver Citas</strong>
               <span>Consulta las citas próximas.</span>
             </button>
