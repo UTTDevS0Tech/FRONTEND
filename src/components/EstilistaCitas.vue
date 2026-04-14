@@ -14,12 +14,13 @@ function claseEstado(estado: string) {
 </script>
 
 <template>
-  <div class="agenda-panel">
+  <div class="agenda-content-inner">
     <div class="detalles-header">
       <div>
         <h3>Mi Agenda de Trabajo</h3>
         <p>Revisa aquí las citas asignadas para tu jornada.</p>
       </div>
+
       <span>{{ store.citas.length }} citas programadas</span>
     </div>
 
@@ -46,8 +47,8 @@ function claseEstado(estado: string) {
         </div>
 
         <div class="cita-info">
-          <strong> {{ cita.hora_c }} - {{ cita.hora_fin }}</strong>
-          <p> {{ cita.fecha_c }}</p>
+          <strong>🕒 {{ cita.hora_c }} - {{ cita.hora_fin }}</strong>
+          <p>📅 {{ cita.fecha_c }}</p>
         </div>
 
         <div class="total-row mt-2">
@@ -64,7 +65,11 @@ function claseEstado(estado: string) {
 </template>
 
 <style scoped>
-.agenda-panel {
+:global(*) {
+  box-sizing: border-box;
+}
+
+.agenda-content-inner {
   display: grid;
   gap: 1rem;
 }
@@ -80,7 +85,7 @@ function claseEstado(estado: string) {
 .detalles-header h3 {
   margin: 0 0 0.35rem;
   color: #5f4b3a;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
 }
 
 .detalles-header p {
@@ -216,5 +221,12 @@ function claseEstado(estado: string) {
 
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+@media (max-width: 700px) {
+  .detalles-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 </style>

@@ -8,11 +8,11 @@ const router = useRouter()
 const store = usePersonalCitasStore()
 
 const totalPendientes = computed(() =>
-  store.citas.filter((cita) => cita.estado === 'pendiente').length
+  store.citas.filter((c) => c.estado === 'pendiente').length
 )
 
 const totalConfirmadas = computed(() =>
-  store.citas.filter((cita) => cita.estado === 'confirmada').length
+  store.citas.filter((c) => c.estado === 'confirmada').length
 )
 </script>
 
@@ -20,12 +20,13 @@ const totalConfirmadas = computed(() =>
   <main class="agenda-page">
     <section class="agenda-shell">
       <div class="agenda-layout">
+        
+        <!-- SIDEBAR -->
         <aside class="agenda-sidebar">
           <span class="panel-tag">Personal</span>
           <h1>Mi agenda</h1>
           <p>
-            Consulta tus citas programadas, organiza mejor tu jornada y revisa
-            rápidamente los horarios asignados.
+            Consulta tus citas programadas y organiza tu jornada fácilmente.
           </p>
 
           <div class="sidebar-stats">
@@ -36,20 +37,22 @@ const totalConfirmadas = computed(() =>
 
             <div class="stat-card">
               <strong>{{ totalPendientes }}</strong>
-              <span>Citas pendientes</span>
+              <span>Pendientes</span>
             </div>
 
             <div class="stat-card">
               <strong>{{ totalConfirmadas }}</strong>
-              <span>Citas confirmadas</span>
+              <span>Confirmadas</span>
             </div>
           </div>
         </aside>
 
-        <section class="agenda-content">
+        <!-- CONTENIDO -->
+        <section class="agenda-main">
+          
+          <!-- BOTÓN -->
           <div class="top-actions">
             <button
-              type="button"
               class="back-btn"
               @click="router.push('/dashboard/personal')"
             >
@@ -57,14 +60,17 @@ const totalConfirmadas = computed(() =>
             </button>
           </div>
 
+          <!-- HEADER -->
           <div class="page-header">
             <h2>Agenda de trabajo</h2>
-            <p>Visualiza las citas asignadas para tu día y su estado actual.</p>
+            <p>Visualiza tus citas asignadas y su estado.</p>
           </div>
 
+          <!-- CARD -->
           <div class="content-card">
-            <AgendaPersonalPanel />
+            <EstilistaCitas />
           </div>
+
         </section>
       </div>
     </section>
@@ -82,184 +88,91 @@ const totalConfirmadas = computed(() =>
   display: grid;
   place-items: center;
   padding: 22px;
-  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
+  background: linear-gradient(135deg, #fefae0, #faedcd, #e9edc9);
 }
 
 .agenda-shell {
-  width: min(1680px, 100%);
-  animation: pageEnter 0.8s ease;
+  width: min(1600px, 100%);
 }
 
 .agenda-layout {
   display: grid;
-  grid-template-columns: 270px 1fr;
-  min-height: 780px;
+  grid-template-columns: 260px 1fr;
   border-radius: 30px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
-  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.6);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
 }
 
+/* SIDEBAR */
 .agenda-sidebar {
-  padding: 34px 24px;
-  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  padding: 30px;
+  background: linear-gradient(#ccd5ae, #e9edc9);
 }
 
 .panel-tag {
-  display: inline-block;
-  width: fit-content;
-  margin-bottom: 24px;
-  padding: 10px 18px;
+  background: rgba(255,255,255,0.4);
+  padding: 8px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
-  color: #6d5844;
-  font-weight: 800;
-  font-size: 0.95rem;
+  font-weight: bold;
 }
 
 .agenda-sidebar h1 {
-  margin: 0 0 16px;
-  font-size: 2.3rem;
-  line-height: 1.05;
+  margin: 15px 0;
   color: #5f4b3a;
-}
-
-.agenda-sidebar p {
-  margin: 0 0 24px;
-  color: #7b6a58;
-  line-height: 1.7;
-  font-size: 0.95rem;
 }
 
 .sidebar-stats {
+  margin-top: 20px;
   display: grid;
-  gap: 18px;
-  margin-top: 12px;
+  gap: 15px;
 }
 
 .stat-card {
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+  background: rgba(255,255,255,0.5);
+  padding: 15px;
+  border-radius: 15px;
 }
 
 .stat-card strong {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 1.8rem;
-  color: #5f4b3a;
+  font-size: 1.5rem;
 }
 
-.stat-card span {
-  color: #7b6a58;
-  font-weight: 600;
-}
-
-.agenda-content {
-  padding: 24px 28px;
-  background: rgba(254, 250, 224, 0.88);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  overflow: hidden;
+/* MAIN */
+.agenda-main {
+  padding: 25px;
+  background: rgba(254,250,224,0.9);
 }
 
 .top-actions {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .back-btn {
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 0.95rem;
+  background: #ccd5ae;
   border: none;
+  padding: 10px 15px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
-  background: rgba(204, 213, 174, 0.55);
-  color: #5f4b3a;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
-}
-
-.back-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(204, 213, 174, 0.78);
-  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+  font-weight: bold;
 }
 
 .page-header h2 {
-  margin: 0 0 6px;
-  font-size: 1.8rem;
+  margin: 0;
   color: #5f4b3a;
 }
 
-.page-header p {
-  margin: 0;
-  color: #8a7764;
-  font-size: 0.95rem;
-}
-
 .content-card {
-  background: rgba(255, 255, 255, 0.62);
-  border-radius: 28px;
-  padding: 24px;
-  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
-  border: 1px solid rgba(236, 231, 216, 0.7);
-  min-height: 620px;
+  margin-top: 15px;
+  padding: 20px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.6);
 }
 
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 1250px) {
+/* RESPONSIVE */
+@media (max-width: 900px) {
   .agenda-layout {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .agenda-page {
-    padding: 16px;
-  }
-
-  .agenda-content {
-    padding: 18px;
-  }
-
-  .content-card {
-    padding: 18px;
-    border-radius: 22px;
-  }
-
-  .agenda-sidebar h1 {
-    font-size: 2rem;
-  }
-
-  .back-btn {
-    width: 100%;
-    justify-content: center;
   }
 }
 </style>
