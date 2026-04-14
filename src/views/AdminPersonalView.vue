@@ -184,18 +184,6 @@ async function guardarPersonalEditado(payload: { nombre: string; descripcion: st
   }
 }
 
-async function guardarHorario(payload: { horarios: any[] }) {
-  if (!personalSeleccionado.value?.id) return
-
-  try {
-    await adminHorarioStore.guardarHorarios(personalSeleccionado.value.id, payload)
-    await adminPersonalStore.obtenerPersonales()
-    cerrarModalHorario()
-  } catch (error) {
-    console.error('Error al guardar horarios:', error)
-  }
-}
-
 async function toggleUsuario(userId?: number) {
   if (!userId) return
 
@@ -327,7 +315,7 @@ onMounted(() => {
                           class="table-btn schedule"
                           @click="abrirModalHorario(registro)"
                         >
-                          Asignar horario
+                          Ver horario
                         </button>
 
                         <button
@@ -437,9 +425,9 @@ onMounted(() => {
         <div class="modal-card wide-card">
           <div class="modal-header">
             <div>
-              <h3>Asignar horario</h3>
+              <h3>Horario del estilista</h3>
               <p>
-                Configura la semana laboral de
+                Consulta el horario base de
                 <strong>{{ personalSeleccionado?.nombre || 'este estilista' }}</strong>.
               </p>
             </div>
@@ -452,15 +440,9 @@ onMounted(() => {
           <div v-if="adminHorarioStore.error" class="mensaje-error">
             {{ adminHorarioStore.error }}
           </div>
-
-          <div v-if="adminHorarioStore.mensaje" class="mensaje-exito">
-            {{ adminHorarioStore.mensaje }}
-          </div>
-
           <AdminHorarioForm
             :model-value="adminHorarioStore.horarios"
             :cargando="adminHorarioStore.cargando"
-            @submit="guardarHorario"
             @cancel="cerrarModalHorario"
           />
         </div>
@@ -805,17 +787,6 @@ onMounted(() => {
 .table-btn.danger {
   background: rgba(255, 226, 226, 0.95);
   color: #ae4d4d;
-}
-
-.mensaje-exito {
-  padding: 14px 18px;
-  margin-bottom: 14px;
-  border-radius: 16px;
-  font-weight: 700;
-  animation: fadeIn 0.3s ease;
-  background: rgba(204, 213, 174, 0.38);
-  color: #436132;
-  border: 1px solid rgba(92, 75, 59, 0.08);
 }
 
 .loading-state,

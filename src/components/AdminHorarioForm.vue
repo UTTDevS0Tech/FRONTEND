@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { computed } from 'vue'
 import type { AdminHorario } from '@/types'
 
 const props = defineProps<{
@@ -8,7 +8,6 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'submit', payload: { horarios: AdminHorario[] }): void
   (e: 'cancel'): void
 }>()
 
@@ -22,47 +21,18 @@ const diasSemana = [
   'Domingo',
 ]
 
-const horarios = reactive<AdminHorario[]>(
-  diasSemana.map((dia) => ({
-    dia_semana: dia,
-    hora_inicio: '09:00',
-    hora_fin: '18:00',
-    activo: dia !== 'Domingo',
-  }))
-)
+const horariosOrdenados = computed(() =>
+  diasSemana.map((dia) => {
+    const horario = props.modelValue?.find((item) => item.dia_semana === dia)
 
-function normalizarHora(valor?: string | null) {
-  return valor ? valor.slice(0, 5) : '09:00'
-}
-
-watch(
-  () => props.modelValue,
-  (valor) => {
-    diasSemana.forEach((dia, indice) => {
-      const horarioExistente = valor?.find((item) => item.dia_semana === dia)
-
-      horarios[indice] = {
-        id: horarioExistente?.id,
-        personal_id: horarioExistente?.personal_id,
-        dia_semana: dia,
-        hora_inicio: normalizarHora(horarioExistente?.hora_inicio) || '09:00',
-        hora_fin: normalizarHora(horarioExistente?.hora_fin) || '18:00',
-        activo: horarioExistente?.activo ?? dia !== 'Domingo',
-      }
-    })
-  },
-  { immediate: true }
-)
-
-function guardarHorarios() {
-  emit('submit', {
-    horarios: horarios.map((horario) => ({
-      ...horario,
-      hora_inicio: normalizarHora(horario.hora_inicio),
-      hora_fin: normalizarHora(horario.hora_fin),
-    })),
+    return {
+      dia_semana: dia,
+      hora_inicio: horario?.hora_inicio?.slice(0, 5) || '--:--',
+      hora_fin: horario?.hora_fin?.slice(0, 5) || '--:--',
+      activo: horario?.activo ?? false,
+    }
   })
-}
+)
 
 function cancelar() {
   emit('cancel')
@@ -73,49 +43,47 @@ function cancelar() {
   <div class="formulario-panel">
     <div class="form-intro">
       <span class="form-tag">Horario semanal</span>
-      <h4>Configura la disponibilidad del estilista</h4>
+      <h4>Horario registrado del estilista</h4>
       <p>
-        Activa solo los días que trabaja y define un rango de hora claro para
-        que la disponibilidad del sistema sea coherente.
+        Esta vista solo muestra el horario base guardado en la base de datos.
       </p>
     </div>
 
-    <form class="admin-form" @submit.prevent="guardarHorarios">
-      <div class="horarios-grid">
-        <div v-for="horario in horarios" :key="horario.dia_semana" class="horario-card">
-          <div class="horario-head">
-            <strong>{{ horario.dia_semana }}</strong>
+    <div v-if="cargando" class="loading-state">
+      <div class="loader"></div>
+      <p>Cargando horario...</p>
+    </div>
 
-            <label class="toggle-line">
-              <input v-model="horario.activo" type="checkbox" />
-              <span>{{ horario.activo ? 'Activo' : 'Descanso' }}</span>
-            </label>
-          </div>
+    <div v-else class="tabla-shell">
+      <table class="tabla-horario">
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="horario in horariosOrdenados" :key="horario.dia_semana">
+            <td>{{ horario.dia_semana }}</td>
+            <td>{{ horario.hora_inicio }}</td>
+            <td>{{ horario.hora_fin }}</td>
+            <td>
+              <span class="estado-pill" :class="horario.activo ? 'activo' : 'descanso'">
+                {{ horario.activo ? 'Activo' : 'Descanso' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <div class="horario-fields">
-            <div class="field">
-              <label>Inicio</label>
-              <input v-model="horario.hora_inicio" type="time" :disabled="!horario.activo" />
-            </div>
-
-            <div class="field">
-              <label>Fin</label>
-              <input v-model="horario.hora_fin" type="time" :disabled="!horario.activo" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="acciones-formulario">
-        <button type="submit" class="primary-btn" :disabled="cargando">
-          {{ cargando ? 'Guardando...' : 'Guardar horario' }}
-        </button>
-
-        <button type="button" class="secondary-btn" :disabled="cargando" @click="cancelar">
-          Cancelar
-        </button>
-      </div>
-    </form>
+    <div class="acciones-formulario">
+      <button type="button" class="secondary-btn" @click="cancelar">
+        Cerrar
+      </button>
+    </div>
   </div>
 </template>
 
@@ -162,97 +130,63 @@ function cancelar() {
   font-size: 0.95rem;
 }
 
-.admin-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.tabla-shell {
+  overflow-x: auto;
+  padding-bottom: 6px;
 }
 
-.horarios-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.horario-card {
-  display: grid;
-  gap: 14px;
-  padding: 18px;
-  border-radius: 22px;
+.tabla-horario {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
   background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(236, 231, 216, 0.9);
+  border-radius: 22px;
+  overflow: hidden;
   box-shadow: 0 12px 26px rgba(92, 75, 59, 0.06);
 }
 
-.horario-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: center;
-}
-
-.horario-head strong {
-  color: #5f4b3a;
-  font-size: 1rem;
-}
-
-.toggle-line {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #7b6a58;
-  font-weight: 700;
-}
-
-.horario-fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.field {
-  display: grid;
-  gap: 8px;
-}
-
-.field label {
-  color: #5f4b3a;
-  font-weight: 800;
-  font-size: 0.92rem;
-}
-
-input[type='time'] {
-  width: 100%;
+.tabla-horario th,
+.tabla-horario td {
   padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(212, 163, 115, 0.24);
-  background: rgba(255, 255, 255, 0.96);
+  text-align: left;
+  border-bottom: 1px solid rgba(92, 75, 59, 0.08);
   color: #5f4b3a;
-  font-size: 0.96rem;
-  outline: none;
-  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
-  font-family: inherit;
 }
 
-input[type='time']:focus {
-  border-color: #d4a373;
-  box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
-  transform: translateY(-1px);
+.tabla-horario th {
+  background: rgba(250, 237, 205, 0.58);
+  color: #6c5743;
+  font-size: 0.92rem;
+  font-weight: 900;
 }
 
-input[type='time']:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.tabla-horario tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.estado-pill {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.estado-pill.activo {
+  background: rgba(204, 213, 174, 0.45);
+  color: #536437;
+}
+
+.estado-pill.descanso {
+  background: rgba(255, 228, 228, 0.85);
+  color: #a14444;
 }
 
 .acciones-formulario {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 4px;
+  justify-content: flex-end;
 }
 
-.primary-btn,
 .secondary-btn {
   padding: 12px 18px;
   border: none;
@@ -260,43 +194,48 @@ input[type='time']:disabled {
   cursor: pointer;
   font-weight: 900;
   font-size: 0.95rem;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, #d4a373, #bf8c5a);
-  color: white;
-  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.24);
-}
-
-.secondary-btn {
   background: rgba(204, 213, 174, 0.58);
   color: #5f4b3a;
   box-shadow: 0 12px 24px rgba(179, 192, 136, 0.2);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
 }
 
-.primary-btn:hover:not(:disabled),
-.secondary-btn:hover:not(:disabled) {
+.secondary-btn:hover {
   transform: translateY(-2px);
 }
 
-.primary-btn:disabled,
-.secondary-btn:disabled {
-  opacity: 0.72;
-  cursor: not-allowed;
+.loading-state {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #7b6a58;
+  min-height: 180px;
+}
+
+.loader {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 4px solid rgba(212, 163, 115, 0.22);
+  border-top-color: #d4a373;
+  animation: spin 0.85s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 760px) {
-  .horarios-grid,
-  .horario-fields {
-    grid-template-columns: 1fr;
+  .tabla-horario {
+    min-width: 100%;
   }
 
   .acciones-formulario {
-    flex-direction: column;
+    justify-content: stretch;
   }
 
-  .primary-btn,
   .secondary-btn {
     width: 100%;
   }
