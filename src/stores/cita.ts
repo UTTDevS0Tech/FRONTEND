@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import type { Cita, DetalleCita, ServicioSeleccionado, DisponibilidadResponse} from '@/types'
 import { useApiFetchDiego } from '@/composables/useApi'
 import { watch } from 'vue'
+
 export const useCitaStore = defineStore('citas', () =>  {
 
 const horasDisponibles = ref<DisponibilidadResponse[]>([])
