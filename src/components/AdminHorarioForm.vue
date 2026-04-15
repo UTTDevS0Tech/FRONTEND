@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { AdminHorario } from '@/types'
-
+//son los datoos que el papá le pasa al hijo 
+//o sea el adminhorario puede recibir desde afuera lo q es modelValue y el cargando
 const props = defineProps<{
   modelValue?: AdminHorario[] | null
   cargando?: boolean
 }>()
-
+//este es el contrario de lo de arriba, el hijo le avisa algo al papá 
+//aquí  le está diciendo al papá de q: el usuario cancelo, haz algo tu q yo no sé q onda
 const emit = defineEmits<{
   (e: 'cancel'): void
 }>()
@@ -20,15 +22,22 @@ const diasSemana = [
   'Sábado',
   'Domingo',
 ]
-
+// aquí agarramos un valor calculado (el computed) para que se arme automáicamente a partir de otros datos 
+//y pues aquí estamos armando la lista de los horarios así bonito
 const horariosOrdenados = computed(() =>
+//recorre día por día
   diasSemana.map((dia) => {
+    //aquí busca en los horarios si existe uno pa ese día... busca en el props.modelValue el objeto cuyo día es igual
     const horario = props.modelValue?.find((item) => item.dia_semana === dia)
-
+//aquí construímos el objeto nuevo pal día 
     return {
+      //nombre del día
       dia_semana: dia,
+      //aquí está cortando el formato de la hora por una cosilla q tenemos en el back jaajja
       hora_inicio: horario?.hora_inicio?.slice(0, 5) || '--:--',
+      //lo mismo 
       hora_fin: horario?.hora_fin?.slice(0, 5) || '--:--',
+      //ps si existe el valor ponle el valor, si no, ponle false :3
       activo: horario?.activo ?? false,
     }
   })
