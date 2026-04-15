@@ -12,6 +12,7 @@ const modalTerminosAbierto = ref(false)
 
 const submitiarlacita = async () => {
   errorCita.value = ''
+  citaStore.limpiarMensajes()
 
   if (citaStore.nuevaCita.detalle_cita.length === 0) {
     errorCita.value = 'Selecciona al menos un servicio.'
@@ -30,11 +31,17 @@ const submitiarlacita = async () => {
     return
   }
 
+  if (citaStore.tipoMensaje === 'error' && citaStore.mensaje) {
+    errorCita.value = citaStore.mensaje
+    return
+  }
+
   errorCita.value = 'No se pudo realizar la cita. Intenta nuevamente.'
 }
 
 function irAMisCitas() {
   modalExitoAbierto.value = false
+  modalTerminosAbierto.value = false
   router.push('/dashboard/cliente')
 }
 
@@ -50,10 +57,17 @@ function cerrarTerminos() {
 </script>
 
 <template>
-  <div>
+  <div class="cita-form-wrap">
     <form class="cita-form" @submit.prevent="submitiarlacita">
       <div v-if="errorCita" class="mensaje-error">
         {{ errorCita }}
+      </div>
+
+      <div
+        v-else-if="citaStore.mensaje && citaStore.tipoMensaje === 'error'"
+        class="mensaje-error"
+      >
+        {{ citaStore.mensaje }}
       </div>
 
       <div class="grid">
@@ -162,22 +176,34 @@ function cerrarTerminos() {
     </form>
 
     <transition name="fade">
-      <div v-if="modalExitoAbierto" class="modal-overlay" @click.self="irAMisCitas">
+      <div
+        v-if="modalExitoAbierto"
+        class="modal-overlay"
+        @click.self="irAMisCitas"
+      >
         <div class="modal-card modal-card-small">
           <div class="modal-header centered">
             <div>
               <h3>Cita realizada</h3>
-              <p>¿Qué desea hacer?</p>
+              <p>¿Que desea hacer?</p>
             </div>
           </div>
 
           <div class="modal-actions vertical">
-            <button type="button" class="btn primary full-btn" @click="irAMisCitas">
+            <button
+              type="button"
+              class="btn primary full-btn"
+              @click="irAMisCitas"
+            >
               Ver mis citas pendientes
             </button>
 
-            <button type="button" class="btn secondary full-btn" @click="abrirTerminos">
-              Ver términos y condiciones
+            <button
+              type="button"
+              class="btn secondary full-btn"
+              @click="abrirTerminos"
+            >
+              Ver terminos y condiciones
             </button>
           </div>
         </div>
@@ -185,12 +211,16 @@ function cerrarTerminos() {
     </transition>
 
     <transition name="fade">
-      <div v-if="modalTerminosAbierto" class="modal-overlay" @click.self="cerrarTerminos">
+      <div
+        v-if="modalTerminosAbierto"
+        class="modal-overlay"
+        @click.self="cerrarTerminos"
+      >
         <div class="modal-card">
           <div class="modal-header">
             <div>
-              <h3>Términos y condiciones</h3>
-              <p>Lee esta información antes de continuar.</p>
+              <h3>Terminos y condiciones</h3>
+              <p>Lee esta informacion antes de continuar.</p>
             </div>
 
             <button type="button" class="close-btn" @click="cerrarTerminos">
@@ -201,31 +231,37 @@ function cerrarTerminos() {
           <div class="terminos-box">
             <p><strong>1. Política de pago</strong></p>
             <p>
-              Al realizar tu pago en línea, estás abonando el 20% del total de tus servicios
-              para apartar la fecha y hora de tu cita.
+              Al realizar tu pago en línea, estás abonando el 20% del total de tus
+              servicios para apartar la fecha y hora de tu cita.
             </p>
 
             <p><strong>2. Política de cancelación/reagendado</strong></p>
             <p>
-              Tienes hasta 12 horas antes de tu cita para realizar cualquier cancelación o cambio
-              de horario contactando a recepción del recinto. Pasado ese tiempo, el adelanto no será
-              reembolsable ni transferible.
+              Tienes hasta 12 horas antes de tu cita para realizar cualquier cancelación
+              o cambio de horario contactando a recepción del recinto. Pasado ese tiempo,
+              el adelanto no será reembolsable ni transferible.
             </p>
 
             <p>
-              Es de gran importancia que estés informad@ de que cuentas con 15 minutos de tolerancia
-              previos a la hora de tu cita. Cualquier cliente que no respete este plazo de tiempo no
-              se le proporcionará el servicio y su cita será cancelada automáticamente.
+              Es de gran importancia que estés informad@ de que cuentas con 15 minutos
+              de tolerancia previos a la hora de tu cita. Cualquier cliente que no
+              respete este plazo de tiempo no se le proporcionará el servicio y su cita
+              será cancelada automáticamente.
             </p>
 
             <p>
-              Tu tiempo es valioso, y el nuestro también. Esta política nos permite ofrecerte un mejor
-              servicio y respetar el espacio de todos nuestros clientes. Gracias por tu comprensión y confianza.
+              Tu tiempo es valioso, y el nuestro también. Esta política nos permite
+              ofrecerte un mejor servicio y respetar el espacio de todos nuestros
+              clientes. Gracias por tu comprensión y confianza
             </p>
           </div>
 
           <div class="modal-actions">
-            <button type="button" class="btn primary full-btn" @click="cerrarTerminos">
+            <button
+              type="button"
+              class="btn primary full-btn"
+              @click="cerrarTerminos"
+            >
               Cerrar
             </button>
           </div>
@@ -238,6 +274,10 @@ function cerrarTerminos() {
 <style scoped>
 :global(*) {
   box-sizing: border-box;
+}
+
+.cita-form-wrap {
+  display: grid;
 }
 
 .cita-form {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { computed, onMounted, ref } from 'vue'
-import type { Cita, DetalleCita, ServicioSeleccionado, DisponibilidadResponse} from '@/types'
+import { computed, ref } from 'vue'
+import type { Cita, DisponibilidadResponse } from '@/types'
 import { useApiFetchDiego } from '@/composables/useApi'
 import { watch } from 'vue'
 
@@ -8,6 +8,9 @@ export const useCitaStore = defineStore('citas', () =>  {
 
 const horasDisponibles = ref<DisponibilidadResponse[]>([])
 const cargarHoras = ref(false)
+const mensaje = ref('')
+const tipoMensaje = ref<'error' | 'success'>('error')
+
 //nos traermos del bakend a los servicios y al peronal por q tenemos que hacer la cita, acuerdense
 const {data:serviciosData, isFetching: cargandoServicios} = useApiFetchDiego('servicioss').get().json()
 const { data:personalData, isFetching: cargandoPersonal } = useApiFetchDiego('estilistas').get().json()
@@ -40,6 +43,11 @@ const limpiarCita = () => {
     }
 }
 
+const limpiarMensajes = () => {
+    mensaje.value = ''
+    tipoMensaje.value = 'error'
+}
+
 
 //despues de esto pa mi lo mas complicado, el "carrito" de servicios q basicamente es por q pues ya saben son varios
 
@@ -53,13 +61,17 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
     const servicioId = Number(servicio.id) //aqui lo convertimos a numero por q el id del servicio es un numero pero el valor que nos llega del select es un string, entonces lo convertimos a numero para que no haya problemas al compararlo
     const indice = lista.findIndex(item => item.tipo_servicio_id === servicioId)
 
- 
-    
+
+
     if(indice >-1) {
         lista.splice(indice, 1)
+        if (mensaje.value === 'Tienes un máximo de 3 servicios por cita') {
+            limpiarMensajes()
+        }
     } else {
         if(lista.length >= 3) {
-            alert('tienes un max ed 3 servicios por cita')
+            mensaje.value = 'Tienes un máximo de 3 servicios por cita'
+            tipoMensaje.value = 'error'
             return;
         }
 
@@ -68,12 +80,16 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
             precio_capturado: Number(servicio.precio),
          // el backend me va a traer el id real de la cita
         })
+
+        if (mensaje.value === 'Tienes un máximo de 3 servicios por cita') {
+            limpiarMensajes()
+        }
     }
 }
 //pal que se pregunte por q .reduce q qes eso, basicamente es como el mapp, te agarra una propiedad de un objeto y en ves de quedarsela en un array lo que hace es
 //eh coimpare de todos los valores que agarraste, sumamelos paro y asi jala, basicamente jalan igua la difernecia es q el map te los deja en el arrayt, el .reduce te los suma
-//y la suma si lo quieren ver asi es una variuab le temporal que se va a ir sumando dependiendo 
-// y el + NUmber es para converitr ejemplo "200" a 200   
+//y la suma si lo quieren ver asi es una variuab le temporal que se va a ir sumando dependiendo
+// y el + NUmber es para converitr ejemplo "200" a 200
  const totalCita = computed(() => {
         return nuevaCita.value.detalle_cita.reduce((suma, servicio)=> {
             return suma + Number(servicio.precio_capturado)
@@ -84,14 +100,17 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
 
 
     const enviarCita = async() => {
+        limpiarMensajes()
+
         nuevaCita.value.total = totalCita.value;
         nuevaCita.value.apartado = totalCita.value * 0.20;
-        
+
         const {data, error, response} = await useApiFetchDiego('citas').post(nuevaCita.value).json()
 
-        if(response.value?.ok &&!error.value) {
+        if(response.value?.ok && !error.value) {
             console.log("SI JALO FELICIDADES SI GUARDA", data.value)
-            alert('cita agendada con exito')
+            mensaje.value = 'Cita agendada con exito'
+            tipoMensaje.value = 'success'
             limpiarCita()
             return true;
 
@@ -100,7 +119,8 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
 
             const mensajeDelServiod = data.value?.message || 'Error al agendar la cita'
             console.log("ESTO ES EL ERROR", error.value)
-            alert("no se pudo agendar la cita" + mensajeDelServiod)
+            mensaje.value = 'No se pudo agendar la cita ' + mensajeDelServiod
+            tipoMensaje.value = 'error'
             return false;
         }
     }
@@ -109,9 +129,10 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
 
         if(nuevaCita.value.personal_id && nuevaCita.value.fecha_c) {
             obtenerDisponibilidad()
-            
+
         } else {
             horasDisponibles.value = [];
+            nuevaCita.value.hora_c = '';
 
         }
     });
@@ -133,19 +154,23 @@ console.log("ESTO ES EL ID DEL SERVICIO QUE ME LLEGA", servicio.id);
        } else {
         horasDisponibles.value = []
 console.log("ESTO ES EL ERROR AL OBTENER LA DISPONIBILIDAD", error.value)
+        mensaje.value = 'Error al cargar las horas disponibles'
+        tipoMensaje.value = 'error'
         cargarHoras.value = false;
 
        }
         } catch (error) {
             console.log("ESTO ES EL ERROR AL OBTENER LA DISPONIBILIDAD", error)
-            alert('Error al cargar las horas disponibles')
-                cargarHoras.value = false;
+            mensaje.value = 'Error al cargar las horas disponibles'
+            tipoMensaje.value = 'error'
+            cargarHoras.value = false;
         }
 
     }
 
     return {
         limpiarCita,
+        limpiarMensajes,
         serviciosData,
         personalData,
         cargandoServicios,
@@ -156,8 +181,9 @@ console.log("ESTO ES EL ERROR AL OBTENER LA DISPONIBILIDAD", error.value)
         enviarCita,
         horasDisponibles,
         obtenerDisponibilidad,
-        cargarHoras
+        cargarHoras,
+        mensaje,
+        tipoMensaje
     }
 
 })
-
