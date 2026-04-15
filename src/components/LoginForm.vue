@@ -9,6 +9,8 @@ import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const errorLogin = ref('')
+const loading = ref(false)
 
 const credenciales = ref<User>({
     email: '',
@@ -17,51 +19,53 @@ const credenciales = ref<User>({
 
 
 function login() {
-    const { data, onFetchResponse, onFetchError} = useFetch('https://api.carlosd-dev.me/api/login', {
+  errorLogin.value = ''
+  loading.value = true
+
+  const { data, onFetchResponse, onFetchError } = useFetch('https://api.carlosd-dev.me/api/login', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json' }
-    }).post(credenciales.value).json()
-      
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  }).post(credenciales.value).json()
 
-    onFetchResponse(() => {
-      const respuestadentrodedata = data.value.data
-      console.log('Respuesta recibida para ver si entro el token:', data.value)
-        if (data.value) {
-          //aqui como ya creamos nuetra variable q accede a la informacion data(del fetch) y luego la del trait pues ya accedemos a nuesta ingo
-            const token = respuestadentrodedata.token
-            const informacionUsuario = respuestadentrodedata.user
-            console.log("tengo el token? nomas pa probar al rato la borramos", token)
-            console.log("tengo el usuario? nomas pa probar al rato la borramos", informacionUsuario?.rol_id)
-            if (token ) {
-                authStore.setLogin(token) 
+  onFetchResponse(() => {
+    loading.value = false
 
-            } 
-            if (informacionUsuario) {
-                authStore.setUsuario(informacionUsuario)
+    // ⚠️ si backend manda error (ej: credenciales incorrectas)
+    if (!data.value || data.value.status === 'error') {
+      errorLogin.value = data.value?.message || 'Correo o contraseña incorrectos'
+      return
+    }
 
-                const sacamosroldeusuario = informacionUsuario.rol_id
+    const res = data.value.data
+    const token = res?.token
+    const usuario = res?.user
 
-                if (sacamosroldeusuario === 1) {
-                  router.push({ name: 'dashboard/estilista' })
-            } 
-            if(sacamosroldeusuario === 2){
-              router.push({name: 'dashboard/admin'})
+    if (!token) {
+      errorLogin.value = 'No se pudo iniciar sesión'
+      return
+    }
 
-            }
-            if(sacamosroldeusuario === 3) {
-              router.push({name: 'dashboard/cliente'})
-            }
-            if(sacamosroldeusuario === 4) {
-              router.push({name: 'dashboard/personal'})
-            }
+    authStore.setLogin(token)
 
+    if (usuario) {
+      authStore.setUsuario(usuario)
 
-            
-        }
-      }
-    })
+      const rol = usuario.rol_id
+
+      if (rol === 1) router.push({ name: 'dashboard/estilista' })
+      if (rol === 2) router.push({ name: 'dashboard/admin' })
+      if (rol === 3) router.push({ name: 'dashboard/cliente' })
+      if (rol === 4) router.push({ name: 'dashboard/personal' })
+    }
+  })
+
+  onFetchError(() => {
+    loading.value = false
+    errorLogin.value = 'Error de conexión con el servidor'
+  })
 }
 
 
@@ -137,7 +141,10 @@ function login() {
           <h2>Iniciar Sesión</h2>
           <p class="panel-subtitle">Accede con tu correo y contraseña</p>
 
-          <form class="login-form">
+          <div v-if="errorLogin" class="login-error">
+            {{ errorLogin }}
+          </div>
+          <form class="login-form" @submit.prevent="login">
             <div class="form-group">
               <label>Correo Electrónico</label>
               <input
@@ -156,8 +163,8 @@ function login() {
               />
             </div>
 
-            <button type="button" @click="login">
-              Entrar
+            <button type="submit" :disabled="loading">
+              {{ loading ? 'Entrando...' : 'Entrar' }}
             </button>
           </form>
         </div>
@@ -227,6 +234,16 @@ function login() {
     rgba(233, 237, 201, 0.78),
     rgba(212, 163, 115, 0.88)
   );
+}
+
+.login-error {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 228, 228, 0.95);
+  color: #a14444;
+  border: 1px solid rgba(161, 68, 68, 0.2);
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
 .hero-content {
