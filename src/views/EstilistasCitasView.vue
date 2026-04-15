@@ -7,12 +7,16 @@ import EstilistaCitas from '@/components/EstilistaCitas.vue'
 const router = useRouter()
 const store = usePersonalCitasStore()
 
+const totalCitas = computed(() =>
+  store.citasFuturas.length + store.citasPasadas.length
+)
+
 const totalPendientes = computed(() =>
-  store.citas.filter((c) => c.estado === 'pendiente').length
+  store.citasFuturas.filter((c) => c.estado === 'pendiente').length
 )
 
 const totalConfirmadas = computed(() =>
-  store.citas.filter((c) => c.estado === 'confirmada').length
+  store.citasFuturas.filter((c) => c.estado === 'confirmada').length
 )
 </script>
 
@@ -31,7 +35,7 @@ const totalConfirmadas = computed(() =>
 
           <div class="sidebar-stats">
             <div class="stat-card">
-              <strong>{{ store.citas.length }}</strong>
+              <strong>{{ totalCitas }}</strong>
               <span>Total de citas</span>
             </div>
 
