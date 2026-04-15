@@ -1,143 +1,238 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useCitaStore } from '@/stores/cita'
 import { useRouter } from 'vue-router'
-
-
-
 
 const citaStore = useCitaStore()
 const router = useRouter()
 
-
+const errorCita = ref('')
+const modalExitoAbierto = ref(false)
+const modalTerminosAbierto = ref(false)
 
 const submitiarlacita = async () => {
-    if(citaStore.nuevaCita.detalle_cita.length === 0) {
-        alert("seleccione al menos un servicio")
-        return
-    }
+  errorCita.value = ''
 
-    if(!citaStore.nuevaCita.personal_id || !citaStore.nuevaCita.fecha_c || !citaStore.nuevaCita.hora_c) {
-        alert("compare llename todos los campos")
-        return
-    }
+  if (citaStore.nuevaCita.detalle_cita.length === 0) {
+    errorCita.value = 'Selecciona al menos un servicio.'
+    return
+  }
 
-    const sisaliotodobien = await citaStore.enviarCita()
-    if(sisaliotodobien) {
-        alert("todo salio bien")//despues usare el router.pus(mis citas)
-        router.push('/dashboard/cliente')
-      }
+  if (!citaStore.nuevaCita.personal_id || !citaStore.nuevaCita.fecha_c || !citaStore.nuevaCita.hora_c) {
+    errorCita.value = 'Completa todos los campos antes de confirmar tu cita.'
+    return
+  }
 
+  const sisaliotodobien = await citaStore.enviarCita()
 
+  if (sisaliotodobien) {
+    modalExitoAbierto.value = true
+    return
+  }
+
+  errorCita.value = 'No se pudo realizar la cita. Intenta nuevamente.'
 }
 
+function irAMisCitas() {
+  modalExitoAbierto.value = false
+  router.push('/dashboard/cliente')
+}
+
+function abrirTerminos() {
+  modalExitoAbierto.value = false
+  modalTerminosAbierto.value = true
+}
+
+function cerrarTerminos() {
+  modalTerminosAbierto.value = false
+  router.push('/dashboard/cliente')
+}
 </script>
 
 <template>
-  <form class="cita-form" @submit.prevent="submitiarlacita">
-    <div class="grid">
-      <div class="field">
-        <label>Personal</label>
-        <select v-model="citaStore.nuevaCita.personal_id" required>
-          <option :value="null" disabled>Selecciona un estilista</option>
-          <option
-            v-for="p in citaStore.personalData?.data || []"
-            :key="p?.id"
-            :value="p?.id"
+  <div>
+    <form class="cita-form" @submit.prevent="submitiarlacita">
+      <div v-if="errorCita" class="mensaje-error">
+        {{ errorCita }}
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label>Personal</label>
+          <select v-model="citaStore.nuevaCita.personal_id" required>
+            <option :value="null" disabled>Selecciona un estilista</option>
+            <option
+              v-for="p in citaStore.personalData?.data || []"
+              :key="p?.id"
+              :value="p?.id"
+            >
+              {{ p?.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Fecha</label>
+          <input
+            v-model="citaStore.nuevaCita.fecha_c"
+            type="date"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="detalles">
+        <div class="detalles-header">
+          <h3>Horario disponible</h3>
+        </div>
+
+        <p class="helper-text">
+          Hora seleccionada:
+          <strong>{{ citaStore.nuevaCita.hora_c || 'Ninguna' }}</strong>
+        </p>
+
+        <div v-if="citaStore.cargarHoras" class="info-box">
+          Buscando horarios disponibles...
+        </div>
+
+        <div v-else-if="citaStore.horasDisponibles.length > 0" class="horas-grid">
+          <button
+            v-for="h in citaStore.horasDisponibles"
+            :key="h.hora"
+            type="button"
+            class="btn hora-btn"
+            :class="{ selected: citaStore.nuevaCita.hora_c === h.hora }"
+            @click="citaStore.nuevaCita.hora_c = h.hora"
           >
-            {{ p?.nombre }}
-          </option>
-        </select>
-      </div>
+            {{ h.formato_12h }}
+          </button>
+        </div>
 
-      <div class="field">
-        <label>Fecha</label>
-        <input
-          v-model="citaStore.nuevaCita.fecha_c"
-          type="date"
-          required
-        />
-      </div>
-    </div>
-
-    <div class="detalles">
-      <div class="detalles-header">
-        <h3>Horario disponible</h3>
-      </div>
-
-      <p class="helper-text">
-        Hora seleccionada:
-        <strong>{{ citaStore.nuevaCita.hora_c || 'Ninguna' }}</strong>
-      </p>
-
-      <div v-if="citaStore.cargarHoras" class="info-box">
-        Buscando horarios disponibles...
-      </div>
-
-      <div v-else-if="citaStore.horasDisponibles.length > 0" class="horas-grid">
-        <button
-          v-for="h in citaStore.horasDisponibles"
-          :key="h.hora"
-          type="button"
-          class="btn hora-btn"
-          :class="{ selected: citaStore.nuevaCita.hora_c === h.hora }"
-          @click="citaStore.nuevaCita.hora_c = h.hora"
+        <div
+          v-else-if="citaStore.nuevaCita.fecha_c && citaStore.nuevaCita.personal_id"
+          class="info-box"
         >
-          {{ h.formato_12h }}
-        </button>
+          No hay horarios disponibles para este día.
+        </div>
       </div>
 
-      <div
-        v-else-if="citaStore.nuevaCita.fecha_c && citaStore.nuevaCita.personal_id"
-        class="info-box"
+      <div class="detalles">
+        <div class="detalles-header">
+          <h3>Servicios</h3>
+          <span>Máximo 3 servicios</span>
+        </div>
+
+        <div v-if="citaStore.cargandoServicios" class="info-box">
+          Cargando servicios...
+        </div>
+
+        <div v-else class="servicios-grid">
+          <button
+            v-for="s in citaStore.serviciosData?.data || []"
+            :key="s?.id"
+            type="button"
+            class="servicio-card"
+            :class="{ selected: citaStore.nuevaCita.detalle_cita.some(item => item.tipo_servicio_id === s?.id) }"
+            @click="citaStore.gestionarServicio(s)"
+          >
+            <span class="servicio-nombre">{{ s?.nombre }}</span>
+            <strong class="servicio-precio">${{ s?.precio }}</strong>
+          </button>
+        </div>
+      </div>
+
+      <div class="total-box" v-if="citaStore.nuevaCita.detalle_cita.length > 0">
+        <div class="total-row">
+          <span>Total:</span>
+          <strong>${{ citaStore.totalCita }}</strong>
+        </div>
+        <div class="total-row anticipo">
+          <span>Anticipo (20%):</span>
+          <strong>${{ (citaStore.totalCita * 0.2).toFixed(2) }}</strong>
+        </div>
+      </div>
+
+      <button
+        v-if="citaStore.nuevaCita.detalle_cita.length > 0"
+        type="submit"
+        class="submit-btn"
       >
-        No hay horarios disponibles para este día.
-      </div>
-    </div>
+        Confirmar cita
+      </button>
+    </form>
 
-    <div class="detalles">
-      <div class="detalles-header">
-        <h3>Servicios</h3>
-        <span>Máximo 3 servicios</span>
-      </div>
+    <transition name="fade">
+      <div v-if="modalExitoAbierto" class="modal-overlay" @click.self="irAMisCitas">
+        <div class="modal-card modal-card-small">
+          <div class="modal-header centered">
+            <div>
+              <h3>Cita realizada</h3>
+              <p>¿Qué desea hacer?</p>
+            </div>
+          </div>
 
-      <div v-if="citaStore.cargandoServicios" class="info-box">
-        Cargando servicios...
-      </div>
+          <div class="modal-actions vertical">
+            <button type="button" class="btn primary full-btn" @click="irAMisCitas">
+              Ver mis citas pendientes
+            </button>
 
-      <div v-else class="servicios-grid">
-        <button
-          v-for="s in citaStore.serviciosData?.data || []"
-          :key="s?.id"
-          type="button"
-          class="servicio-card"
-          :class="{ selected: citaStore.nuevaCita.detalle_cita.some(item => item.tipo_servicio_id === s?.id) }"
-          @click="citaStore.gestionarServicio(s)"
-        >
-          <span class="servicio-nombre">{{ s?.nombre }}</span>
-          <strong class="servicio-precio">${{ s?.precio }}</strong>
-        </button>
+            <button type="button" class="btn secondary full-btn" @click="abrirTerminos">
+              Ver términos y condiciones
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </transition>
 
-    <div class="total-box" v-if="citaStore.nuevaCita.detalle_cita.length > 0">
-      <div class="total-row">
-        <span>Total:</span>
-        <strong>${{ citaStore.totalCita }}</strong>
-      </div>
-      <div class="total-row anticipo">
-        <span>Anticipo (20%):</span>
-        <strong>${{ (citaStore.totalCita * 0.2).toFixed(2) }}</strong>
-      </div>
-    </div>
+    <transition name="fade">
+      <div v-if="modalTerminosAbierto" class="modal-overlay" @click.self="cerrarTerminos">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div>
+              <h3>Términos y condiciones</h3>
+              <p>Lee esta información antes de continuar.</p>
+            </div>
 
-    <button
-      v-if="citaStore.nuevaCita.detalle_cita.length > 0"
-      type="submit"
-      class="submit-btn"
-    >
-      Confirmar cita
-    </button>
-  </form>
+            <button type="button" class="close-btn" @click="cerrarTerminos">
+              ✕
+            </button>
+          </div>
+
+          <div class="terminos-box">
+            <p><strong>1. Política de pago</strong></p>
+            <p>
+              Al realizar tu pago en línea, estás abonando el 20% del total de tus servicios
+              para apartar la fecha y hora de tu cita.
+            </p>
+
+            <p><strong>2. Política de cancelación/reagendado</strong></p>
+            <p>
+              Tienes hasta 12 horas antes de tu cita para realizar cualquier cancelación o cambio
+              de horario contactando a recepción del recinto. Pasado ese tiempo, el adelanto no será
+              reembolsable ni transferible.
+            </p>
+
+            <p>
+              Es de gran importancia que estés informad@ de que cuentas con 15 minutos de tolerancia
+              previos a la hora de tu cita. Cualquier cliente que no respete este plazo de tiempo no
+              se le proporcionará el servicio y su cita será cancelada automáticamente.
+            </p>
+
+            <p>
+              Tu tiempo es valioso, y el nuestro también. Esta política nos permite ofrecerte un mejor
+              servicio y respetar el espacio de todos nuestros clientes. Gracias por tu comprensión y confianza.
+            </p>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn primary full-btn" @click="cerrarTerminos">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <style scoped>
@@ -148,6 +243,15 @@ const submitiarlacita = async () => {
 .cita-form {
   display: grid;
   gap: 1rem;
+}
+
+.mensaje-error {
+  padding: 14px 18px;
+  border-radius: 16px;
+  font-weight: 700;
+  background: rgba(255, 228, 228, 0.9);
+  color: #a14444;
+  border: 1px solid rgba(161, 68, 68, 0.14);
 }
 
 .grid {
@@ -349,6 +453,137 @@ select:focus {
   box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(71, 58, 45, 0.35);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 200;
+}
+
+.modal-card {
+  width: min(760px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 28px;
+  background: rgba(254, 250, 224, 0.98);
+  box-shadow: 0 28px 60px rgba(92, 75, 59, 0.22);
+  padding: 24px;
+}
+
+.modal-card-small {
+  width: min(520px, 100%);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-header.centered {
+  justify-content: center;
+  text-align: center;
+}
+
+.modal-header h3 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+  color: #5f4b3a;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #8a7764;
+  font-size: 0.95rem;
+}
+
+.close-btn {
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: rgba(255, 226, 226, 0.95);
+  color: #a14444;
+}
+
+.close-btn:hover {
+  transform: translateY(-2px);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modal-actions.vertical {
+  flex-direction: column;
+}
+
+.full-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.btn.primary {
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #D4A373, #bf8c5a);
+  color: white;
+  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
+}
+
+.btn.secondary {
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #ccd5ae, #b8c493);
+  color: #5f4b3a;
+  box-shadow: 0 14px 24px rgba(179, 192, 136, 0.22);
+}
+
+.btn.secondary:hover {
+  transform: translateY(-2px);
+}
+
+.terminos-box {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(212, 163, 115, 0.16);
+  color: #5f4b3a;
+  line-height: 1.75;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.terminos-box p {
+  margin: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 @media (max-width: 900px) {
   .grid,
   .servicios-grid {
@@ -362,6 +597,14 @@ select:focus {
 
   .submit-btn {
     width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .modal-card,
+  .modal-card-small {
+    padding: 18px;
+    border-radius: 22px;
   }
 }
 </style>

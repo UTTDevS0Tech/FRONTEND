@@ -64,7 +64,7 @@ function login() {
 
   onFetchError(() => {
     loading.value = false
-    errorLogin.value = 'Error de conexión con el servidor'
+    errorLogin.value = 'Credenciales incorrectas o error de conexión'
   })
 }
 
