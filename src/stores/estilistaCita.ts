@@ -3,10 +3,6 @@ import { defineStore } from 'pinia'
 import type { EstilistaCita } from '@/types'
 import { useApiFetchDiego } from '@/composables/useApi'
 
-
-
-
-
 export const usePersonalCitasStore = defineStore('personalcitas', () => {
  const citas = ref<EstilistaCita[]>([])
  const mensajeError = ref('')

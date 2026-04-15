@@ -1,24 +1,30 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue'
 import type { AdminPersonal } from '@/types'
-
+//aqí recinbe datos del papá, que es el modelValue y el cargando
+//en el papá es: si el modelvalue viene vacío, está creando si vene un personal, ta editando
 const props = defineProps<{
   modelValue?: AdminPersonal | null
   cargando?: boolean
 }>()
-
+//el hijo le manda cosas al papá 
+//el submit que es el formulario que se le manda al papa  
+//avisa q ya cancelaron 
 const emit = defineEmits<{
   (e: 'submit', payload: { nombre: string; descripcion: string }): void
   (e: 'cancel'): void
 }>()
-
+//este es el formulario reactivo donde se van a guardar el nombre y descripción que se conecta con el v-model
 const formulario = reactive({
   nombre: '',
   descripcion: '',
 })
-
+//este calcula que el formulario este en modo edición o no 
+//si el props.modelvalue?.id existe entonces está editando, si no, está creando 
 const editando = computed(() => !!props.modelValue?.id)
-
+//bueno, este observa (vaya) el props.modelValue, cada vez que ese cambie esto se va a 
+//ejecutar y llenar el formulario, por ejemplo si se abre el modal de editar, va a cargar los datos del id ese
+//si el id viene null pues no pone nada
 watch(
   () => props.modelValue,
   (valor) => {
@@ -33,7 +39,7 @@ function limpiarFormulario() {
   formulario.descripcion = props.modelValue?.descripcion ?? ''
   emit('cancel')
 }
-
+//hace el submit al formulario del papá 
 function guardarPersonal() {
   emit('submit', {
     nombre: formulario.nombre.trim(),
