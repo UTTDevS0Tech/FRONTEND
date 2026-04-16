@@ -1,10 +1,24 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { Cita, DisponibilidadResponse } from '@/types'
+import { loadStripe } from '@stripe/stripe-js';
 import { useApiFetchDiego } from '@/composables/useApi'
 import { watch } from 'vue'
 
 export const useCitaStore = defineStore('citas', () =>  {
+
+    
+const obtenerStripeSecret = async () => {
+    const { data, error } = await useApiFetchDiego('create-payment-intent')
+        .post({ detalle_cita: nuevaCita.value.detalle_cita })
+        .json()
+
+    if (error.value) return null
+    return data.value // Esto trae el clientSecret y el total_a_pagar
+}
+
+
+
 
 const horasDisponibles = ref<DisponibilidadResponse[]>([])
 const cargarHoras = ref(false)
@@ -183,7 +197,8 @@ console.log("ESTO ES EL ERROR AL OBTENER LA DISPONIBILIDAD", error.value)
         obtenerDisponibilidad,
         cargarHoras,
         mensaje,
-        tipoMensaje
+        tipoMensaje,
+        obtenerStripeSecret 
     }
 
 })

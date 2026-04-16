@@ -16,6 +16,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^9.2.0",
     "@vueuse/core": "^14.2.1",
     "git": "^0.1.5",
     "main": "^1000.0.1",

@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useCitaStore } from '@/stores/cita'
 import { useRouter } from 'vue-router'
+import { loadStripe } from '@stripe/stripe-js'
+import { onMounted } from 'vue'
 
 const citaStore = useCitaStore()
 const router = useRouter()
@@ -9,35 +11,86 @@ const router = useRouter()
 const errorCita = ref('')
 const modalExitoAbierto = ref(false)
 const modalTerminosAbierto = ref(false)
+const stripe = ref<any>(null)
+const cardElement = ref<any>(null)
+const cargandoProceso = ref(false)
 
-const submitiarlacita = async () => {
+
+
+onMounted(async () => {
+  stripe.value = await loadStripe('pk_test_51TMc6UHlgZ3HN3OhXVyLgIFy58QNBiE2zEIIvke23OMpGKzZ9UXJPxYGncfUtNLGTZDUpLtw8WoYIHWxoFSBxuLi00tKRv6hFL')
+  const elements = stripe.value.elements()
+  
+  cardElement.value = elements.create('card', {
+    style: {
+      base: {
+        fontSize: '16px',
+        color: '#5f4b3a',
+        fontFamily: 'inherit',
+        '::placeholder': { color: '#aab7c4' },
+      }
+    }
+  })
+  cardElement.value.mount('#card-element')
+})
+
+const procesarPagoYConfirmar = async () => {
   errorCita.value = ''
-  citaStore.limpiarMensajes()
+  cargandoProceso.value = true
 
-  if (citaStore.nuevaCita.detalle_cita.length === 0) {
-    errorCita.value = 'Selecciona al menos un servicio.'
-    return
-  }
+if(citaStore.nuevaCita.detalle_cita.length === 0) {
+  errorCita.value = 'Selecciona al menos un servicio para continuar.'
+  cargandoProceso.value = false
+  return
 
-  if (!citaStore.nuevaCita.personal_id || !citaStore.nuevaCita.fecha_c || !citaStore.nuevaCita.hora_c) {
-    errorCita.value = 'Completa todos los campos antes de confirmar tu cita.'
-    return
-  }
 
-  const sisaliotodobien = await citaStore.enviarCita()
-
-  if (sisaliotodobien) {
-    modalExitoAbierto.value = true
-    return
-  }
-
-  if (citaStore.tipoMensaje === 'error' && citaStore.mensaje) {
-    errorCita.value = citaStore.mensaje
-    return
-  }
-
-  errorCita.value = 'No se pudo realizar la cita. Intenta nuevamente.'
 }
+
+if(!citaStore.nuevaCita.personal_id || !citaStore.nuevaCita.fecha_c || !citaStore.nuevaCita.hora_c) {
+  errorCita.value = 'Selecciona personal, fecha y hora para continuar.'
+  cargandoProceso.value = false
+  return
+}
+
+const datosPago = await citaStore.obtenerStripeSecret()
+
+
+if(!datosPago) {
+  errorCita.value = 'Error al iniciar el proceso de pago Intenta nuevamente.'
+  cargandoProceso.value = false
+  return
+}
+
+
+const {paymentIntent, error} = await stripe.value.confirmCardPayment(datosPago.clientSecret, {
+  payment_method: {
+card: cardElement.value,
+  }
+  })
+
+  if(error) {
+    errorCita.value = error.message || 'Error al procesar el pago. Intenta nuevamente.'
+    cargandoProceso.value = false
+    return
+  }
+  if(paymentIntent.status === 'succeeded'){
+    const sisaliotodobien = await citaStore.enviarCita()
+
+    if(sisaliotodobien) {
+      modalExitoAbierto.value = true
+    } else {
+      errorCita.value = 'error al confirmar la cita'
+    }
+  }
+
+  cargandoProceso.value = false
+
+
+
+}
+
+
+
 
 function irAMisCitas() {
   modalExitoAbierto.value = false
@@ -58,18 +111,8 @@ function cerrarTerminos() {
 
 <template>
   <div class="cita-form-wrap">
-    <form class="cita-form" @submit.prevent="submitiarlacita">
-      <div v-if="errorCita" class="mensaje-error">
-        {{ errorCita }}
-      </div>
-
-      <div
-        v-else-if="citaStore.mensaje && citaStore.tipoMensaje === 'error'"
-        class="mensaje-error"
-      >
-        {{ citaStore.mensaje }}
-      </div>
-
+    <form class="cita-form" @submit.prevent="procesarPagoYConfirmar">
+      
       <div class="grid">
         <div class="field">
           <label>Personal</label>
@@ -161,49 +204,49 @@ function cerrarTerminos() {
           <strong>${{ citaStore.totalCita }}</strong>
         </div>
         <div class="total-row anticipo">
-          <span>Anticipo (20%):</span>
+          <span>Anticipo a pagar (20%):</span>
           <strong>${{ (citaStore.totalCita * 0.2).toFixed(2) }}</strong>
         </div>
+
+        <div class="stripe-container-wrap">
+          <label class="pago-label">Datos de tarjeta bancaria</label>
+          <div id="card-element" class="stripe-input"></div>
+        </div>
+      </div>
+
+      <div v-if="errorCita" class="mensaje-error">
+        {{ errorCita }}
+      </div>
+      <div v-else-if="citaStore.mensaje && citaStore.tipoMensaje === 'error'" class="mensaje-error">
+        {{ citaStore.mensaje }}
       </div>
 
       <button
         v-if="citaStore.nuevaCita.detalle_cita.length > 0"
         type="submit"
         class="submit-btn"
+        :disabled="cargandoProceso"
       >
-        Confirmar cita
+        <span v-if="!cargandoProceso">Pagar Apartado y Confirmar Cita</span>
+        <span v-else>Procesando pago...</span>
       </button>
     </form>
 
     <transition name="fade">
-      <div
-        v-if="modalExitoAbierto"
-        class="modal-overlay"
-        @click.self="irAMisCitas"
-      >
+      <div v-if="modalExitoAbierto" class="modal-overlay" @click.self="irAMisCitas">
         <div class="modal-card modal-card-small">
           <div class="modal-header centered">
             <div>
-              <h3>Cita realizada</h3>
-              <p>¿Que desea hacer?</p>
+              <h3>¡Cita agendada con éxito!</h3>
+              <p>Tu pago ha sido procesado correctamente.</p>
             </div>
           </div>
-
           <div class="modal-actions vertical">
-            <button
-              type="button"
-              class="btn primary full-btn"
-              @click="irAMisCitas"
-            >
+            <button type="button" class="btn primary full-btn" @click="irAMisCitas">
               Ver mis citas pendientes
             </button>
-
-            <button
-              type="button"
-              class="btn secondary full-btn"
-              @click="abrirTerminos"
-            >
-              Ver terminos y condiciones
+            <button type="button" class="btn secondary full-btn" @click="abrirTerminos">
+              Ver términos y condiciones
             </button>
           </div>
         </div>
@@ -211,67 +254,55 @@ function cerrarTerminos() {
     </transition>
 
     <transition name="fade">
-      <div
-        v-if="modalTerminosAbierto"
-        class="modal-overlay"
-        @click.self="cerrarTerminos"
-      >
+      <div v-if="modalTerminosAbierto" class="modal-overlay" @click.self="cerrarTerminos">
         <div class="modal-card">
           <div class="modal-header">
             <div>
-              <h3>Terminos y condiciones</h3>
-              <p>Lee esta informacion antes de continuar.</p>
+              <h3>Términos y condiciones</h3>
+              <p>Lee esta información antes de continuar.</p>
             </div>
-
-            <button type="button" class="close-btn" @click="cerrarTerminos">
-              ✕
-            </button>
+            <button type="button" class="close-btn" @click="cerrarTerminos">✕</button>
           </div>
-
           <div class="terminos-box">
             <p><strong>1. Política de pago</strong></p>
-            <p>
-              Al realizar tu pago en línea, estás abonando el 20% del total de tus
-              servicios para apartar la fecha y hora de tu cita.
-            </p>
-
-            <p><strong>2. Política de cancelación/reagendado</strong></p>
-            <p>
-              Tienes hasta 12 horas antes de tu cita para realizar cualquier cancelación
-              o cambio de horario contactando a recepción del recinto. Pasado ese tiempo,
-              el adelanto no será reembolsable ni transferible.
-            </p>
-
-            <p>
-              Es de gran importancia que estés informad@ de que cuentas con 15 minutos
-              de tolerancia previos a la hora de tu cita. Cualquier cliente que no
-              respete este plazo de tiempo no se le proporcionará el servicio y su cita
-              será cancelada automáticamente.
-            </p>
-
-            <p>
-              Tu tiempo es valioso, y el nuestro también. Esta política nos permite
-              ofrecerte un mejor servicio y respetar el espacio de todos nuestros
-              clientes. Gracias por tu comprensión y confianza
-            </p>
+            <p>Al realizar tu pago en línea, estás abonando el 20% del total para apartar tu cita.</p>
+            <p><strong>2. Cancelación</strong></p>
+            <p>Tienes hasta 12 horas antes para cancelar. De lo contrario, el adelanto no es reembolsable.</p>
           </div>
-
           <div class="modal-actions">
-            <button
-              type="button"
-              class="btn primary full-btn"
-              @click="cerrarTerminos"
-            >
-              Cerrar
-            </button>
+            <button type="button" class="btn primary full-btn" @click="cerrarTerminos">Cerrar</button>
           </div>
         </div>
       </div>
     </transition>
   </div>
 </template>
-
 <style scoped>
+/* Agrega estos para que el cuadro de Stripe se vea bien integrado */
+.stripe-container-wrap {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 163, 115, 0.3);
+}
+
+.pago-label {
+  display: block;
+  color: #5f4b3a;
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.stripe-input {
+  padding: 10px 0;
+}
+
+/* El resto de tus estilos se mantienen igual... */
+
+
+
 :global(*) {
   box-sizing: border-box;
 }
