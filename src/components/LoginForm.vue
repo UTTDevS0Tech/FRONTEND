@@ -113,11 +113,11 @@ function login() {
 
 <template>
   <main class="login-page">
-    <div class="page-base"></div>
+    <div class="page-image"></div>
+    <div class="page-overlay"></div>
     <div class="page-grid"></div>
     <div class="page-glow glow-1"></div>
     <div class="page-glow glow-2"></div>
-    <div class="page-glow glow-3"></div>
 
     <section class="login-layout">
       <div class="login-hero">
@@ -149,8 +149,6 @@ function login() {
         <div class="hero-decor">
           <span class="shape shape-1"></span>
           <span class="shape shape-2"></span>
-          <span class="shape shape-3"></span>
-          <span class="shape shape-4"></span>
           <span class="line line-1"></span>
           <span class="line line-2"></span>
         </div>
@@ -211,63 +209,72 @@ function login() {
   width: 100%;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(135deg, #dce4bf 0%, #eef1d2 35%, #f9edd4 72%, #ddb78f 100%);
+  background: #ede6d7;
 }
 
-.page-base {
+.page-image {
+  position: absolute;
+  inset: 0;
+  background-image: url('@/assets/fondo-login.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.03);
+}
+
+.page-overlay {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.3), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.16), transparent 24%);
-  pointer-events: none;
+    linear-gradient(
+      90deg,
+      rgba(74, 58, 38, 0.34) 0%,
+      rgba(74, 58, 38, 0.18) 36%,
+      rgba(245, 239, 229, 0.74) 68%,
+      rgba(248, 243, 235, 0.9) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.14)
+    );
 }
 
 .page-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 36px 36px;
-  opacity: 0.28;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent 90%);
+  opacity: 0.22;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65), transparent 90%);
   pointer-events: none;
 }
 
 .page-glow {
   position: absolute;
   border-radius: 999px;
-  filter: blur(34px);
+  filter: blur(36px);
   pointer-events: none;
-  opacity: 0.8;
 }
 
 .glow-1 {
-  top: -60px;
-  left: -40px;
+  top: -70px;
+  left: -60px;
   width: 260px;
   height: 260px;
-  background: rgba(255, 255, 255, 0.28);
-  animation: floatBlob 13s ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.18);
+  animation: floatBlob 14s ease-in-out infinite;
 }
 
 .glow-2 {
-  right: -70px;
-  top: 18%;
-  width: 320px;
-  height: 320px;
-  background: rgba(250, 237, 205, 0.28);
-  animation: floatBlob 16s ease-in-out infinite reverse;
-}
-
-.glow-3 {
-  bottom: -90px;
-  left: 30%;
-  width: 320px;
-  height: 320px;
-  background: rgba(212, 163, 115, 0.18);
-  animation: floatBlob 18s ease-in-out infinite;
+  right: 10%;
+  bottom: -100px;
+  width: 300px;
+  height: 300px;
+  background: rgba(212, 163, 115, 0.14);
+  animation: floatBlob 18s ease-in-out infinite reverse;
 }
 
 .login-layout {
@@ -275,7 +282,7 @@ function login() {
   z-index: 1;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.7fr);
+  grid-template-columns: minmax(0, 1.75fr) minmax(320px, 0.65fr);
 }
 
 .login-hero {
@@ -285,15 +292,6 @@ function login() {
   justify-content: space-between;
   padding: 42px 52px 48px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 70% 85%, rgba(212, 163, 115, 0.22), transparent 30%),
-    linear-gradient(
-      145deg,
-      rgba(204, 213, 174, 0.82) 0%,
-      rgba(233, 237, 201, 0.58) 42%,
-      rgba(244, 220, 186, 0.28) 100%
-    );
-  border-right: 1px solid rgba(132, 111, 81, 0.08);
 }
 
 .hero-topbar {
@@ -320,13 +318,13 @@ function login() {
   margin-bottom: 20px;
   padding: 11px 18px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.3);
-  color: #7c5c41;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
   font-size: 0.95rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.02em;
   backdrop-filter: blur(10px);
-  box-shadow: 0 12px 28px rgba(130, 104, 74, 0.08);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
   animation: fadeUp 0.95s ease;
 }
 
@@ -336,31 +334,32 @@ function login() {
 
 .hero-kicker {
   margin: 0 0 14px;
-  color: #8a674a;
+  color: rgba(255, 255, 255, 0.88);
   font-size: 0.94rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .hero-content h1 {
   margin: 0;
-  color: #5f4635;
+  color: #ffffff;
   font-size: clamp(3.3rem, 6vw, 6rem);
   line-height: 0.98;
   font-weight: 900;
   letter-spacing: -0.04em;
   max-width: 620px;
   text-wrap: balance;
-  text-shadow: 0 14px 35px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
 }
 
 .hero-description {
   margin: 24px 0 0;
   max-width: 560px;
-  color: #705645;
+  color: rgba(255, 255, 255, 0.95);
   font-size: 1.08rem;
   line-height: 1.95;
+  text-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
 .hero-info-card {
@@ -369,10 +368,10 @@ function login() {
   max-width: 500px;
   padding: 22px 22px;
   border-radius: 28px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(16px);
-  box-shadow: 0 20px 44px rgba(117, 91, 62, 0.08);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.08);
   animation: fadeUp 1.05s ease;
 }
 
@@ -393,15 +392,15 @@ function login() {
   margin-bottom: 12px;
   padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.3);
-  color: #7b5a40;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
   font-size: 0.82rem;
   font-weight: 800;
 }
 
 .hero-info-card p {
   margin: 0;
-  color: #775d49;
+  color: rgba(255, 255, 255, 0.95);
   font-size: 0.98rem;
   line-height: 1.8;
 }
@@ -420,60 +419,41 @@ function login() {
 
 .shape {
   transform: rotate(-36deg);
-  opacity: 0.22;
+  opacity: 0.18;
 }
 
 .shape-1 {
-  left: 42px;
+  left: 40px;
   bottom: 56px;
-  width: 240px;
-  height: 72px;
-  background: #f8ebc8;
+  width: 220px;
+  height: 68px;
+  background: rgba(255, 255, 255, 0.3);
   animation: floatSoft 5.5s ease-in-out infinite;
 }
 
 .shape-2 {
-  left: 170px;
+  left: 180px;
   bottom: 130px;
   width: 180px;
-  height: 54px;
-  background: #fefae0;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.18);
   animation: floatSoft 7s ease-in-out infinite;
-}
-
-.shape-3 {
-  left: 330px;
-  bottom: 48px;
-  width: 250px;
-  height: 68px;
-  background: #e9edc9;
-  animation: floatSoft 6.4s ease-in-out infinite;
-}
-
-.shape-4 {
-  right: 64px;
-  top: 110px;
-  width: 120px;
-  height: 120px;
-  background: rgba(255, 255, 255, 0.14);
-  filter: blur(4px);
-  animation: pulseSoft 5s ease-in-out infinite;
 }
 
 .line {
   height: 8px;
-  background: rgba(170, 138, 102, 0.18);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .line-1 {
-  left: 76px;
-  bottom: 156px;
+  left: 78px;
+  bottom: 154px;
   width: 136px;
 }
 
 .line-2 {
-  left: 240px;
-  bottom: 98px;
+  left: 238px;
+  bottom: 100px;
   width: 112px;
 }
 
@@ -484,7 +464,8 @@ function login() {
   justify-content: center;
   padding: 40px 28px;
   background:
-    linear-gradient(180deg, rgba(253, 249, 232, 0.82) 0%, rgba(255, 250, 239, 0.8) 100%);
+    linear-gradient(180deg, rgba(253, 249, 232, 0.72) 0%, rgba(255, 250, 239, 0.78) 100%);
+  backdrop-filter: blur(10px);
 }
 
 .panel-overlay {
@@ -705,17 +686,6 @@ input:focus {
   }
 }
 
-@keyframes pulseSoft {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.2;
-  }
-  50% {
-    transform: scale(1.08);
-    opacity: 0.34;
-  }
-}
-
 @media (max-width: 1100px) {
   .login-layout {
     grid-template-columns: 1fr;
@@ -724,12 +694,11 @@ input:focus {
   .login-hero {
     padding: 32px 28px 24px;
     min-height: auto;
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   }
 
   .login-panel {
     padding: 34px 26px 42px;
+    background: rgba(255, 248, 239, 0.78);
   }
 
   .hero-content h1 {
@@ -800,14 +769,6 @@ input:focus {
     bottom: 86px;
   }
 
-  .shape-3 {
-    width: 150px;
-    height: 46px;
-    left: 180px;
-    bottom: 10px;
-  }
-
-  .shape-4,
   .line-1,
   .line-2 {
     display: none;
