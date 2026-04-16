@@ -202,7 +202,7 @@ onUnmounted(() => {
             <span class="section-tag">Agenda activa</span>
             <h2>Citas pendientes</h2>
           </div>
-          <p>Tus próximos espacios reservados y citas aún vigentes.</p>
+          <p>Recuerda: Si necesitas Reagendar o Cancelar debes contactar a nuestro local para hacerlo.</p>
         </div>
 
         <div v-if="perfilStore.loadingCitas" class="empty-state loading">
