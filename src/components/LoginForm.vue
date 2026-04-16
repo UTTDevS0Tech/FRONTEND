@@ -6,7 +6,7 @@ import { ref } from 'vue'
 import { useFetch } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
-
+//hola 
 const authStore = useAuthStore()
 const router = useRouter()
 const errorLogin = ref('')
