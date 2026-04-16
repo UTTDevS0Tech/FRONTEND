@@ -134,18 +134,6 @@ onMounted(() => {
           Descubre su estilo de trabajo y sus horarios disponibles.
         </p>
       </div>
-
-      <div class="hero-stats">
-        <article class="stat-card">
-          <strong>{{ estilistas.length }}</strong>
-          <span>Estilistas registrados</span>
-        </article>
-
-        <article class="stat-card">
-          <strong>{{ totalHorariosActivos }}</strong>
-          <span>Horarios activos en total</span>
-        </article>
-      </div>
     </section>
 
     <section class="content-area">
