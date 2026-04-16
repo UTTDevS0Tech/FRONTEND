@@ -32,7 +32,7 @@ const cargando = ref(false)
 const error = ref('')
 
 
-//esto solo recorta la hora ej: 08:00:00 a 08:00 pq no sirven los seg 
+//esto solo recorta la hora ej: 08:00:00 a 08:00 pq no sirven los seg
 function formatearHora(hora: string) {
   return hora.slice(0, 5)
 }
@@ -243,9 +243,10 @@ onMounted(() => {
   padding: 0;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at top left, rgba(233, 237, 201, 0.95), transparent 24%),
+    radial-gradient(circle at top left, rgba(204, 213, 174, 0.95), transparent 22%),
+    radial-gradient(circle at 85% 20%, rgba(233, 237, 201, 0.7), transparent 20%),
     radial-gradient(circle at bottom right, rgba(212, 163, 115, 0.18), transparent 22%),
-    linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
+    linear-gradient(145deg, #fefae0 0%, #f7f1de 42%, #e9edc9 100%);
   color: #5f4b3a;
 }
 
@@ -288,7 +289,7 @@ onMounted(() => {
   bottom: 120px;
   width: 320px;
   height: 320px;
-  background: rgba(204, 213, 174, 0.24);
+  background: rgba(204, 213, 174, 0.32);
 }
 
 .hero-strip {
@@ -351,6 +352,15 @@ onMounted(() => {
   backdrop-filter: blur(12px);
 }
 
+.stat-card:first-child {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.stat-card:last-child {
+  background: rgba(204, 213, 174, 0.34);
+  border: 1px solid rgba(169, 184, 130, 0.22);
+}
+
 .stat-card strong {
   display: block;
   margin-bottom: 8px;
@@ -393,16 +403,17 @@ onMounted(() => {
   font-weight: 800;
   font-size: 0.95rem;
   text-decoration: none;
-  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
-  background: rgba(204, 213, 174, 0.42);
-  color: #5f4b3a;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  background: rgba(204, 213, 174, 0.55);
+  color: #556246;
+  border: 1px solid rgba(169, 184, 130, 0.2);
   box-shadow: 0 10px 20px rgba(92, 75, 59, 0.06);
   backdrop-filter: blur(8px);
 }
 
 .back-btn:hover {
   transform: translateY(-2px);
-  background: rgba(204, 213, 174, 0.65);
+  background: rgba(204, 213, 174, 0.78);
   box-shadow: 0 14px 24px rgba(92, 75, 59, 0.1);
 }
 
@@ -496,8 +507,8 @@ onMounted(() => {
 
 .disponibilidad-texto {
   margin: 0;
-  color: #8a7764;
-  font-weight: 700;
+  color: #6d7d55;
+  font-weight: 800;
   font-size: 0.92rem;
 }
 
@@ -513,8 +524,8 @@ onMounted(() => {
   gap: 12px;
   padding: 16px;
   border-radius: 22px;
-  background: rgba(250, 237, 205, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(135deg, rgba(233, 237, 201, 0.34) 0%, rgba(250, 237, 205, 0.22) 100%);
+  border: 1px solid rgba(204, 213, 174, 0.24);
   backdrop-filter: blur(8px);
 }
 
@@ -536,13 +547,17 @@ onMounted(() => {
   gap: 12px;
   padding: 10px 12px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(204, 213, 174, 0.2);
   color: #5f4b3a;
 }
 
 .horario-item .dia {
   font-weight: 700;
+}
+
+.horario-item strong {
+  color: #5f6f4f;
 }
 
 .sin-horarios {
