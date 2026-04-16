@@ -198,21 +198,16 @@ function cerrarTerminos() {
         </div>
       </div>
 
-      <div class="total-box" v-if="citaStore.nuevaCita.detalle_cita.length > 0">
-        <div class="total-row">
-          <span>Total:</span>
-          <strong>${{ citaStore.totalCita }}</strong>
-        </div>
-        <div class="total-row anticipo">
-          <span>Anticipo a pagar (20%):</span>
-          <strong>${{ (citaStore.totalCita * 0.2).toFixed(2) }}</strong>
-        </div>
-
-        <div class="stripe-container-wrap">
-          <label class="pago-label">Datos de tarjeta bancaria</label>
-          <div id="card-element" class="stripe-input"></div>
-        </div>
-      </div>
+   <div class="total-box" v-show="citaStore.nuevaCita.detalle_cita.length > 0">
+  <div class="total-row">
+    <span>Total:</span>
+    <strong>${{ citaStore.totalCita }}</strong>
+  </div>
+  <div class="stripe-container-wrap">
+    <label class="pago-label">Datos de tarjeta bancaria</label>
+    <div id="card-element" class="stripe-input"></div>
+  </div>
+</div>
 
       <div v-if="errorCita" class="mensaje-error">
         {{ errorCita }}
