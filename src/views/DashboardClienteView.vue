@@ -160,6 +160,7 @@ onUnmounted(() => {
   <main class="client-home">
     <div class="page-glow glow-1"></div>
     <div class="page-glow glow-2"></div>
+    <div class="page-glow glow-3"></div>
     <div class="page-pattern"></div>
 
     <header class="top-nav">
@@ -188,7 +189,7 @@ onUnmounted(() => {
       </div>
 
       <div class="hero-content">
-        <span class="hero-badge">Bienvenida</span>
+        <span class="hero-badge">Bienvenid@</span>
         <h1>Tu espacio para relajarte, renovarte y verte increíble</h1>
         <p>
           Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
@@ -228,8 +229,6 @@ onUnmounted(() => {
             :key="`pendiente-${cita.id}`"
             class="cita-card"
           >
-            <div class="card-top-glow"></div>
-
             <div class="cita-top">
               <div>
                 <h3>Cita #{{ cita.id }}</h3>
@@ -269,10 +268,6 @@ onUnmounted(() => {
         <div class="section-head">
           <span>Nuestra Galería</span>
           <h2>Momentos y espacios</h2>
-          <p>
-            Explora un vistazo de nuestros ambientes, detalles y resultados
-            favoritos dentro de la experiencia Nova.
-          </p>
         </div>
 
         <div
@@ -292,7 +287,6 @@ onUnmounted(() => {
                   :key="`${indiceActual}-${imagen.src}`"
                   class="gallery-card"
                 >
-                  <div class="gallery-card-overlay"></div>
                   <img
                     :src="imagen.src"
                     :alt="imagen.alt"
@@ -326,17 +320,17 @@ onUnmounted(() => {
     </section>
 
     <footer class="about-bar">
-      <div class="footer-card">
+      <div>
         <h3>Sobre Nosotros</h3>
         <p>Un espacio dedicado al cuidado personal, la belleza y el bienestar.</p>
       </div>
 
-      <div class="footer-card">
+      <div>
         <h4>Dirección</h4>
         <p>*****************</p>
       </div>
 
-      <div class="footer-card">
+      <div>
         <h4>Contacto</h4>
         <p>Tel. 000 000 0000</p>
         <p>estetica@gmail.com</p>
@@ -350,7 +344,9 @@ onUnmounted(() => {
   position: relative;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, #fefae0 0%, #fcf5e8 36%, #f6edde 100%);
+    radial-gradient(circle at top left, rgba(233, 237, 201, 0.9), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(212, 163, 115, 0.18), transparent 24%),
+    linear-gradient(180deg, #fefae0 0%, #fbf5e9 46%, #f6edde 100%);
   color: #5f4b3a;
   overflow-x: hidden;
   animation: pageFade 0.8s ease;
@@ -380,14 +376,22 @@ onUnmounted(() => {
   background: rgba(204, 213, 174, 0.2);
 }
 
+.glow-3 {
+  left: 35%;
+  top: 920px;
+  width: 220px;
+  height: 220px;
+  background: rgba(250, 237, 205, 0.4);
+}
+
 .page-pattern {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
   background-size: 42px 42px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.12), transparent 60%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent 62%);
   pointer-events: none;
   z-index: 0;
 }
@@ -454,7 +458,7 @@ onUnmounted(() => {
   color: #a14444;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.1);
+  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.10);
   transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
@@ -560,19 +564,19 @@ onUnmounted(() => {
 .pending-section {
   position: relative;
   z-index: 1;
-  padding: 3.2rem 3rem 1.4rem;
+  padding: 3rem 3rem 1rem;
+  background: transparent;
 }
 
 .pending-shell {
   width: min(1480px, 100%);
   margin: 0 auto;
-  padding: 1.8rem;
-  border-radius: 30px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 250, 239, 0.78) 100%);
-  box-shadow: 0 20px 40px rgba(92, 75, 59, 0.08);
-  border: 1px solid rgba(236, 231, 216, 0.78);
-  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
 }
 
 .pending-head {
@@ -580,7 +584,7 @@ onUnmounted(() => {
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
-  margin-bottom: 1.3rem;
+  margin-bottom: 18px;
   flex-wrap: wrap;
 }
 
@@ -590,14 +594,14 @@ onUnmounted(() => {
 }
 
 .pending-head h2 {
-  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-size: 1.8rem;
   color: #5f4b3a;
 }
 
 .pending-head p {
   color: #8a7764;
-  line-height: 1.65;
-  max-width: 430px;
+  line-height: 1.6;
+  max-width: 420px;
 }
 
 .section-tag {
@@ -606,47 +610,35 @@ onUnmounted(() => {
   align-items: center;
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(212, 163, 115, 0.16);
+  background: rgba(212, 163, 115, 0.14);
   color: #8d633c;
   font-size: 0.82rem;
   font-weight: 800;
   margin-bottom: 10px;
+  backdrop-filter: blur(8px);
 }
 
 .cards-grid {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .cita-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 24px;
-  padding: 1.25rem;
-  background: linear-gradient(135deg, rgba(254, 250, 224, 0.92) 0%, rgba(255, 255, 255, 0.75) 100%);
-  border: 1px solid rgba(212, 163, 115, 0.16);
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   display: grid;
-  gap: 1rem;
-  box-shadow: 0 16px 28px rgba(92, 75, 59, 0.06);
+  gap: 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.05);
   transition: transform 0.26s ease, box-shadow 0.26s ease, border-color 0.26s ease;
 }
 
 .cita-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 22px 38px rgba(92, 75, 59, 0.1);
-  border-color: rgba(212, 163, 115, 0.28);
-}
-
-.card-top-glow {
-  position: absolute;
-  top: -38px;
-  right: -20px;
-  width: 120px;
-  height: 120px;
-  border-radius: 999px;
-  background: rgba(212, 163, 115, 0.12);
-  filter: blur(18px);
-  pointer-events: none;
+  transform: translateY(-4px);
+  box-shadow: 0 18px 30px rgba(92, 75, 59, 0.08);
+  border-color: rgba(212, 163, 115, 0.22);
 }
 
 .cita-top {
@@ -675,17 +667,17 @@ onUnmounted(() => {
 .cita-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
   margin: 0;
 }
 
 .cita-meta div {
   display: grid;
-  gap: 5px;
-  padding: 0.95rem 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.52);
-  border: 1px solid rgba(212, 163, 115, 0.08);
+  gap: 4px;
+  padding: 0.85rem 0.9rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .cita-meta dt {
@@ -695,7 +687,7 @@ onUnmounted(() => {
 
 .cita-meta dd {
   margin: 0;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.5;
   color: #5f4b3a;
 }
@@ -740,41 +732,43 @@ onUnmounted(() => {
 }
 
 .alert.error {
-  background: rgba(255, 228, 228, 0.95);
+  background: rgba(255, 228, 228, 0.86);
   color: #9d3e3e;
+  border: 1px solid rgba(161, 68, 68, 0.14);
 }
 
 .empty-state {
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.22);
   color: #7b6a58;
   border: 1px dashed rgba(212, 163, 115, 0.28);
+  backdrop-filter: blur(10px);
 }
 
 .empty-state.loading {
-  background: rgba(250, 237, 205, 0.55);
+  background: rgba(250, 237, 205, 0.34);
 }
 
 .gallery {
   position: relative;
   z-index: 1;
-  padding: 3.8rem 3rem 5rem;
+  padding: 4rem 3rem 5rem;
+  background: transparent;
 }
 
 .gallery-shell {
-  width: min(1520px, 100%);
+  width: min(1720px, 100%);
   margin: 0 auto;
-  padding: 2rem;
-  border-radius: 32px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.56) 0%, rgba(255, 249, 239, 0.7) 100%);
-  border: 1px solid rgba(236, 231, 216, 0.82);
-  box-shadow: 0 20px 40px rgba(92, 75, 59, 0.08);
-  backdrop-filter: blur(14px);
+  padding: 1.8rem;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.06);
 }
 
 .section-head {
   text-align: center;
-  margin-bottom: 2.4rem;
+  margin-bottom: 2.6rem;
 }
 
 .section-head span {
@@ -783,15 +777,8 @@ onUnmounted(() => {
 }
 
 .section-head h2 {
-  margin: 0.55rem 0 0.6rem;
-  font-size: clamp(2.1rem, 4vw, 3rem);
-}
-
-.section-head p {
-  max-width: 700px;
-  margin: 0 auto;
-  color: #8a7764;
-  line-height: 1.75;
+  margin: 0.55rem 0 0;
+  font-size: 2.6rem;
 }
 
 .carousel-shell {
@@ -800,7 +787,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .carousel-viewport {
@@ -812,32 +799,23 @@ onUnmounted(() => {
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 .gallery-card {
-  position: relative;
-  border-radius: 28px;
+  border-radius: 26px;
   overflow: hidden;
-  box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
-  background: #FAEDCD;
+  box-shadow: 0 16px 30px rgba(92, 75, 59, 0.10);
+  background: rgba(255, 255, 255, 0.14);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   aspect-ratio: 3 / 4;
   width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .gallery-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 26px 42px rgba(92, 75, 59, 0.18);
-}
-
-.gallery-card-overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to top, rgba(95, 75, 58, 0.14), transparent 55%);
-  z-index: 1;
-  pointer-events: none;
+  box-shadow: 0 26px 42px rgba(92, 75, 59, 0.14);
 }
 
 .gallery-card img {
@@ -854,23 +832,24 @@ onUnmounted(() => {
 }
 
 .carousel-btn {
-  width: 56px;
-  height: 56px;
+  width: 54px;
+  height: 54px;
   border: none;
   border-radius: 50%;
-  background: rgba(212, 163, 115, 0.16);
+  background: rgba(255, 255, 255, 0.22);
   color: #8d633c;
   font-size: 2rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.06);
   transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  backdrop-filter: blur(8px);
 }
 
 .carousel-btn:hover {
   transform: translateY(-2px);
-  background: rgba(212, 163, 115, 0.28);
-  box-shadow: 0 16px 24px rgba(92, 75, 59, 0.12);
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: 0 16px 24px rgba(92, 75, 59, 0.1);
 }
 
 .carousel-dots {
@@ -907,29 +886,24 @@ onUnmounted(() => {
   z-index: 1;
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
-  gap: 1rem;
+  gap: 2rem;
   padding: 2.6rem 3rem;
-  background: #CCD5AE;
+  background: transparent;
   color: #5f4b3a;
-}
-
-.footer-card {
-  padding: 1.2rem 1.15rem;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.24);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(212, 163, 115, 0.14);
 }
 
 .about-bar h3,
 .about-bar h4 {
   margin-top: 0;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.6rem;
+  font-weight: 800;
 }
 
 .about-bar p {
   margin: 0.35rem 0;
   line-height: 1.7;
+  color: #7d6855;
 }
 
 .slide-page-enter-active,
@@ -1020,10 +994,10 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
   }
 
-  .gallery-shell,
-  .pending-shell {
-    padding: 1.3rem;
-    border-radius: 24px;
+  .pending-shell,
+  .gallery-shell {
+    padding: 18px;
+    border-radius: 22px;
   }
 }
 
@@ -1038,8 +1012,8 @@ onUnmounted(() => {
 
   .pending-shell,
   .gallery-shell {
-    padding: 1rem;
-    border-radius: 22px;
+    padding: 16px;
+    border-radius: 20px;
   }
 
   .logout-btn {
