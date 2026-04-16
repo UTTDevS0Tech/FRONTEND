@@ -290,66 +290,6 @@ onMounted(async () => {
               <article class="content-card">
                 <div class="section-head compact">
                   <div>
-                    <span class="section-tag">Agenda activa</span>
-                    <h3>Citas pendientes</h3>
-                  </div>
-                  <p>Tus próximos espacios reservados y citas aún vigentes.</p>
-                </div>
-
-                <div v-if="perfilStore.loadingCitas" class="empty-state loading">
-                  Cargando tus citas...
-                </div>
-
-                <div v-else-if="perfilStore.errorCitas" class="alert error">
-                  {{ perfilStore.errorCitas }}
-                </div>
-
-                <div v-else-if="perfilStore.citasPendientes.length === 0" class="empty-state">
-                  No tienes citas pendientes por ahora.
-                </div>
-
-                <div v-else class="cards-grid">
-                  <article
-                    v-for="cita in perfilStore.citasPendientes"
-                    :key="`pendiente-${cita.id}`"
-                    class="cita-card"
-                  >
-                    <div class="cita-top">
-                      <div>
-                        <h4>Cita #{{ cita.id }}</h4>
-                        <p>{{ formatearFecha(cita.fecha_c) }}</p>
-                      </div>
-
-                      <span class="estado-pill" :class="claseEstado(cita.estado)">
-                        {{ cita.estado }}
-                      </span>
-                    </div>
-
-                    <dl class="cita-meta">
-                      <div>
-                        <dt>Horario</dt>
-                        <dd>{{ resumenHorario(cita) }}</dd>
-                      </div>
-                      <div>
-                        <dt>Estilista</dt>
-                        <dd>{{ cita.personal || 'Sin asignar' }}</dd>
-                      </div>
-                      <div>
-                        <dt>Servicios</dt>
-                        <dd>{{ serviciosTexto(cita) }}</dd>
-                      </div>
-                      <div>
-                        <dt>Total</dt>
-                        <dd>{{ totalTexto(cita) }}</dd>
-                      </div>
-                    </dl>
-                  </article>
-                </div>
-              </article>
-
-              <article class="content-card">
-                <div class="section-head compact">
-                  <div>
                     <span class="section-tag">Historial</span>
                     <h3>Citas pasadas</h3>
                   </div>

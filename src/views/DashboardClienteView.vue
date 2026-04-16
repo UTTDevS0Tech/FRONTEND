@@ -2,9 +2,12 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { usePerfilStore } from '@/stores/perfil'
+import type { PerfilClienteCita } from '@/types'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const perfilStore = usePerfilStore()
 
 function cerrarSesion() {
   authStore.logout()
@@ -75,8 +78,77 @@ function reanudarCarrusel() {
   }
 }
 
+function normalizarHora(valor?: string | null) {
+  return valor ? valor.slice(0, 5) : ''
+}
+
+function formatearFecha(valor: string) {
+  if (!valor) return 'Fecha pendiente'
+
+  const partes = valor.slice(0, 10).split('-')
+  const anio = Number(partes[0])
+  const mes = Number(partes[1])
+  const dia = Number(partes[2])
+
+  if (!anio || !mes || !dia) return valor
+
+  return new Intl.DateTimeFormat('es-MX', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(anio, mes - 1, dia))
+}
+
+function formatearHora(valor?: string | null) {
+  const horaNormalizada = normalizarHora(valor)
+
+  if (!horaNormalizada) return 'Por definir'
+
+  const partes = horaNormalizada.split(':')
+  const hora = Number(partes[0])
+  const minuto = Number(partes[1])
+
+  if (Number.isNaN(hora) || Number.isNaN(minuto)) return horaNormalizada
+
+  const fecha = new Date()
+  fecha.setHours(hora, minuto, 0, 0)
+
+  return new Intl.DateTimeFormat('es-MX', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(fecha)
+}
+
+function resumenHorario(cita: PerfilClienteCita) {
+  const inicio = formatearHora(cita.hora_c)
+  const fin = cita.hora_fin ? formatearHora(cita.hora_fin) : ''
+  return fin ? `${inicio} - ${fin}` : inicio
+}
+
+function serviciosTexto(cita: PerfilClienteCita) {
+  if (!cita.detalles?.length) return 'Sin servicios registrados'
+  return cita.detalles.map((detalle) => detalle.servicio || 'Servicio').join(', ')
+}
+
+function totalTexto(cita: PerfilClienteCita) {
+  if (cita.total === null || cita.total === undefined || cita.total === '') {
+    return 'Por definir'
+  }
+
+  const total = Number(cita.total)
+  if (Number.isNaN(total)) return String(cita.total)
+
+  return `$${total.toFixed(2)}`
+}
+
+function claseEstado(estado: PerfilClienteCita['estado']) {
+  return `estado-${estado}`
+}
+
 onMounted(() => {
   iniciarCarrusel()
+  perfilStore.obtenerMisCitas()
 })
 
 onUnmounted(() => {
@@ -123,6 +195,68 @@ onUnmounted(() => {
       </div>
     </section>
 
+    <section class="pending-section">
+      <div class="pending-shell">
+        <div class="pending-head">
+          <div>
+            <span class="section-tag">Agenda activa</span>
+            <h2>Citas pendientes</h2>
+          </div>
+          <p>Tus próximos espacios reservados y citas aún vigentes.</p>
+        </div>
+
+        <div v-if="perfilStore.loadingCitas" class="empty-state loading">
+          Cargando tus citas...
+        </div>
+
+        <div v-else-if="perfilStore.errorCitas" class="alert error">
+          {{ perfilStore.errorCitas }}
+        </div>
+
+        <div v-else-if="perfilStore.citasPendientes.length === 0" class="empty-state">
+          No tienes citas pendientes por ahora.
+        </div>
+
+        <div v-else class="cards-grid">
+          <article
+            v-for="cita in perfilStore.citasPendientes"
+            :key="`pendiente-${cita.id}`"
+            class="cita-card"
+          >
+            <div class="cita-top">
+              <div>
+                <h3>Cita #{{ cita.id }}</h3>
+                <p>{{ formatearFecha(cita.fecha_c) }}</p>
+              </div>
+
+              <span class="estado-pill" :class="claseEstado(cita.estado)">
+                {{ cita.estado }}
+              </span>
+            </div>
+
+            <dl class="cita-meta">
+              <div>
+                <dt>Horario</dt>
+                <dd>{{ resumenHorario(cita) }}</dd>
+              </div>
+              <div>
+                <dt>Estilista</dt>
+                <dd>{{ cita.personal || 'Sin asignar' }}</dd>
+              </div>
+              <div>
+                <dt>Servicios</dt>
+                <dd>{{ serviciosTexto(cita) }}</dd>
+              </div>
+              <div>
+                <dt>Total</dt>
+                <dd>{{ totalTexto(cita) }}</dd>
+              </div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="gallery">
       <div class="section-head">
         <span>Nuestra Galería</span>
@@ -147,9 +281,9 @@ onUnmounted(() => {
                 class="gallery-card"
               >
                 <img
-                :src="imagen.src"
-                :alt="imagen.alt"
-                :style="{ objectPosition: imagen.position }"
+                  :src="imagen.src"
+                  :alt="imagen.alt"
+                  :style="{ objectPosition: imagen.position }"
                 />
               </div>
             </div>
@@ -170,6 +304,7 @@ onUnmounted(() => {
           @click="irAPagina(index)"
         ></button>
       </div>
+
       <button class="hero-btn" @click="router.push('/dashboard/cliente/galeria')">
         Ver galería completa
       </button>
@@ -334,8 +469,176 @@ onUnmounted(() => {
   box-shadow: 0 22px 36px rgba(212, 163, 115, 0.34);
 }
 
+.pending-section {
+  padding: 3rem 3rem 1rem;
+  background: #FEFAE0;
+}
+
+.pending-shell {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.7);
+}
+
+.pending-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.pending-head h2,
+.pending-head p {
+  margin: 0;
+}
+
+.pending-head h2 {
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.pending-head p {
+  color: #8a7764;
+  line-height: 1.6;
+  max-width: 420px;
+}
+
+.section-tag {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.16);
+  color: #8d633c;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.cards-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.cita-card {
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(254, 250, 224, 0.7);
+  border: 1px solid rgba(212, 163, 115, 0.18);
+  display: grid;
+  gap: 14px;
+}
+
+.cita-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.cita-top h3,
+.cita-top p {
+  margin: 0;
+}
+
+.cita-top h3 {
+  color: #5f4b3a;
+  font-size: 1.1rem;
+}
+
+.cita-top p {
+  margin-top: 4px;
+  color: #8a7764;
+  text-transform: capitalize;
+}
+
+.cita-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.cita-meta div {
+  display: grid;
+  gap: 4px;
+}
+
+.cita-meta dt {
+  color: #8a7764;
+  font-weight: 700;
+}
+
+.cita-meta dd {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #5f4b3a;
+}
+
+.estado-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  font-size: 0.88rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.estado-pendiente {
+  background: rgba(250, 237, 205, 0.95);
+  color: #8d633c;
+}
+
+.estado-confirmada {
+  background: rgba(204, 213, 174, 0.95);
+  color: #48623b;
+}
+
+.estado-cancelada {
+  background: rgba(255, 228, 228, 0.92);
+  color: #9d3e3e;
+}
+
+.estado-completada {
+  background: rgba(220, 232, 250, 0.92);
+  color: #355886;
+}
+
+.alert,
+.empty-state {
+  border-radius: 18px;
+  padding: 14px 16px;
+  font-weight: 700;
+}
+
+.alert.error {
+  background: rgba(255, 228, 228, 0.95);
+  color: #9d3e3e;
+}
+
+.empty-state {
+  background: rgba(255, 255, 255, 0.68);
+  color: #7b6a58;
+  border: 1px dashed rgba(212, 163, 115, 0.28);
+}
+
+.empty-state.loading {
+  background: rgba(250, 237, 205, 0.55);
+}
+
 .gallery {
-  padding: 5rem 3rem;
+  padding: 4rem 3rem 5rem;
   background: #FEFAE0;
 }
 
@@ -525,6 +828,66 @@ onUnmounted(() => {
   }
   to {
     transform: scale(1.08);
+  }
+}
+
+@media (max-width: 900px) {
+  .top-nav {
+    padding: 1rem 1.2rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    justify-content: center;
+  }
+
+  .pending-section,
+  .gallery,
+  .about-bar {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  .pending-head,
+  .cita-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cita-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-btn {
+    display: none;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .about-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-content h1 {
+    font-size: 2.4rem;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pending-shell {
+    padding: 18px;
+    border-radius: 22px;
   }
 }
 </style>
