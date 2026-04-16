@@ -129,15 +129,13 @@ function login() {
           <div class="hero-badge">Belleza & Bienestar</div>
 
           <div class="hero-content">
-            <p class="hero-kicker">TU ESPACIO DE CUIDADO PERSONAL</p>
-            <h1>Bienvenido a tu espacio</h1>
+            <h1>Bienvenid@ a tu espacio</h1>
             <p class="hero-description">
               Estética Nova es tu refugio de cuidado personal. Inicia sesión para descubrir un mundo de servicios diseñados para realzar tu belleza y bienestar.
             </p>
           </div>
 
           <div class="hero-info-card">
-            <span class="hero-info-label">Experiencia Nova</span>
             <p>
               Accede a tus citas, consulta tus servicios y mantén todo
               organizado desde una experiencia visual más cómoda, clara
@@ -160,7 +158,6 @@ function login() {
 
         <div class="panel-content">
           <div class="panel-header">
-            <span class="panel-tag">Acceso</span>
             <h2>Iniciar Sesión</h2>
             <p class="panel-subtitle">Accede con tu correo y contraseña</p>
           </div>
