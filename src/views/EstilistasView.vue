@@ -120,95 +120,112 @@ onMounted(() => {
 
 <template>
   <main class="estilistas-page">
-    <section class="estilistas-shell">
-      <div class="estilistas-layout">
-        <aside class="estilistas-sidebar">
-          <span class="panel-tag">Cliente</span>
-          <h1>Estilistas</h1>
-          <p>
-            Conoce al equipo que hará de tu visita una experiencia especial.
-            Descubre su estilo de trabajo y sus horarios disponibles.
-          </p>
-        </aside>
+    <div class="page-gradient"></div>
+    <div class="page-pattern"></div>
+    <div class="page-glow glow-1"></div>
+    <div class="page-glow glow-2"></div>
 
-        <section class="estilistas-content">
-          <div class="top-actions">
-            <router-link to="/dashboard/cliente" class="back-btn">
-              ← Volver a la página principal
-            </router-link>
+    <section class="hero-strip">
+      <div class="hero-copy">
+        <span class="panel-tag">Cliente</span>
+        <h1>Estilistas</h1>
+        <p>
+          Conoce al equipo que hará de tu visita una experiencia especial.
+          Descubre su estilo de trabajo y sus horarios disponibles.
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <article class="stat-card">
+          <strong>{{ estilistas.length }}</strong>
+          <span>Estilistas registrados</span>
+        </article>
+
+        <article class="stat-card">
+          <strong>{{ totalHorariosActivos }}</strong>
+          <span>Horarios activos en total</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-area">
+      <div class="top-actions">
+        <router-link to="/dashboard/cliente" class="back-btn">
+          ← Volver a la página principal
+        </router-link>
+      </div>
+
+      <div class="page-header">
+        <h2>Nuestro equipo</h2>
+        <p>
+          Explora la información de cada estilista y revisa su disponibilidad semanal.
+        </p>
+      </div>
+
+      <div v-if="cargando" class="empty-state">
+        <div class="loader"></div>
+        <p>Cargando estilistas...</p>
+      </div>
+
+      <div v-else-if="error" class="empty-state error-state">
+        <h3>No se pudieron cargar los estilistas</h3>
+        <p>{{ error }}</p>
+      </div>
+
+      <div v-else-if="!estilistas.length" class="empty-state">
+        <h3>No hay estilistas disponibles</h3>
+        <p>Pronto podrás consultar aquí al equipo de la estética.</p>
+      </div>
+
+      <div v-else class="estilistas-grid">
+        <article
+          v-for="estilista in estilistas"
+          :key="estilista.id"
+          class="estilista-card"
+        >
+          <div class="card-glow"></div>
+
+          <div class="estilista-top">
+            <div class="avatar-circle">
+              {{ estilista.nombre.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="estilista-copy">
+              <h3>{{ estilista.nombre }}</h3>
+              <p class="disponibilidad-texto">
+                {{ resumenDisponibilidad(estilista.horarios) }}
+              </p>
+            </div>
           </div>
 
-          <div class="page-header">
-            <h2>Nuestro equipo</h2>
-            <p>
-              Explora la información de cada estilista y revisa su disponibilidad semanal.
+          <p class="descripcion">
+            {{ estilista.descripcion || 'Sin descripción disponible.' }}
+          </p>
+
+          <div class="horarios-card">
+            <h4>Horarios disponibles</h4>
+
+            <div
+              v-if="obtenerHorariosActivos(estilista.horarios).length"
+              class="horarios-lista"
+            >
+              <div
+                v-for="horario in obtenerHorariosActivos(estilista.horarios)"
+                :key="`${estilista.id}-${horario.dia}`"
+                class="horario-item"
+              >
+                <span class="dia">{{ horario.dia }}</span>
+                <strong>
+                  {{ formatearHora(horario.inicio) }} - {{ formatearHora(horario.fin) }}
+                </strong>
+              </div>
+            </div>
+
+            <p v-else class="sin-horarios">
+              Este estilista no tiene horarios activos por el momento.
             </p>
           </div>
-
-          <div v-if="cargando" class="empty-state">
-            <div class="loader"></div>
-            <p>Cargando estilistas...</p>
-          </div>
-
-          <div v-else-if="error" class="empty-state error-state">
-            <h3>No se pudieron cargar los estilistas</h3>
-            <p>{{ error }}</p>
-          </div>
-
-          <div v-else-if="!estilistas.length" class="empty-state">
-            <h3>No hay estilistas disponibles</h3>
-            <p>Pronto podrás consultar aquí al equipo de la estética.</p>
-          </div>
-
-          <div v-else class="estilistas-grid">
-            <article
-              v-for="estilista in estilistas"
-              :key="estilista.id"
-              class="estilista-card"
-            >
-              <div class="estilista-top">
-                <div class="avatar-circle">
-                  {{ estilista.nombre.charAt(0).toUpperCase() }}
-                </div>
-
-                <div class="estilista-copy">
-                  <h3>{{ estilista.nombre }}</h3>
-                  <p class="disponibilidad-texto">
-                    {{ resumenDisponibilidad(estilista.horarios) }}
-                  </p>
-                </div>
-              </div>
-
-              <p class="descripcion">
-                {{ estilista.descripcion || 'Sin descripción disponible.' }}
-              </p>
-
-              <div class="horarios-card">
-                <h4>Horarios disponibles</h4>
-
-                <div
-                  v-if="obtenerHorariosActivos(estilista.horarios).length"
-                  class="horarios-lista"
-                >
-                  <div
-                    v-for="horario in obtenerHorariosActivos(estilista.horarios)"
-                    :key="`${estilista.id}-${horario.dia}`"
-                    class="horario-item"
-                  >
-                    <span class="dia">{{ horario.dia }}</span>
-                    <strong>
-                      {{ formatearHora(horario.inicio) }} - {{ formatearHora(horario.fin) }}
-                    </strong>
-                  </div>
-                </div>
-
-                <p v-else class="sin-horarios">
-                  Este estilista no tiene horarios activos por el momento.
-                </p>
-              </div>
-            </article>
-          </div>
-        </section>
+        </article>
       </div>
     </section>
   </main>
@@ -220,98 +237,142 @@ onMounted(() => {
 }
 
 .estilistas-page {
+  position: relative;
   width: 100%;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 22px;
-  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
+  padding: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(233, 237, 201, 0.95), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(212, 163, 115, 0.18), transparent 22%),
+    linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
   color: #5f4b3a;
 }
 
-.estilistas-shell {
-  width: min(1680px, 100%);
+.page-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.page-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.18), transparent 60%);
+  pointer-events: none;
+}
+
+.page-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(46px);
+  pointer-events: none;
+}
+
+.glow-1 {
+  top: 80px;
+  left: -100px;
+  width: 260px;
+  height: 260px;
+  background: rgba(212, 163, 115, 0.12);
+}
+
+.glow-2 {
+  right: -120px;
+  bottom: 120px;
+  width: 320px;
+  height: 320px;
+  background: rgba(204, 213, 174, 0.24);
+}
+
+.hero-strip {
+  position: relative;
+  z-index: 1;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 22px;
   animation: pageEnter 0.8s ease;
 }
 
-.estilistas-layout {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  min-height: 780px;
-  border-radius: 30px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
-  backdrop-filter: blur(16px);
-}
-
-.estilistas-sidebar {
-  padding: 34px 24px;
-  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+.hero-copy {
+  padding: 18px 0;
 }
 
 .panel-tag {
   display: inline-block;
   width: fit-content;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   padding: 10px 18px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.38);
   color: #6d5844;
   font-weight: 800;
   font-size: 0.95rem;
+  backdrop-filter: blur(8px);
 }
 
-.estilistas-sidebar h1 {
+.hero-copy h1 {
   margin: 0 0 16px;
-  font-size: 2.3rem;
-  line-height: 1.05;
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  line-height: 0.98;
   color: #5f4b3a;
 }
 
-.estilistas-sidebar p {
-  margin: 0 0 24px;
+.hero-copy p {
+  margin: 0;
+  max-width: 720px;
   color: #7b6a58;
-  line-height: 1.7;
-  font-size: 0.95rem;
+  line-height: 1.8;
+  font-size: 1rem;
 }
 
-.sidebar-stats {
+.hero-stats {
   display: grid;
-  gap: 18px;
-  margin-top: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-self: end;
 }
 
 .stat-card {
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+  padding: 22px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  backdrop-filter: blur(12px);
 }
 
 .stat-card strong {
   display: block;
   margin-bottom: 8px;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #5f4b3a;
 }
 
 .stat-card span {
   color: #7b6a58;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
-.estilistas-content {
-  padding: 24px 28px;
-  background: rgba(254, 250, 224, 0.88);
+.content-area {
+  position: relative;
+  z-index: 1;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 10px 0 48px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  overflow: hidden;
+  gap: 18px;
 }
 
 .top-actions {
@@ -333,53 +394,78 @@ onMounted(() => {
   font-size: 0.95rem;
   text-decoration: none;
   transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
-  background: rgba(204, 213, 174, 0.55);
+  background: rgba(204, 213, 174, 0.42);
   color: #5f4b3a;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.06);
+  backdrop-filter: blur(8px);
 }
 
 .back-btn:hover {
   transform: translateY(-2px);
-  background: rgba(204, 213, 174, 0.78);
-  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+  background: rgba(204, 213, 174, 0.65);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.1);
 }
 
 .page-header {
   display: grid;
   gap: 0.35rem;
+  margin-bottom: 4px;
 }
 
 .page-header h2 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #5f4b3a;
 }
 
 .page-header p {
   margin: 0;
   color: #8a7764;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .estilistas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 18px;
+  gap: 20px;
 }
 
 .estilista-card,
 .empty-state {
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 28px;
-  border: 1px solid rgba(236, 231, 216, 0.7);
-  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.07);
+  backdrop-filter: blur(12px);
 }
 
 .estilista-card {
+  position: relative;
+  overflow: hidden;
   padding: 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.estilista-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 22px 38px rgba(92, 75, 59, 0.1);
+  border-color: rgba(212, 163, 115, 0.22);
+}
+
+.card-glow {
+  position: absolute;
+  top: -36px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.14);
+  filter: blur(18px);
+  pointer-events: none;
 }
 
 .estilista-top {
@@ -418,7 +504,7 @@ onMounted(() => {
 .descripcion {
   margin: 0;
   color: #7b6a58;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .horarios-card {
@@ -427,8 +513,9 @@ onMounted(() => {
   gap: 12px;
   padding: 16px;
   border-radius: 22px;
-  background: rgba(250, 237, 205, 0.45);
-  border: 1px solid rgba(212, 163, 115, 0.14);
+  background: rgba(250, 237, 205, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
 }
 
 .horarios-card h4 {
@@ -449,7 +536,8 @@ onMounted(() => {
   gap: 12px;
   padding: 10px 12px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #5f4b3a;
 }
 
@@ -478,7 +566,7 @@ onMounted(() => {
 }
 
 .error-state {
-  background: rgba(255, 244, 244, 0.9);
+  background: rgba(255, 244, 244, 0.6);
 }
 
 .loader {
@@ -508,19 +596,39 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 1250px) {
-  .estilistas-layout {
+@media (max-width: 1080px) {
+  .hero-strip {
     grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .estilistas-page {
-    padding: 16px;
+    padding: 0;
   }
 
-  .estilistas-content {
-    padding: 18px;
+  .hero-strip,
+  .content-area {
+    width: min(100% - 28px, 1440px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-strip {
+    padding-top: 28px;
+    gap: 18px;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
   }
 
   .estilista-card,
