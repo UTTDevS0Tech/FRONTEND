@@ -160,7 +160,6 @@ onUnmounted(() => {
   <main class="client-home">
     <div class="page-glow glow-1"></div>
     <div class="page-glow glow-2"></div>
-    <div class="page-glow glow-3"></div>
     <div class="page-pattern"></div>
 
     <header class="top-nav">
@@ -186,22 +185,18 @@ onUnmounted(() => {
       <div class="hero-image">
         <img src="@/assets/banner-principal.jpg" alt="Interior de la estética" />
         <div class="hero-overlay"></div>
-        <div class="hero-blur blur-1"></div>
-        <div class="hero-blur blur-2"></div>
       </div>
 
       <div class="hero-content">
-        <div class="hero-card">
-          <span class="hero-badge">Bienvenida</span>
-          <h1>Tu espacio para relajarte, renovarte y verte increíble</h1>
-          <p>
-            Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
-            en un ambiente pensado para tu bienestar.
-          </p>
-          <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">
-            Agendar cita
-          </button>
-        </div>
+        <span class="hero-badge">Bienvenida</span>
+        <h1>Tu espacio para relajarte, renovarte y verte increíble</h1>
+        <p>
+          Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
+          en un ambiente pensado para tu bienestar.
+        </p>
+        <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">
+          Agendar cita
+        </button>
       </div>
     </section>
 
@@ -233,6 +228,8 @@ onUnmounted(() => {
             :key="`pendiente-${cita.id}`"
             class="cita-card"
           >
+            <div class="card-top-glow"></div>
+
             <div class="cita-top">
               <div>
                 <h3>Cita #{{ cita.id }}</h3>
@@ -268,58 +265,64 @@ onUnmounted(() => {
     </section>
 
     <section class="gallery">
-      <div class="section-head">
-        <span>Nuestra Galería</span>
-        <h2>Momentos y espacios</h2>
-        <p>Una pequeña muestra de los detalles, ambientes y resultados que forman parte de la experiencia Nova.</p>
-      </div>
-
-      <div
-        class="carousel-shell"
-        @mouseenter="pausarCarrusel"
-        @mouseleave="reanudarCarrusel"
-      >
-        <button class="carousel-btn" @click="anteriorSlide">
-          ‹
-        </button>
-
-        <div class="carousel-viewport">
-          <transition name="slide-page" mode="out-in">
-            <div :key="indiceActual" class="gallery-grid">
-              <div
-                v-for="imagen in imagenesVisibles"
-                :key="`${indiceActual}-${imagen.src}`"
-                class="gallery-card"
-              >
-                <img
-                  :src="imagen.src"
-                  :alt="imagen.alt"
-                  :style="{ objectPosition: imagen.position }"
-                />
-              </div>
-            </div>
-          </transition>
+      <div class="gallery-shell">
+        <div class="section-head">
+          <span>Nuestra Galería</span>
+          <h2>Momentos y espacios</h2>
+          <p>
+            Explora un vistazo de nuestros ambientes, detalles y resultados
+            favoritos dentro de la experiencia Nova.
+          </p>
         </div>
 
-        <button class="carousel-btn" @click="siguienteSlide">
-          ›
+        <div
+          class="carousel-shell"
+          @mouseenter="pausarCarrusel"
+          @mouseleave="reanudarCarrusel"
+        >
+          <button class="carousel-btn" @click="anteriorSlide">
+            ‹
+          </button>
+
+          <div class="carousel-viewport">
+            <transition name="slide-page" mode="out-in">
+              <div :key="indiceActual" class="gallery-grid">
+                <div
+                  v-for="imagen in imagenesVisibles"
+                  :key="`${indiceActual}-${imagen.src}`"
+                  class="gallery-card"
+                >
+                  <div class="gallery-card-overlay"></div>
+                  <img
+                    :src="imagen.src"
+                    :alt="imagen.alt"
+                    :style="{ objectPosition: imagen.position }"
+                  />
+                </div>
+              </div>
+            </transition>
+          </div>
+
+          <button class="carousel-btn" @click="siguienteSlide">
+            ›
+          </button>
+        </div>
+
+        <div class="carousel-dots">
+          <button
+            v-for="(_, index) in totalPaginas"
+            :key="index"
+            class="dot"
+            :class="{ active: indiceActual === index }"
+            @click="irAPagina(index)"
+          ></button>
+        </div>
+
+        <button class="hero-btn gallery-action-btn" @click="router.push('/dashboard/cliente/galeria')">
+          <img src="@/assets/galeria.svg" alt="" aria-hidden="true" class="btn-icon" />
+          <span>Ver galería completa</span>
         </button>
       </div>
-
-      <div class="carousel-dots">
-        <button
-          v-for="(_, index) in totalPaginas"
-          :key="index"
-          class="dot"
-          :class="{ active: indiceActual === index }"
-          @click="irAPagina(index)"
-        ></button>
-      </div>
-
-      <button class="hero-btn gallery-action-btn" @click="router.push('/dashboard/cliente/galeria')">
-        <img src="@/assets/galeria.svg" alt="" aria-hidden="true" class="btn-icon" />
-        <span>Ver galería completa</span>
-      </button>
     </section>
 
     <footer class="about-bar">
@@ -347,7 +350,7 @@ onUnmounted(() => {
   position: relative;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, #fefae0 0%, #fcf5e8 38%, #f7efe1 100%);
+    linear-gradient(180deg, #fefae0 0%, #fcf5e8 36%, #f6edde 100%);
   color: #5f4b3a;
   overflow-x: hidden;
   animation: pageFade 0.8s ease;
@@ -362,27 +365,19 @@ onUnmounted(() => {
 }
 
 .glow-1 {
-  top: 100px;
-  left: -100px;
-  width: 280px;
-  height: 280px;
-  background: rgba(212, 163, 115, 0.12);
+  top: 560px;
+  left: -110px;
+  width: 260px;
+  height: 260px;
+  background: rgba(212, 163, 115, 0.1);
 }
 
 .glow-2 {
-  right: -120px;
-  top: 760px;
-  width: 340px;
-  height: 340px;
-  background: rgba(204, 213, 174, 0.22);
-}
-
-.glow-3 {
-  left: 30%;
-  bottom: 240px;
-  width: 220px;
-  height: 220px;
-  background: rgba(250, 237, 205, 0.45);
+  right: -130px;
+  top: 1080px;
+  width: 320px;
+  height: 320px;
+  background: rgba(204, 213, 174, 0.2);
 }
 
 .page-pattern {
@@ -392,45 +387,43 @@ onUnmounted(() => {
     linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
   background-size: 42px 42px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.18), transparent 55%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.12), transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
 
 .top-nav {
-  position: sticky;
-  top: 0;
-  z-index: 20;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1.25rem;
-  padding: 1rem 2rem;
-  background: rgba(254, 250, 224, 0.72);
-  border-bottom: 1px solid rgba(212, 163, 115, 0.12);
-  backdrop-filter: blur(18px);
+  padding: 1.2rem 3.2rem;
+  background: rgba(254, 250, 224, 0.96);
+  border-bottom: 1px solid rgba(212, 163, 115, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  min-width: fit-content;
 }
 
 .brand img {
-  height: 46px;
+  height: 44px;
   width: auto;
   object-fit: contain;
   transition: transform 0.25s ease;
 }
 
 .brand img:hover {
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 
 .nav-links {
   display: flex;
-  gap: 0.65rem;
+  gap: 0.9rem;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -439,13 +432,9 @@ onUnmounted(() => {
   color: #5f4b3a;
   text-decoration: none;
   font-weight: 800;
-  padding: 0.75rem 1rem;
+  padding: 0.7rem 1rem;
   border-radius: 999px;
-  transition:
-    background 0.22s ease,
-    transform 0.22s ease,
-    color 0.22s ease,
-    box-shadow 0.22s ease;
+  transition: 0.25s ease;
 }
 
 .nav-links a:hover {
@@ -457,19 +446,16 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.72rem;
+  gap: 0.7rem;
   border: none;
-  border-radius: 16px;
-  padding: 0.92rem 1.2rem;
-  background: rgba(255, 228, 228, 0.98);
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+  background: rgba(255, 226, 226, 0.96);
   color: #a14444;
   font-weight: 900;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(161, 68, 68, 0.1);
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    background 0.22s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
 .logout-btn:hover {
@@ -487,7 +473,7 @@ onUnmounted(() => {
 
 .hero {
   position: relative;
-  min-height: 92vh;
+  min-height: 82vh;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -509,79 +495,42 @@ onUnmounted(() => {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      100deg,
-      rgba(95, 75, 58, 0.76) 0%,
-      rgba(95, 75, 58, 0.36) 42%,
-      rgba(95, 75, 58, 0.18) 100%
-    );
-}
-
-.hero-blur {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(24px);
-  pointer-events: none;
-}
-
-.blur-1 {
-  left: 8%;
-  top: 18%;
-  width: 180px;
-  height: 180px;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.blur-2 {
-  right: 12%;
-  bottom: 12%;
-  width: 240px;
-  height: 240px;
-  background: rgba(212, 163, 115, 0.16);
+  background: linear-gradient(
+    90deg,
+    rgba(95, 75, 58, 0.60),
+    rgba(95, 75, 58, 0.26)
+  );
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  width: min(1220px, 100%);
+  width: min(1100px, 100%);
   padding: 2rem;
+  text-align: center;
   color: white;
   animation: riseIn 1s ease;
 }
 
-.hero-card {
-  max-width: 760px;
-  padding: 2rem;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.12);
-}
-
 .hero-badge {
   display: inline-block;
-  margin-bottom: 1rem;
-  padding: 0.58rem 1rem;
+  margin-bottom: 1.1rem;
+  padding: 0.55rem 0.95rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.18);
   font-weight: 800;
-  backdrop-filter: blur(8px);
 }
 
 .hero-content h1 {
-  margin: 0 0 1rem;
-  max-width: 680px;
-  font-size: clamp(2.8rem, 5vw, 5.2rem);
-  line-height: 1.03;
-  text-wrap: balance;
+  margin: 0 auto 1rem;
+  max-width: 860px;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 1.05;
 }
 
 .hero-content p {
-  max-width: 640px;
-  margin: 0 0 1.7rem;
+  max-width: 760px;
+  margin: 0 auto 1.6rem;
   line-height: 1.9;
   font-size: 1.08rem;
 }
@@ -594,39 +543,36 @@ onUnmounted(() => {
   border: none;
   border-radius: 18px;
   padding: 1.05rem 1.7rem;
-  background: linear-gradient(135deg, #d4a373 0%, #c88f59 100%);
+  background: #D4A373;
   color: white;
   font-weight: 900;
   cursor: pointer;
   font-size: 1rem;
   box-shadow: 0 16px 30px rgba(212, 163, 115, 0.28);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    filter 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .hero-btn:hover {
   transform: translateY(-4px);
   box-shadow: 0 22px 36px rgba(212, 163, 115, 0.34);
-  filter: brightness(1.02);
 }
 
 .pending-section {
   position: relative;
   z-index: 1;
-  padding: 3.4rem 2rem 1.5rem;
+  padding: 3.2rem 3rem 1.4rem;
 }
 
 .pending-shell {
   width: min(1480px, 100%);
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 32px;
-  padding: 1.6rem;
-  box-shadow: 0 18px 34px rgba(92, 75, 59, 0.08);
-  border: 1px solid rgba(236, 231, 216, 0.82);
-  backdrop-filter: blur(12px);
+  padding: 1.8rem;
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 250, 239, 0.78) 100%);
+  box-shadow: 0 20px 40px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.78);
+  backdrop-filter: blur(14px);
 }
 
 .pending-head {
@@ -634,7 +580,7 @@ onUnmounted(() => {
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.3rem;
   flex-wrap: wrap;
 }
 
@@ -644,51 +590,63 @@ onUnmounted(() => {
 }
 
 .pending-head h2 {
-  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
   color: #5f4b3a;
 }
 
 .pending-head p {
   color: #8a7764;
   line-height: 1.65;
-  max-width: 460px;
+  max-width: 430px;
 }
 
 .section-tag {
   width: fit-content;
   display: inline-flex;
   align-items: center;
-  padding: 0.55rem 0.82rem;
+  padding: 8px 12px;
   border-radius: 999px;
   background: rgba(212, 163, 115, 0.16);
   color: #8d633c;
   font-size: 0.82rem;
   font-weight: 800;
-  margin-bottom: 0.72rem;
+  margin-bottom: 10px;
 }
 
 .cards-grid {
   display: grid;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .cita-card {
+  position: relative;
+  overflow: hidden;
   border-radius: 24px;
-  padding: 1.15rem;
-  background: rgba(254, 250, 224, 0.8);
-  border: 1px solid rgba(212, 163, 115, 0.18);
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(254, 250, 224, 0.92) 0%, rgba(255, 255, 255, 0.75) 100%);
+  border: 1px solid rgba(212, 163, 115, 0.16);
   display: grid;
-  gap: 0.95rem;
-  transition:
-    transform 0.24s ease,
-    box-shadow 0.24s ease,
-    border-color 0.24s ease;
+  gap: 1rem;
+  box-shadow: 0 16px 28px rgba(92, 75, 59, 0.06);
+  transition: transform 0.26s ease, box-shadow 0.26s ease, border-color 0.26s ease;
 }
 
 .cita-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 28px rgba(92, 75, 59, 0.08);
+  transform: translateY(-5px);
+  box-shadow: 0 22px 38px rgba(92, 75, 59, 0.1);
   border-color: rgba(212, 163, 115, 0.28);
+}
+
+.card-top-glow {
+  position: absolute;
+  top: -38px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.12);
+  filter: blur(18px);
+  pointer-events: none;
 }
 
 .cita-top {
@@ -717,16 +675,17 @@ onUnmounted(() => {
 .cita-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
   margin: 0;
 }
 
 .cita-meta div {
   display: grid;
-  gap: 4px;
-  padding: 0.85rem 0.95rem;
+  gap: 5px;
+  padding: 0.95rem 1rem;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.48);
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(212, 163, 115, 0.08);
 }
 
 .cita-meta dt {
@@ -736,7 +695,7 @@ onUnmounted(() => {
 
 .cita-meta dd {
   margin: 0;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.5;
   color: #5f4b3a;
 }
@@ -798,7 +757,19 @@ onUnmounted(() => {
 .gallery {
   position: relative;
   z-index: 1;
-  padding: 3.8rem 2rem 5rem;
+  padding: 3.8rem 3rem 5rem;
+}
+
+.gallery-shell {
+  width: min(1520px, 100%);
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 32px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.56) 0%, rgba(255, 249, 239, 0.7) 100%);
+  border: 1px solid rgba(236, 231, 216, 0.82);
+  box-shadow: 0 20px 40px rgba(92, 75, 59, 0.08);
+  backdrop-filter: blur(14px);
 }
 
 .section-head {
@@ -807,30 +778,29 @@ onUnmounted(() => {
 }
 
 .section-head span {
-  color: #d4a373;
+  color: #D4A373;
   font-weight: 800;
 }
 
 .section-head h2 {
-  margin: 0.55rem 0 0.75rem;
-  font-size: clamp(2rem, 4vw, 3rem);
-  color: #5f4b3a;
+  margin: 0.55rem 0 0.6rem;
+  font-size: clamp(2.1rem, 4vw, 3rem);
 }
 
 .section-head p {
-  max-width: 720px;
+  max-width: 700px;
   margin: 0 auto;
   color: #8a7764;
   line-height: 1.75;
 }
 
 .carousel-shell {
-  width: min(1720px, 100%);
+  width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .carousel-viewport {
@@ -842,7 +812,7 @@ onUnmounted(() => {
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.95rem;
+  gap: 1rem;
 }
 
 .gallery-card {
@@ -850,10 +820,8 @@ onUnmounted(() => {
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
-  background: #faedcd;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  background: #FAEDCD;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   aspect-ratio: 3 / 4;
   width: 100%;
 }
@@ -863,12 +831,12 @@ onUnmounted(() => {
   box-shadow: 0 26px 42px rgba(92, 75, 59, 0.18);
 }
 
-.gallery-card::after {
-  content: '';
+.gallery-card-overlay {
   position: absolute;
-  inset: auto 0 0 0;
-  height: 40%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.12), transparent);
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(95, 75, 58, 0.14), transparent 55%);
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -886,24 +854,23 @@ onUnmounted(() => {
 }
 
 .carousel-btn {
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border: none;
   border-radius: 50%;
-  background: rgba(212, 163, 115, 0.18);
+  background: rgba(212, 163, 115, 0.16);
   color: #8d633c;
   font-size: 2rem;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
-  transition:
-    transform 0.22s ease,
-    background 0.22s ease;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
 }
 
 .carousel-btn:hover {
   transform: translateY(-2px);
   background: rgba(212, 163, 115, 0.28);
+  box-shadow: 0 16px 24px rgba(92, 75, 59, 0.12);
 }
 
 .carousel-dots {
@@ -920,9 +887,7 @@ onUnmounted(() => {
   border-radius: 50%;
   background: rgba(212, 163, 115, 0.35);
   cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .dot:hover {
@@ -930,7 +895,7 @@ onUnmounted(() => {
 }
 
 .dot.active {
-  background: #d4a373;
+  background: #D4A373;
 }
 
 .gallery-action-btn {
@@ -943,18 +908,16 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
   gap: 1rem;
-  padding: 2.8rem 2rem;
-  background:
-    linear-gradient(135deg, rgba(204, 213, 174, 0.92) 0%, rgba(233, 237, 201, 0.88) 100%);
+  padding: 2.6rem 3rem;
+  background: #CCD5AE;
   color: #5f4b3a;
-  border-top: 1px solid rgba(95, 75, 58, 0.08);
 }
 
 .footer-card {
-  padding: 1.2rem;
+  padding: 1.2rem 1.15rem;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.24);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
 }
 
@@ -971,9 +934,7 @@ onUnmounted(() => {
 
 .slide-page-enter-active,
 .slide-page-leave-active {
-  transition:
-    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.65s ease;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease;
 }
 
 .slide-page-enter-from {
@@ -1015,10 +976,11 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
   .top-nav {
     padding: 1rem 1.2rem;
     flex-direction: column;
+    gap: 1rem;
   }
 
   .nav-links {
@@ -1057,57 +1019,31 @@ onUnmounted(() => {
   .about-bar {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 768px) {
-  .hero {
-    min-height: 76vh;
-  }
-
-  .hero-content {
-    padding: 1.2rem;
-  }
-
-  .hero-card {
-    padding: 1.4rem;
-    border-radius: 24px;
-  }
-
-  .hero-content h1 {
-    font-size: clamp(2.2rem, 8vw, 3.2rem);
-  }
-
-  .hero-content p {
-    font-size: 1rem;
-    line-height: 1.75;
-  }
-
+  .gallery-shell,
   .pending-shell {
-    padding: 1.2rem;
+    padding: 1.3rem;
     border-radius: 24px;
   }
 }
 
 @media (max-width: 640px) {
-  .top-nav {
-    gap: 0.9rem;
-  }
-
-  .nav-links {
-    gap: 0.45rem;
-  }
-
-  .nav-links a {
-    width: 100%;
-    text-align: center;
-  }
-
-  .logout-btn {
-    width: 100%;
+  .hero-content h1 {
+    font-size: 2.4rem;
   }
 
   .gallery-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pending-shell,
+  .gallery-shell {
+    padding: 1rem;
+    border-radius: 22px;
+  }
+
+  .logout-btn {
+    width: 100%;
   }
 
   .hero-btn {
@@ -1117,15 +1053,6 @@ onUnmounted(() => {
 
   .gallery-action-btn {
     max-width: 360px;
-  }
-
-  .pending-shell {
-    padding: 1rem;
-    border-radius: 22px;
-  }
-
-  .section-head h2 {
-    font-size: 2rem;
   }
 }
 </style>
