@@ -160,6 +160,7 @@ onUnmounted(() => {
   <main class="client-home">
     <div class="page-glow glow-1"></div>
     <div class="page-glow glow-2"></div>
+    <div class="page-glow glow-3"></div>
     <div class="page-pattern"></div>
 
     <header class="top-nav">
@@ -190,15 +191,17 @@ onUnmounted(() => {
       </div>
 
       <div class="hero-content">
-        <span class="hero-badge">Bienvenida</span>
-        <h1>Tu espacio para relajarte, renovarte y verte increíble</h1>
-        <p>
-          Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
-          en un ambiente pensado para tu bienestar.
-        </p>
-        <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">
-          Agendar cita
-        </button>
+        <div class="hero-card">
+          <span class="hero-badge">Bienvenida</span>
+          <h1>Tu espacio para relajarte, renovarte y verte increíble</h1>
+          <p>
+            Descubre nuestros servicios, conoce a nuestro equipo y agenda tu cita
+            en un ambiente pensado para tu bienestar.
+          </p>
+          <button class="hero-btn" @click="router.push('/dashboard/cliente/cita')">
+            Agendar cita
+          </button>
+        </div>
       </div>
     </section>
 
@@ -268,6 +271,7 @@ onUnmounted(() => {
       <div class="section-head">
         <span>Nuestra Galería</span>
         <h2>Momentos y espacios</h2>
+        <p>Una pequeña muestra de los detalles, ambientes y resultados que forman parte de la experiencia Nova.</p>
       </div>
 
       <div
@@ -319,17 +323,17 @@ onUnmounted(() => {
     </section>
 
     <footer class="about-bar">
-      <div>
+      <div class="footer-card">
         <h3>Sobre Nosotros</h3>
         <p>Un espacio dedicado al cuidado personal, la belleza y el bienestar.</p>
       </div>
 
-      <div>
+      <div class="footer-card">
         <h4>Dirección</h4>
         <p>*****************</p>
       </div>
 
-      <div>
+      <div class="footer-card">
         <h4>Contacto</h4>
         <p>Tel. 000 000 0000</p>
         <p>estetica@gmail.com</p>
@@ -343,7 +347,7 @@ onUnmounted(() => {
   position: relative;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, #fefae0 0%, #fbf3e3 42%, #f6edde 100%);
+    linear-gradient(180deg, #fefae0 0%, #fcf5e8 38%, #f7efe1 100%);
   color: #5f4b3a;
   overflow-x: hidden;
   animation: pageFade 0.8s ease;
@@ -352,25 +356,33 @@ onUnmounted(() => {
 .page-glow {
   position: absolute;
   border-radius: 999px;
-  filter: blur(44px);
+  filter: blur(48px);
   pointer-events: none;
   z-index: 0;
 }
 
 .glow-1 {
-  top: 120px;
-  left: -80px;
-  width: 260px;
-  height: 260px;
+  top: 100px;
+  left: -100px;
+  width: 280px;
+  height: 280px;
   background: rgba(212, 163, 115, 0.12);
 }
 
 .glow-2 {
-  right: -100px;
-  top: 680px;
-  width: 320px;
-  height: 320px;
-  background: rgba(204, 213, 174, 0.2);
+  right: -120px;
+  top: 760px;
+  width: 340px;
+  height: 340px;
+  background: rgba(204, 213, 174, 0.22);
+}
+
+.glow-3 {
+  left: 30%;
+  bottom: 240px;
+  width: 220px;
+  height: 220px;
+  background: rgba(250, 237, 205, 0.45);
 }
 
 .page-pattern {
@@ -394,7 +406,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 1.25rem;
   padding: 1rem 2rem;
-  background: rgba(254, 250, 224, 0.78);
+  background: rgba(254, 250, 224, 0.72);
   border-bottom: 1px solid rgba(212, 163, 115, 0.12);
   backdrop-filter: blur(18px);
 }
@@ -432,7 +444,8 @@ onUnmounted(() => {
   transition:
     background 0.22s ease,
     transform 0.22s ease,
-    color 0.22s ease;
+    color 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
 .nav-links a:hover {
@@ -474,7 +487,7 @@ onUnmounted(() => {
 
 .hero {
   position: relative;
-  min-height: 88vh;
+  min-height: 92vh;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -499,9 +512,9 @@ onUnmounted(() => {
   background:
     linear-gradient(
       100deg,
-      rgba(95, 75, 58, 0.72) 0%,
-      rgba(95, 75, 58, 0.34) 42%,
-      rgba(95, 75, 58, 0.2) 100%
+      rgba(95, 75, 58, 0.76) 0%,
+      rgba(95, 75, 58, 0.36) 42%,
+      rgba(95, 75, 58, 0.18) 100%
     );
 }
 
@@ -531,11 +544,20 @@ onUnmounted(() => {
 .hero-content {
   position: relative;
   z-index: 2;
-  width: min(1180px, 100%);
+  width: min(1220px, 100%);
   padding: 2rem;
-  text-align: center;
   color: white;
   animation: riseIn 1s ease;
+}
+
+.hero-card {
+  max-width: 760px;
+  padding: 2rem;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.12);
 }
 
 .hero-badge {
@@ -550,16 +572,16 @@ onUnmounted(() => {
 }
 
 .hero-content h1 {
-  margin: 0 auto 1rem;
-  max-width: 900px;
+  margin: 0 0 1rem;
+  max-width: 680px;
   font-size: clamp(2.8rem, 5vw, 5.2rem);
   line-height: 1.03;
   text-wrap: balance;
 }
 
 .hero-content p {
-  max-width: 760px;
-  margin: 0 auto 1.7rem;
+  max-width: 640px;
+  margin: 0 0 1.7rem;
   line-height: 1.9;
   font-size: 1.08rem;
 }
@@ -599,8 +621,8 @@ onUnmounted(() => {
 .pending-shell {
   width: min(1480px, 100%);
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.54);
-  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 32px;
   padding: 1.6rem;
   box-shadow: 0 18px 34px rgba(92, 75, 59, 0.08);
   border: 1px solid rgba(236, 231, 216, 0.82);
@@ -612,7 +634,7 @@ onUnmounted(() => {
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
-  margin-bottom: 1.15rem;
+  margin-bottom: 1.2rem;
   flex-wrap: wrap;
 }
 
@@ -653,7 +675,7 @@ onUnmounted(() => {
 .cita-card {
   border-radius: 24px;
   padding: 1.15rem;
-  background: rgba(254, 250, 224, 0.78);
+  background: rgba(254, 250, 224, 0.8);
   border: 1px solid rgba(212, 163, 115, 0.18);
   display: grid;
   gap: 0.95rem;
@@ -702,6 +724,9 @@ onUnmounted(() => {
 .cita-meta div {
   display: grid;
   gap: 4px;
+  padding: 0.85rem 0.95rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.48);
 }
 
 .cita-meta dt {
@@ -773,7 +798,7 @@ onUnmounted(() => {
 .gallery {
   position: relative;
   z-index: 1;
-  padding: 3.6rem 2rem 5rem;
+  padding: 3.8rem 2rem 5rem;
 }
 
 .section-head {
@@ -787,9 +812,16 @@ onUnmounted(() => {
 }
 
 .section-head h2 {
-  margin: 0.55rem 0 0;
+  margin: 0.55rem 0 0.75rem;
   font-size: clamp(2rem, 4vw, 3rem);
   color: #5f4b3a;
+}
+
+.section-head p {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #8a7764;
+  line-height: 1.75;
 }
 
 .carousel-shell {
@@ -814,6 +846,7 @@ onUnmounted(() => {
 }
 
 .gallery-card {
+  position: relative;
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 16px 30px rgba(92, 75, 59, 0.12);
@@ -828,6 +861,15 @@ onUnmounted(() => {
 .gallery-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 26px 42px rgba(92, 75, 59, 0.18);
+}
+
+.gallery-card::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.12), transparent);
+  pointer-events: none;
 }
 
 .gallery-card img {
@@ -900,12 +942,20 @@ onUnmounted(() => {
   z-index: 1;
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
   padding: 2.8rem 2rem;
   background:
-    linear-gradient(135deg, rgba(204, 213, 174, 0.96) 0%, rgba(233, 237, 201, 0.88) 100%);
+    linear-gradient(135deg, rgba(204, 213, 174, 0.92) 0%, rgba(233, 237, 201, 0.88) 100%);
   color: #5f4b3a;
   border-top: 1px solid rgba(95, 75, 58, 0.08);
+}
+
+.footer-card {
+  padding: 1.2rem;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
 }
 
 .about-bar h3,
@@ -1011,11 +1061,16 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .hero {
-    min-height: 72vh;
+    min-height: 76vh;
   }
 
   .hero-content {
+    padding: 1.2rem;
+  }
+
+  .hero-card {
     padding: 1.4rem;
+    border-radius: 24px;
   }
 
   .hero-content h1 {
