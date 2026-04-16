@@ -58,7 +58,10 @@ export const usePersonalCitasStore = defineStore('personalcitas', () => {
       const { data: dataPasadas, error: errorPasadas } = respuestaPasadas
 
       if (errorFuturas.value || errorPasadas.value) {
-        mensajeError.value = 'hubo error al traer citas'
+        mensajeError.value =
+          errorFuturas.value?.message ||
+          errorPasadas.value?.message ||
+          'hubo error al traer citas'
         citasFuturas.value = []
         citasPasadas.value = []
         return
