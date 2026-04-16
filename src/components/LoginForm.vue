@@ -17,8 +17,6 @@ const credenciales = ref<User>({
     password: ''
 })
 
-//hdtpm jala we
-
 
 function login() {
   errorLogin.value = ''
@@ -115,45 +113,51 @@ function login() {
 
 <template>
   <main class="login-page">
-    <div class="page-gradient"></div>
-    <div class="page-mesh"></div>
-    <div class="ambient ambient-1"></div>
-    <div class="ambient ambient-2"></div>
-    <div class="ambient ambient-3"></div>
+    <div class="page-base"></div>
+    <div class="page-grid"></div>
+    <div class="page-glow glow-1"></div>
+    <div class="page-glow glow-2"></div>
+    <div class="page-glow glow-3"></div>
 
-    <section class="login-shell">
+    <section class="login-layout">
       <div class="login-hero">
-        <img src="@/assets/logolargo.png" class="hero-logo" alt="Logo Nova" />
-
-        <div class="hero-badge">Belleza & Bienestar</div>
-
-        <div class="hero-content">
-          <p class="hero-kicker">Tu espacio de cuidado personal</p>
-          <h1>Bienvenido a tu espacio</h1>
-          <p class="hero-description">
-            Estética Nova es tu refugio de cuidado personal. Inicia sesión para descubrir un mundo de servicios diseñados para realzar tu belleza y bienestar.
-          </p>
+        <div class="hero-topbar">
+          <img src="@/assets/logolargo.png" class="hero-logo" alt="Logo Nova" />
         </div>
 
-        <div class="hero-card">
-          <span class="hero-card-label">Experiencia Nova</span>
-          <p>
-            Accede a tus citas, consulta tus servicios y mantén todo organizado
-            desde una experiencia visual más cómoda, clara y moderna.
-          </p>
+        <div class="hero-inner">
+          <div class="hero-badge">Belleza & Bienestar</div>
+
+          <div class="hero-content">
+            <p class="hero-kicker">TU ESPACIO DE CUIDADO PERSONAL</p>
+            <h1>Bienvenido a tu espacio</h1>
+            <p class="hero-description">
+              Estética Nova es tu refugio de cuidado personal. Inicia sesión para descubrir un mundo de servicios diseñados para realzar tu belleza y bienestar.
+            </p>
+          </div>
+
+          <div class="hero-info-card">
+            <span class="hero-info-label">Experiencia Nova</span>
+            <p>
+              Accede a tus citas, consulta tus servicios y mantén todo
+              organizado desde una experiencia visual más cómoda, clara
+              y moderna.
+            </p>
+          </div>
         </div>
 
         <div class="hero-decor">
           <span class="shape shape-1"></span>
           <span class="shape shape-2"></span>
           <span class="shape shape-3"></span>
-          <span class="shape line-1"></span>
-          <span class="shape line-2"></span>
-          <span class="shape line-3"></span>
+          <span class="shape shape-4"></span>
+          <span class="line line-1"></span>
+          <span class="line line-2"></span>
         </div>
       </div>
 
       <div class="login-panel">
+        <div class="panel-overlay"></div>
         <div class="panel-glow"></div>
 
         <div class="panel-content">
@@ -206,177 +210,187 @@ function login() {
   min-height: 100vh;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(135deg, #ccd5ae 0%, #e9edc9 34%, #faedcd 72%, #d4a373 100%);
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  isolation: isolate;
+  background: linear-gradient(135deg, #dce4bf 0%, #eef1d2 35%, #f9edd4 72%, #ddb78f 100%);
 }
 
-.page-gradient {
+.page-base {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.26), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.14), transparent 26%);
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.3), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.16), transparent 24%);
   pointer-events: none;
 }
 
-.page-mesh {
+.page-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 38px 38px;
-  opacity: 0.3;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 90%);
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.28;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent 90%);
   pointer-events: none;
 }
 
-.ambient {
+.page-glow {
   position: absolute;
   border-radius: 999px;
-  filter: blur(24px);
+  filter: blur(34px);
   pointer-events: none;
+  opacity: 0.8;
 }
 
-.ambient-1 {
-  top: 6%;
-  left: -4%;
-  width: 220px;
-  height: 220px;
-  background: rgba(255, 255, 255, 0.22);
-  animation: blobFloat 11s ease-in-out infinite;
-}
-
-.ambient-2 {
-  right: -3%;
-  top: 22%;
+.glow-1 {
+  top: -60px;
+  left: -40px;
   width: 260px;
   height: 260px;
+  background: rgba(255, 255, 255, 0.28);
+  animation: floatBlob 13s ease-in-out infinite;
+}
+
+.glow-2 {
+  right: -70px;
+  top: 18%;
+  width: 320px;
+  height: 320px;
   background: rgba(250, 237, 205, 0.28);
-  animation: blobFloat 14s ease-in-out infinite reverse;
+  animation: floatBlob 16s ease-in-out infinite reverse;
 }
 
-.ambient-3 {
-  bottom: -4%;
-  left: 35%;
-  width: 260px;
-  height: 260px;
+.glow-3 {
+  bottom: -90px;
+  left: 30%;
+  width: 320px;
+  height: 320px;
   background: rgba(212, 163, 115, 0.18);
-  animation: blobFloat 16s ease-in-out infinite;
+  animation: floatBlob 18s ease-in-out infinite;
 }
 
-.login-shell {
+.login-layout {
   position: relative;
   z-index: 1;
-  width: min(1380px, 100%);
-  min-height: calc(100vh - 48px);
+  min-height: 100vh;
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  border-radius: 36px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  box-shadow: 0 28px 80px rgba(92, 75, 59, 0.18);
-  backdrop-filter: blur(16px);
-  animation: fadeUp 0.9s ease;
+  grid-template-columns: 1.08fr 0.92fr;
 }
 
 .login-hero {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 48px 56px 56px;
+  justify-content: space-between;
+  padding: 42px 52px 48px;
+  overflow: hidden;
   background:
+    radial-gradient(circle at 70% 85%, rgba(212, 163, 115, 0.22), transparent 30%),
     linear-gradient(
       145deg,
-      rgba(204, 213, 174, 0.9) 0%,
-      rgba(233, 237, 201, 0.72) 42%,
-      rgba(212, 163, 115, 0.88) 100%
+      rgba(204, 213, 174, 0.82) 0%,
+      rgba(233, 237, 201, 0.58) 42%,
+      rgba(244, 220, 186, 0.28) 100%
     );
-  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.hero-topbar {
+  position: relative;
+  z-index: 2;
 }
 
 .hero-logo {
-  width: clamp(140px, 18vw, 210px);
+  width: clamp(170px, 20vw, 260px);
   height: auto;
-  margin-bottom: 42px;
+  opacity: 0.95;
+  animation: fadeUp 0.9s ease;
+}
+
+.hero-inner {
   position: relative;
   z-index: 2;
-  opacity: 0.96;
-  animation: fadeUp 1s ease;
+  max-width: 640px;
+  padding: 24px 0 18px;
 }
 
 .hero-badge {
-  position: relative;
-  z-index: 2;
   display: inline-flex;
-  align-self: flex-start;
-  margin-bottom: 18px;
-  padding: 10px 16px;
+  margin-bottom: 20px;
+  padding: 11px 18px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.24);
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 28px rgba(130, 104, 74, 0.08);
+  animation: fadeUp 0.95s ease;
 }
 
 .hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 620px;
   animation: slideLeft 1s ease;
 }
 
 .hero-kicker {
   margin: 0 0 14px;
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 0.92rem;
-  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.94rem;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .hero-content h1 {
-  margin: 0 0 18px;
-  font-size: clamp(2.8rem, 5vw, 5rem);
-  line-height: 1.02;
-  color: white;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(3.3rem, 6vw, 6rem);
+  line-height: 0.98;
   font-weight: 900;
+  letter-spacing: -0.04em;
+  max-width: 620px;
   text-wrap: balance;
+  text-shadow: 0 14px 35px rgba(124, 95, 64, 0.12);
 }
 
 .hero-description {
-  margin: 0;
+  margin: 24px 0 0;
+  max-width: 560px;
   color: rgba(255, 255, 255, 0.95);
   font-size: 1.08rem;
-  line-height: 1.9;
-  max-width: 540px;
+  line-height: 1.95;
 }
 
-.hero-card {
+.hero-info-card {
   position: relative;
-  z-index: 2;
-  margin-top: 34px;
-  max-width: 470px;
-  padding: 20px 20px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.16);
+  margin-top: 38px;
+  max-width: 500px;
+  padding: 22px 22px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 18px 38px rgba(91, 72, 54, 0.12);
-  animation: fadeUp 1.1s ease;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 44px rgba(117, 91, 62, 0.12);
+  animation: fadeUp 1.05s ease;
 }
 
-.hero-card-label {
-  display: inline-block;
-  margin-bottom: 10px;
+.hero-info-card::before {
+  content: '';
+  position: absolute;
+  right: -40px;
+  bottom: -50px;
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  filter: blur(8px);
+}
+
+.hero-info-label {
+  display: inline-flex;
+  margin-bottom: 12px;
   padding: 7px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
@@ -385,11 +399,11 @@ function login() {
   font-weight: 800;
 }
 
-.hero-card p {
+.hero-info-card p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.92);
-  line-height: 1.75;
-  font-size: 0.96rem;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 0.98rem;
+  line-height: 1.8;
 }
 
 .hero-decor {
@@ -398,63 +412,69 @@ function login() {
   pointer-events: none;
 }
 
-.shape {
+.shape,
+.line {
   position: absolute;
   border-radius: 999px;
-  transform: rotate(-35deg);
-  opacity: 0.32;
+}
+
+.shape {
+  transform: rotate(-36deg);
+  opacity: 0.22;
 }
 
 .shape-1 {
-  width: 270px;
-  height: 70px;
-  left: 34px;
-  bottom: 70px;
-  background: #faedcd;
-  animation: floatSoft 5s ease-in-out infinite;
+  left: 42px;
+  bottom: 56px;
+  width: 240px;
+  height: 72px;
+  background: #f8ebc8;
+  animation: floatSoft 5.5s ease-in-out infinite;
 }
 
 .shape-2 {
-  width: 190px;
-  height: 56px;
-  left: 220px;
-  bottom: 160px;
+  left: 170px;
+  bottom: 130px;
+  width: 180px;
+  height: 54px;
   background: #fefae0;
-  animation: floatSoft 6s ease-in-out infinite;
-}
-
-.shape-3 {
-  width: 240px;
-  height: 64px;
-  left: 390px;
-  bottom: 34px;
-  background: #e9edc9;
   animation: floatSoft 7s ease-in-out infinite;
 }
 
-.line-1,
-.line-2,
-.line-3 {
-  height: 9px;
-  background: rgba(255, 255, 255, 0.35);
+.shape-3 {
+  left: 330px;
+  bottom: 48px;
+  width: 250px;
+  height: 68px;
+  background: #e9edc9;
+  animation: floatSoft 6.4s ease-in-out infinite;
+}
+
+.shape-4 {
+  right: 64px;
+  top: 110px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.14);
+  filter: blur(4px);
+  animation: pulseSoft 5s ease-in-out infinite;
+}
+
+.line {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.26);
 }
 
 .line-1 {
-  width: 150px;
-  left: 82px;
-  bottom: 148px;
+  left: 76px;
+  bottom: 156px;
+  width: 136px;
 }
 
 .line-2 {
-  width: 110px;
-  left: 178px;
+  left: 240px;
   bottom: 98px;
-}
-
-.line-3 {
-  width: 120px;
-  left: 434px;
-  bottom: 138px;
+  width: 112px;
 }
 
 .login-panel {
@@ -462,67 +482,75 @@ function login() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 56px 46px;
+  padding: 56px 44px;
   background:
-    linear-gradient(180deg, rgba(254, 250, 224, 0.95) 0%, rgba(255, 248, 235, 0.9) 100%);
+    linear-gradient(180deg, rgba(253, 249, 232, 0.88) 0%, rgba(255, 250, 239, 0.84) 100%);
+}
+
+.panel-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+  pointer-events: none;
 }
 
 .panel-glow {
   position: absolute;
-  top: -60px;
-  right: -40px;
-  width: 220px;
-  height: 220px;
+  top: 12%;
+  right: 8%;
+  width: 250px;
+  height: 250px;
   border-radius: 999px;
-  background: rgba(212, 163, 115, 0.14);
-  filter: blur(28px);
-  animation: pulseGlow 4.5s ease-in-out infinite;
+  background: rgba(212, 163, 115, 0.12);
+  filter: blur(32px);
+  animation: pulseGlow 5s ease-in-out infinite;
 }
 
 .panel-content {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 430px;
-  padding: 10px 0;
+  width: min(100%, 460px);
+  padding: 22px 6px;
   animation: slideRight 1s ease;
 }
 
 .panel-header {
-  margin-bottom: 26px;
+  margin-bottom: 28px;
 }
 
 .panel-tag {
   display: inline-flex;
   margin-bottom: 12px;
-  padding: 8px 14px;
+  padding: 9px 15px;
   border-radius: 999px;
-  background: rgba(212, 163, 115, 0.14);
-  color: #93653e;
-  font-size: 0.86rem;
+  background: rgba(212, 163, 115, 0.16);
+  color: #9a6942;
+  font-size: 0.85rem;
   font-weight: 800;
 }
 
 .panel-content h2 {
-  margin: 0 0 8px;
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  color: #5f4b3a;
+  margin: 0 0 10px;
+  font-size: clamp(2.6rem, 4.4vw, 4.2rem);
+  color: #6a5241;
   font-weight: 900;
-  line-height: 1.05;
+  line-height: 1;
+  letter-spacing: -0.04em;
 }
 
 .panel-subtitle {
   margin: 0;
-  color: #7b6a58;
-  font-size: 1rem;
+  color: #7f6d5f;
+  font-size: 1.04rem;
   line-height: 1.7;
 }
 
 .login-error {
   margin-bottom: 18px;
-  padding: 13px 14px;
+  padding: 14px 15px;
   border-radius: 16px;
-  background: rgba(255, 228, 228, 0.92);
+  background: rgba(255, 228, 228, 0.94);
   color: #a14444;
   border: 1px solid rgba(161, 68, 68, 0.16);
   font-weight: 700;
@@ -533,30 +561,31 @@ function login() {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
+  gap: 1.2rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.52rem;
+  gap: 0.55rem;
 }
 
 .form-group label {
-  color: #5f4b3a;
+  color: #6a5241;
   font-weight: 800;
-  font-size: 0.98rem;
+  font-size: 1rem;
 }
 
 input {
   width: 100%;
-  padding: 1.05rem 1.1rem;
-  border-radius: 18px;
-  border: 1px solid rgba(212, 163, 115, 0.2);
-  background: rgba(255, 255, 255, 0.88);
-  color: #5f4b3a;
+  padding: 1.12rem 1.18rem;
+  border-radius: 20px;
+  border: 1px solid rgba(212, 163, 115, 0.14);
+  background: rgba(255, 255, 255, 0.82);
+  color: #6a5241;
   font-size: 1rem;
   outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition:
     transform 0.22s ease,
     border-color 0.22s ease,
@@ -565,28 +594,28 @@ input {
 }
 
 input::placeholder {
-  color: #b09a82;
+  color: #b49b83;
 }
 
 input:focus {
   transform: translateY(-1px);
   border-color: #d4a373;
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.14);
 }
 
 .login-button {
-  margin-top: 0.5rem;
+  margin-top: 0.65rem;
   width: 100%;
-  padding: 1.08rem 1rem;
+  padding: 1.12rem 1rem;
   border: none;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #d4a373 0%, #bf8c5a 100%);
+  border-radius: 20px;
+  background: linear-gradient(135deg, #d4a373 0%, #c88f59 100%);
   color: white;
   font-weight: 800;
-  font-size: 1.02rem;
+  font-size: 1.05rem;
   cursor: pointer;
-  box-shadow: 0 16px 30px rgba(212, 163, 115, 0.28);
+  box-shadow: 0 16px 32px rgba(212, 163, 115, 0.28);
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease,
@@ -596,15 +625,15 @@ input:focus {
 
 .login-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 20px 34px rgba(212, 163, 115, 0.35);
+  box-shadow: 0 20px 38px rgba(212, 163, 115, 0.36);
   filter: brightness(1.03);
 }
 
 .login-button:disabled {
   cursor: not-allowed;
-  opacity: 0.78;
+  opacity: 0.8;
   transform: none;
-  box-shadow: 0 12px 24px rgba(180, 180, 180, 0.16);
+  box-shadow: 0 12px 24px rgba(180, 180, 180, 0.14);
 }
 
 @keyframes fadeUp {
@@ -642,19 +671,19 @@ input:focus {
 
 @keyframes floatSoft {
   0%, 100% {
-    transform: rotate(-35deg) translateY(0);
+    transform: rotate(-36deg) translateY(0);
   }
   50% {
-    transform: rotate(-35deg) translateY(-12px);
+    transform: rotate(-36deg) translateY(-12px);
   }
 }
 
-@keyframes blobFloat {
+@keyframes floatBlob {
   0% {
     transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translate3d(10px, -14px, 0);
+    transform: translate3d(12px, -16px, 0);
   }
   100% {
     transform: translate3d(0, 0, 0);
@@ -664,66 +693,69 @@ input:focus {
 @keyframes pulseGlow {
   0% {
     transform: scale(1);
-    opacity: 0.5;
+    opacity: 0.45;
   }
   50% {
     transform: scale(1.08);
-    opacity: 0.85;
+    opacity: 0.8;
   }
   100% {
     transform: scale(1);
-    opacity: 0.5;
+    opacity: 0.45;
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.34;
   }
 }
 
 @media (max-width: 1100px) {
-  .login-page {
-    padding: 18px;
-  }
-
-  .login-shell {
+  .login-layout {
     grid-template-columns: 1fr;
-    min-height: auto;
   }
 
   .login-hero {
-    padding: 42px 34px 28px;
+    padding: 32px 28px 24px;
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   }
 
   .login-panel {
-    padding: 34px 28px 38px;
+    padding: 34px 26px 42px;
   }
 
-  .hero-card {
+  .hero-content h1 {
+    max-width: 760px;
+  }
+
+  .hero-info-card {
     max-width: 100%;
   }
 }
 
 @media (max-width: 768px) {
-  .login-page {
-    padding: 0;
+  .login-layout {
     min-height: 100vh;
-  }
-
-  .login-shell {
-    width: 100%;
-    min-height: 100vh;
-    border-radius: 0;
-    grid-template-columns: 1fr;
   }
 
   .login-hero {
-    padding: 26px 20px 22px;
-    min-height: auto;
+    padding: 24px 18px 18px;
   }
 
   .hero-logo {
-    width: 148px;
-    margin-bottom: 26px;
+    width: 150px;
   }
 
   .hero-badge {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     padding: 9px 14px;
     font-size: 0.82rem;
   }
@@ -734,72 +766,73 @@ input:focus {
   }
 
   .hero-content h1 {
-    font-size: clamp(2.25rem, 9vw, 3.4rem);
-    margin-bottom: 14px;
+    font-size: clamp(2.35rem, 10vw, 3.8rem);
   }
 
   .hero-description {
+    margin-top: 18px;
     font-size: 0.96rem;
     line-height: 1.75;
   }
 
-  .hero-card {
-    margin-top: 24px;
+  .hero-info-card {
+    margin-top: 26px;
     padding: 18px 16px;
-    border-radius: 20px;
+    border-radius: 22px;
   }
 
-  .hero-card p {
+  .hero-info-card p {
     font-size: 0.92rem;
-    line-height: 1.65;
+    line-height: 1.7;
   }
 
   .shape-1 {
-    width: 180px;
+    width: 170px;
     height: 54px;
-    left: 12px;
-    bottom: 44px;
+    left: 10px;
+    bottom: 26px;
   }
 
   .shape-2 {
     width: 120px;
-    height: 42px;
-    left: 130px;
-    bottom: 108px;
+    height: 40px;
+    left: 110px;
+    bottom: 86px;
   }
 
   .shape-3 {
     width: 150px;
-    height: 48px;
-    left: 200px;
-    bottom: 16px;
+    height: 46px;
+    left: 180px;
+    bottom: 10px;
   }
 
+  .shape-4,
   .line-1,
-  .line-2,
-  .line-3 {
+  .line-2 {
     display: none;
   }
 
   .login-panel {
-    padding: 26px 20px 34px;
+    padding: 24px 18px 30px;
   }
 
   .panel-content {
+    width: 100%;
     max-width: 100%;
+    padding: 8px 0;
   }
 
   .panel-header {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
   }
 
   .panel-content h2 {
-    font-size: clamp(2rem, 8vw, 2.7rem);
+    font-size: clamp(2.1rem, 9vw, 3.1rem);
   }
 
   .panel-subtitle {
     font-size: 0.96rem;
-    line-height: 1.6;
   }
 
   input,
@@ -810,26 +843,26 @@ input:focus {
 
 @media (max-width: 480px) {
   .login-hero {
-    padding: 22px 16px 18px;
+    padding: 22px 14px 16px;
   }
 
   .login-panel {
-    padding: 22px 16px 28px;
+    padding: 22px 14px 26px;
   }
 
   .hero-logo {
-    width: 134px;
+    width: 136px;
   }
 
   .hero-content h1 {
-    font-size: clamp(2rem, 10vw, 2.8rem);
+    font-size: clamp(2rem, 11vw, 3rem);
   }
 
   .hero-description {
     font-size: 0.92rem;
   }
 
-  .hero-card-label,
+  .hero-info-label,
   .panel-tag {
     font-size: 0.78rem;
   }
