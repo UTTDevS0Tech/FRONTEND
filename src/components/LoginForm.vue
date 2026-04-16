@@ -275,7 +275,7 @@ function login() {
   z-index: 1;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1.08fr 0.92fr;
+  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.7fr);
 }
 
 .login-hero {
@@ -293,7 +293,7 @@ function login() {
       rgba(233, 237, 201, 0.58) 42%,
       rgba(244, 220, 186, 0.28) 100%
     );
-  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  border-right: 1px solid rgba(132, 111, 81, 0.08);
 }
 
 .hero-topbar {
@@ -311,7 +311,7 @@ function login() {
 .hero-inner {
   position: relative;
   z-index: 2;
-  max-width: 640px;
+  max-width: 720px;
   padding: 24px 0 18px;
 }
 
@@ -320,10 +320,10 @@ function login() {
   margin-bottom: 20px;
   padding: 11px 18px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.24);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.3);
+  color: #7c5c41;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.02em;
   backdrop-filter: blur(10px);
   box-shadow: 0 12px 28px rgba(130, 104, 74, 0.08);
@@ -336,29 +336,29 @@ function login() {
 
 .hero-kicker {
   margin: 0 0 14px;
-  color: rgba(255, 255, 255, 0.9);
+  color: #8a674a;
   font-size: 0.94rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .hero-content h1 {
   margin: 0;
-  color: #fff;
+  color: #5f4635;
   font-size: clamp(3.3rem, 6vw, 6rem);
   line-height: 0.98;
   font-weight: 900;
   letter-spacing: -0.04em;
   max-width: 620px;
   text-wrap: balance;
-  text-shadow: 0 14px 35px rgba(124, 95, 64, 0.12);
+  text-shadow: 0 14px 35px rgba(255, 255, 255, 0.2);
 }
 
 .hero-description {
   margin: 24px 0 0;
   max-width: 560px;
-  color: rgba(255, 255, 255, 0.95);
+  color: #705645;
   font-size: 1.08rem;
   line-height: 1.95;
 }
@@ -369,10 +369,10 @@ function login() {
   max-width: 500px;
   padding: 22px 22px;
   border-radius: 28px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   backdrop-filter: blur(16px);
-  box-shadow: 0 20px 44px rgba(117, 91, 62, 0.12);
+  box-shadow: 0 20px 44px rgba(117, 91, 62, 0.08);
   animation: fadeUp 1.05s ease;
 }
 
@@ -393,15 +393,15 @@ function login() {
   margin-bottom: 12px;
   padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.3);
+  color: #7b5a40;
   font-size: 0.82rem;
   font-weight: 800;
 }
 
 .hero-info-card p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.94);
+  color: #775d49;
   font-size: 0.98rem;
   line-height: 1.8;
 }
@@ -462,7 +462,7 @@ function login() {
 
 .line {
   height: 8px;
-  background: rgba(255, 255, 255, 0.26);
+  background: rgba(170, 138, 102, 0.18);
 }
 
 .line-1 {
@@ -482,16 +482,16 @@ function login() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 56px 44px;
+  padding: 40px 28px;
   background:
-    linear-gradient(180deg, rgba(253, 249, 232, 0.88) 0%, rgba(255, 250, 239, 0.84) 100%);
+    linear-gradient(180deg, rgba(253, 249, 232, 0.82) 0%, rgba(255, 250, 239, 0.8) 100%);
 }
 
 .panel-overlay {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
   pointer-events: none;
 }
 
@@ -499,10 +499,10 @@ function login() {
   position: absolute;
   top: 12%;
   right: 8%;
-  width: 250px;
-  height: 250px;
+  width: 220px;
+  height: 220px;
   border-radius: 999px;
-  background: rgba(212, 163, 115, 0.12);
+  background: rgba(212, 163, 115, 0.1);
   filter: blur(32px);
   animation: pulseGlow 5s ease-in-out infinite;
 }
@@ -510,13 +510,13 @@ function login() {
 .panel-content {
   position: relative;
   z-index: 1;
-  width: min(100%, 460px);
-  padding: 22px 6px;
+  width: min(100%, 420px);
+  padding: 18px 4px;
   animation: slideRight 1s ease;
 }
 
 .panel-header {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .panel-tag {
@@ -532,7 +532,7 @@ function login() {
 
 .panel-content h2 {
   margin: 0 0 10px;
-  font-size: clamp(2.6rem, 4.4vw, 4.2rem);
+  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
   color: #6a5241;
   font-weight: 900;
   line-height: 1;
@@ -542,7 +542,7 @@ function login() {
 .panel-subtitle {
   margin: 0;
   color: #7f6d5f;
-  font-size: 1.04rem;
+  font-size: 0.98rem;
   line-height: 1.7;
 }
 
@@ -561,7 +561,7 @@ function login() {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.05rem;
 }
 
 .form-group {
@@ -573,17 +573,17 @@ function login() {
 .form-group label {
   color: #6a5241;
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.98rem;
 }
 
 input {
   width: 100%;
-  padding: 1.12rem 1.18rem;
-  border-radius: 20px;
+  padding: 1rem 1.05rem;
+  border-radius: 18px;
   border: 1px solid rgba(212, 163, 115, 0.14);
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.84);
   color: #6a5241;
-  font-size: 1rem;
+  font-size: 0.97rem;
   outline: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition:
@@ -605,17 +605,17 @@ input:focus {
 }
 
 .login-button {
-  margin-top: 0.65rem;
+  margin-top: 0.55rem;
   width: 100%;
-  padding: 1.12rem 1rem;
+  padding: 1rem;
   border: none;
-  border-radius: 20px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #d4a373 0%, #c88f59 100%);
   color: white;
   font-weight: 800;
-  font-size: 1.05rem;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 16px 32px rgba(212, 163, 115, 0.28);
+  box-shadow: 0 16px 32px rgba(212, 163, 115, 0.24);
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease,
@@ -625,7 +625,7 @@ input:focus {
 
 .login-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 20px 38px rgba(212, 163, 115, 0.36);
+  box-shadow: 0 20px 38px rgba(212, 163, 115, 0.32);
   filter: brightness(1.03);
 }
 
