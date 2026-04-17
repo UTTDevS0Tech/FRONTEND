@@ -24,8 +24,6 @@ const totalConfirmadas = computed(() =>
   <main class="agenda-page">
     <section class="agenda-shell">
       <div class="agenda-layout">
-        
-        <!-- SIDEBAR -->
         <aside class="agenda-sidebar">
           <span class="panel-tag">Personal</span>
           <h1>Mi agenda</h1>
@@ -51,10 +49,7 @@ const totalConfirmadas = computed(() =>
           </div>
         </aside>
 
-        <!-- CONTENIDO -->
         <section class="agenda-main">
-          
-          <!-- BOTÓN -->
           <div class="top-actions">
             <button
               class="back-btn"
@@ -64,17 +59,14 @@ const totalConfirmadas = computed(() =>
             </button>
           </div>
 
-          <!-- HEADER -->
           <div class="page-header">
             <h2>Agenda de trabajo</h2>
             <p>Visualiza tus citas asignadas y su estado.</p>
           </div>
 
-          <!-- CARD -->
           <div class="content-card">
             <EstilistaCitas />
           </div>
-
         </section>
       </div>
     </section>
@@ -92,91 +84,193 @@ const totalConfirmadas = computed(() =>
   display: grid;
   place-items: center;
   padding: 22px;
-  background: linear-gradient(135deg, #fefae0, #faedcd, #e9edc9);
+  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
 }
 
 .agenda-shell {
-  width: min(1600px, 100%);
+  width: min(1680px, 100%);
+  animation: pageEnter 0.8s ease;
 }
 
 .agenda-layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 270px 1fr;
+  min-height: 780px;
   border-radius: 30px;
   overflow: hidden;
-  background: rgba(255,255,255,0.6);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
+  backdrop-filter: blur(16px);
 }
 
 /* SIDEBAR */
 .agenda-sidebar {
-  padding: 30px;
-  background: linear-gradient(#ccd5ae, #e9edc9);
-}
-
-.panel-tag {
-  background: rgba(255,255,255,0.4);
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-weight: bold;
-}
-
-.agenda-sidebar h1 {
-  margin: 15px 0;
+  padding: 34px 24px;
+  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   color: #5f4b3a;
 }
 
+.panel-tag {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 24px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d5844;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.agenda-sidebar h1 {
+  margin: 0 0 16px;
+  font-size: 2.3rem;
+  line-height: 1.05;
+  color: #5f4b3a;
+}
+
+.agenda-sidebar p {
+  margin: 0 0 24px;
+  color: #7b6a58;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
 .sidebar-stats {
-  margin-top: 20px;
   display: grid;
-  gap: 15px;
+  gap: 18px;
+  margin-top: 12px;
 }
 
 .stat-card {
-  background: rgba(255,255,255,0.5);
-  padding: 15px;
-  border-radius: 15px;
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
 }
 
 .stat-card strong {
-  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
 }
 
 /* MAIN */
 .agenda-main {
-  padding: 25px;
-  background: rgba(254,250,224,0.9);
+  padding: 24px 28px;
+  background: rgba(254, 250, 224, 0.88);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
 }
 
 .top-actions {
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .back-btn {
-  background: #ccd5ae;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
   border: none;
-  padding: 10px 15px;
-  border-radius: 10px;
   cursor: pointer;
-  font-weight: bold;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.page-header {
+  display: grid;
+  gap: 0.35rem;
 }
 
 .page-header h2 {
   margin: 0;
+  font-size: 1.8rem;
   color: #5f4b3a;
 }
 
+.page-header p {
+  margin: 0;
+  color: #8a7764;
+  font-size: 0.95rem;
+}
+
 .content-card {
-  margin-top: 15px;
-  padding: 20px;
-  border-radius: 25px;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.7);
+  min-height: 620px;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* RESPONSIVE */
-@media (max-width: 900px) {
+@media (max-width: 1250px) {
   .agenda-layout {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .agenda-page {
+    padding: 16px;
+  }
+
+  .agenda-main {
+    padding: 18px;
+  }
+
+  .content-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .agenda-sidebar h1 {
+    font-size: 2rem;
+  }
+
+  .back-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>
