@@ -148,206 +148,211 @@ onMounted(async () => {
 
 <template>
   <main class="perfil-page">
-    <section class="perfil-shell">
-      <div class="perfil-layout">
-        <aside class="perfil-sidebar">
-          <span class="panel-tag">Cliente</span>
-          <h1>Mi perfil</h1>
+    <div class="page-gradient"></div>
+    <div class="page-pattern"></div>
+    <div class="page-glow glow-1"></div>
+    <div class="page-glow glow-2"></div>
+
+    <section class="hero-strip">
+      <div class="hero-copy">
+        <span class="panel-tag">Cliente</span>
+        <h1>Mi perfil</h1>
+        <p>
+          Revisa tu información personal, consulta tus próximas citas y mantén
+          tu historial organizado desde una sola pantalla.
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <article class="stat-card">
+          <strong>{{ perfilStore.citasPendientes.length }}</strong>
+          <span>Citas pendientes</span>
+        </article>
+
+        <article class="stat-card">
+          <strong>{{ perfilStore.citasPasadas.length }}</strong>
+          <span>Citas pasadas</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-area">
+      <div class="top-actions">
+        <button type="button" class="back-btn" @click="router.push('/dashboard/cliente')">
+          ← Volver al dashboard
+        </button>
+
+        <button type="button" class="new-btn" @click="router.push('/dashboard/cliente/cita')">
+          + Agendar nueva cita
+        </button>
+      </div>
+
+      <section class="hero-card">
+        <div class="hero-copy-block">
+          <span class="hero-tag">Mi perfil</span>
+          <h2>{{ bienvenida }}</h2>
           <p>
-            Revisa tu información personal, consulta tus próximas citas y mantén
-            tu historial organizado desde una sola pantalla.
+            Desde aquí puedes revisar tu historial, ver tus próximas citas y
+            abrir ajustes solo cuando necesites editar tus datos.
           </p>
+        </div>
+      </section>
 
-          <div class="sidebar-stats">
-            <div class="stat-card">
-              <strong>{{ perfilStore.citasPendientes.length }}</strong>
-              <span>Citas pendientes</span>
+      <div class="content-grid">
+        <section class="content-card info-card">
+          <div class="section-head">
+            <div>
+              <span class="section-tag">Información</span>
+              <h3>Datos personales</h3>
+              <p>Administra tu información de perfil y opciones de cuenta.</p>
             </div>
 
-            <div class="stat-card">
-              <strong>{{ perfilStore.citasPasadas.length }}</strong>
-              <span>Citas pasadas</span>
-            </div>
-          </div>
-        </aside>
+            <div class="settings-wrap">
+              <div class="settings-menu">
+                <button type="button" class="ghost-btn settings-btn" @click="toggleAjustes">
+                  Ajustes
+                </button>
 
-        <section class="perfil-content">
-          <div class="top-actions">
-            <button type="button" class="back-btn" @click="router.push('/dashboard/cliente')">
-              ← Volver al dashboard
-            </button>
-
-            <button type="button" class="new-btn" @click="router.push('/dashboard/cliente/cita')">
-              + Agendar nueva cita
-            </button>
-          </div>
-
-          <section class="hero-card">
-            <div class="hero-copy">
-              <span class="hero-tag">Mi perfil</span>
-              <h2>{{ bienvenida }}</h2>
-              <p>
-                Desde aquí puedes revisar tu historial, ver tus próximas citas y
-                abrir ajustes solo cuando necesites editar tus datos.
-              </p>
-            </div>
-          </section>
-
-          <div class="content-grid">
-            <section class="content-card info-card">
-              <div class="section-head">
-                <div>
-                  <span class="section-tag">Información</span>
-                  <h3>Datos personales</h3>
-                  <p>Administra tu información de perfil y opciones de cuenta.</p>
-                </div>
-
-                <div class="settings-wrap">
-                  <div class="settings-menu">
-                    <button type="button" class="ghost-btn settings-btn" @click="toggleAjustes">
-                      Ajustes
-                    </button>
-
-                    <div v-if="mostrarAjustes" class="settings-dropdown">
-                      <button type="button" class="settings-option" @click="abrirEdicionPerfil">
-                        Editar datos del perfil
-                      </button>
-
-                      <button type="button" class="settings-option danger" @click="cerrarSesion">
-                        Cerrar sesión
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="perfilStore.errorPerfil" class="alert error">
-                {{ perfilStore.errorPerfil }}
-              </div>
-
-              <div v-if="perfilStore.mensaje" class="alert success">
-                {{ perfilStore.mensaje }}
-              </div>
-
-              <div v-if="!mostrarFormularioEdicion" class="profile-summary">
-                <div class="summary-row">
-                  <span>Nombre</span>
-                  <strong>{{ formulario.nom || 'Sin definir' }}</strong>
-                </div>
-
-                <div class="summary-row">
-                  <span>Apellido paterno</span>
-                  <strong>{{ formulario.apellido_p || 'Sin definir' }}</strong>
-                </div>
-
-                <div class="summary-row">
-                  <span>Apellido materno</span>
-                  <strong>{{ formulario.apellido_m || 'Sin definir' }}</strong>
-                </div>
-
-                <div class="summary-row">
-                  <span>Correo electrónico</span>
-                  <strong>{{ formulario.email || 'Sin definir' }}</strong>
-                </div>
-              </div>
-
-              <form v-else class="perfil-form" @submit.prevent="guardarCambios">
-                <div class="grid">
-                  <div class="field">
-                    <label>Nombre</label>
-                    <input v-model="formulario.nom" type="text" autocomplete="given-name" />
-                  </div>
-
-                  <div class="field">
-                    <label>Apellido paterno</label>
-                    <input v-model="formulario.apellido_p" type="text" autocomplete="family-name" />
-                  </div>
-
-                  <div class="field">
-                    <label>Apellido materno</label>
-                    <input v-model="formulario.apellido_m" type="text" />
-                  </div>
-
-                  <div class="field">
-                    <label>Correo electrónico</label>
-                    <input v-model="formulario.email" type="email" autocomplete="email" />
-                  </div>
-                </div>
-
-                <div class="form-actions">
-                  <button type="button" class="ghost-btn wide" @click="cancelarEdicion">
-                    Cancelar
+                <div v-if="mostrarAjustes" class="settings-dropdown">
+                  <button type="button" class="settings-option" @click="abrirEdicionPerfil">
+                    Editar datos del perfil
                   </button>
 
-                  <button type="submit" class="new-btn wide" :disabled="perfilStore.loadingPerfil">
-                    {{ perfilStore.loadingPerfil ? 'Guardando...' : 'Guardar cambios' }}
+                  <button type="button" class="settings-option danger" @click="cerrarSesion">
+                    Cerrar sesión
                   </button>
                 </div>
-              </form>
-            </section>
+              </div>
+            </div>
+          </div>
 
-            <section class="timeline-column">
-              <article class="content-card">
-                <div class="section-head compact">
+          <div v-if="perfilStore.errorPerfil" class="alert error">
+            {{ perfilStore.errorPerfil }}
+          </div>
+
+          <div v-if="perfilStore.mensaje" class="alert success">
+            {{ perfilStore.mensaje }}
+          </div>
+
+          <div v-if="!mostrarFormularioEdicion" class="profile-summary">
+            <div class="summary-row">
+              <span>Nombre</span>
+              <strong>{{ formulario.nom || 'Sin definir' }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Apellido paterno</span>
+              <strong>{{ formulario.apellido_p || 'Sin definir' }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Apellido materno</span>
+              <strong>{{ formulario.apellido_m || 'Sin definir' }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Correo electrónico</span>
+              <strong>{{ formulario.email || 'Sin definir' }}</strong>
+            </div>
+          </div>
+
+          <form v-else class="perfil-form" @submit.prevent="guardarCambios">
+            <div class="grid">
+              <div class="field">
+                <label>Nombre</label>
+                <input v-model="formulario.nom" type="text" autocomplete="given-name" />
+              </div>
+
+              <div class="field">
+                <label>Apellido paterno</label>
+                <input v-model="formulario.apellido_p" type="text" autocomplete="family-name" />
+              </div>
+
+              <div class="field">
+                <label>Apellido materno</label>
+                <input v-model="formulario.apellido_m" type="text" />
+              </div>
+
+              <div class="field">
+                <label>Correo electrónico</label>
+                <input v-model="formulario.email" type="email" autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="ghost-btn wide" @click="cancelarEdicion">
+                Cancelar
+              </button>
+
+              <button type="submit" class="new-btn wide" :disabled="perfilStore.loadingPerfil">
+                {{ perfilStore.loadingPerfil ? 'Guardando...' : 'Guardar cambios' }}
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="timeline-column">
+          <article class="content-card">
+            <div class="section-head compact">
+              <div>
+                <span class="section-tag">Historial</span>
+                <h3>Citas pasadas</h3>
+              </div>
+              <p>Aquí verás las citas que ya vencieron o fueron canceladas.</p>
+            </div>
+
+            <div v-if="perfilStore.loadingCitas" class="empty-state loading">
+              Cargando tus citas...
+            </div>
+
+            <div v-else-if="perfilStore.errorCitas" class="alert error">
+              {{ perfilStore.errorCitas }}
+            </div>
+
+            <div v-else-if="perfilStore.citasPasadas.length === 0" class="empty-state">
+              Aún no tienes citas en tu historial.
+            </div>
+
+            <div v-else class="cards-grid">
+              <article
+                v-for="cita in perfilStore.citasPasadas"
+                :key="`pasada-${cita.id}`"
+                class="cita-card muted"
+              >
+                <div class="card-glow"></div>
+
+                <div class="cita-top">
                   <div>
-                    <span class="section-tag">Historial</span>
-                    <h3>Citas pasadas</h3>
+                    <h4>Cita #{{ cita.id }}</h4>
+                    <p>{{ formatearFecha(cita.fecha_c) }}</p>
                   </div>
-                  <p>Aquí verás las citas que ya vencieron o fueron canceladas.</p>
+
+                  <span class="estado-pill" :class="claseEstado(cita.estado)">
+                    {{ cita.estado }}
+                  </span>
                 </div>
 
-                <div v-if="perfilStore.loadingCitas" class="empty-state loading">
-                  Cargando tus citas...
-                </div>
-
-                <div v-else-if="perfilStore.errorCitas" class="alert error">
-                  {{ perfilStore.errorCitas }}
-                </div>
-
-                <div v-else-if="perfilStore.citasPasadas.length === 0" class="empty-state">
-                  Aún no tienes citas en tu historial.
-                </div>
-
-                <div v-else class="cards-grid">
-                  <article
-                    v-for="cita in perfilStore.citasPasadas"
-                    :key="`pasada-${cita.id}`"
-                    class="cita-card muted"
-                  >
-                    <div class="cita-top">
-                      <div>
-                        <h4>Cita #{{ cita.id }}</h4>
-                        <p>{{ formatearFecha(cita.fecha_c) }}</p>
-                      </div>
-
-                      <span class="estado-pill" :class="claseEstado(cita.estado)">
-                        {{ cita.estado }}
-                      </span>
-                    </div>
-
-                    <dl class="cita-meta">
-                      <div>
-                        <dt>Horario</dt>
-                        <dd>{{ resumenHorario(cita) }}</dd>
-                      </div>
-                      <div>
-                        <dt>Estilista</dt>
-                        <dd>{{ cita.personal || 'Sin asignar' }}</dd>
-                      </div>
-                      <div>
-                        <dt>Servicios</dt>
-                        <dd>{{ serviciosTexto(cita) }}</dd>
-                      </div>
-                      <div>
-                        <dt>Total</dt>
-                        <dd>{{ totalTexto(cita) }}</dd>
-                      </div>
-                    </dl>
-                  </article>
-                </div>
+                <dl class="cita-meta">
+                  <div>
+                    <dt>Horario</dt>
+                    <dd>{{ resumenHorario(cita) }}</dd>
+                  </div>
+                  <div>
+                    <dt>Estilista</dt>
+                    <dd>{{ cita.personal || 'Sin asignar' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Servicios</dt>
+                    <dd>{{ serviciosTexto(cita) }}</dd>
+                  </div>
+                  <div>
+                    <dt>Total</dt>
+                    <dd>{{ totalTexto(cita) }}</dd>
+                  </div>
+                </dl>
               </article>
-            </section>
-          </div>
+            </div>
+          </article>
         </section>
       </div>
     </section>
@@ -360,98 +365,152 @@ onMounted(async () => {
 }
 
 .perfil-page {
+  position: relative;
   width: 100%;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 22px;
-  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
+  padding: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(204, 213, 174, 0.95), transparent 22%),
+    radial-gradient(circle at 85% 20%, rgba(233, 237, 201, 0.7), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(212, 163, 115, 0.18), transparent 22%),
+    linear-gradient(145deg, #fefae0 0%, #f7f1de 42%, #e9edc9 100%);
   color: #5f4b3a;
 }
 
-.perfil-shell {
-  width: min(1680px, 100%);
+.page-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.page-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.18), transparent 60%);
+  pointer-events: none;
+}
+
+.page-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(46px);
+  pointer-events: none;
+}
+
+.glow-1 {
+  top: 80px;
+  left: -100px;
+  width: 260px;
+  height: 260px;
+  background: rgba(212, 163, 115, 0.12);
+}
+
+.glow-2 {
+  right: -120px;
+  bottom: 120px;
+  width: 320px;
+  height: 320px;
+  background: rgba(204, 213, 174, 0.32);
+}
+
+.hero-strip {
+  position: relative;
+  z-index: 1;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 22px;
   animation: pageEnter 0.8s ease;
 }
 
-.perfil-layout {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  min-height: 780px;
-  border-radius: 30px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
-  backdrop-filter: blur(16px);
-}
-
-.perfil-sidebar {
-  padding: 34px 24px;
-  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+.hero-copy {
+  padding: 18px 0;
 }
 
 .panel-tag {
   display: inline-block;
   width: fit-content;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   padding: 10px 18px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.38);
   color: #6d5844;
   font-weight: 800;
   font-size: 0.95rem;
+  backdrop-filter: blur(8px);
 }
 
-.perfil-sidebar h1 {
+.hero-copy h1 {
   margin: 0 0 16px;
-  font-size: 2.3rem;
-  line-height: 1.05;
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  line-height: 0.98;
   color: #5f4b3a;
 }
 
-.perfil-sidebar p {
-  margin: 0 0 24px;
+.hero-copy p {
+  margin: 0;
+  max-width: 720px;
   color: #7b6a58;
-  line-height: 1.7;
-  font-size: 0.95rem;
+  line-height: 1.8;
+  font-size: 1rem;
 }
 
-.sidebar-stats {
+.hero-stats {
   display: grid;
-  gap: 18px;
-  margin-top: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-self: end;
 }
 
 .stat-card {
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+  padding: 22px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.stat-card:first-child {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.stat-card:last-child {
+  background: rgba(204, 213, 174, 0.34);
+  border: 1px solid rgba(169, 184, 130, 0.22);
 }
 
 .stat-card strong {
   display: block;
   margin-bottom: 8px;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #5f4b3a;
 }
 
 .stat-card span {
   color: #7b6a58;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
-.perfil-content {
-  padding: 24px 28px;
-  background: rgba(254, 250, 224, 0.88);
+.content-area {
+  position: relative;
+  z-index: 1;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 10px 0 48px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  overflow: hidden;
+  gap: 18px;
 }
 
 .top-actions {
@@ -476,15 +535,17 @@ onMounted(async () => {
   font-size: 0.95rem;
   border: none;
   text-decoration: none;
-  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   cursor: pointer;
 }
 
 .back-btn,
 .ghost-btn {
   background: rgba(204, 213, 174, 0.55);
-  color: #5f4b3a;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  color: #556246;
+  border: 1px solid rgba(169, 184, 130, 0.2);
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.06);
+  backdrop-filter: blur(8px);
 }
 
 .back-btn:hover,
@@ -496,7 +557,7 @@ onMounted(async () => {
 .back-btn:hover,
 .ghost-btn:hover {
   background: rgba(204, 213, 174, 0.78);
-  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.1);
 }
 
 .new-btn {
@@ -513,31 +574,33 @@ onMounted(async () => {
 
 .hero-card,
 .content-card {
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 28px;
   padding: 24px;
-  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
-  border: 1px solid rgba(236, 231, 216, 0.7);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(12px);
 }
 
-.hero-copy {
+.hero-copy-block {
   display: grid;
   gap: 10px;
 }
 
-.hero-copy h2,
-.hero-copy p {
+.hero-copy-block h2,
+.hero-copy-block p {
   margin: 0;
 }
 
-.hero-copy h2 {
+.hero-copy-block h2 {
   font-size: 1.9rem;
   color: #5f4b3a;
 }
 
-.hero-copy p {
+.hero-copy-block p {
   color: #8a7764;
   line-height: 1.7;
+  max-width: 760px;
 }
 
 .hero-tag,
@@ -650,8 +713,8 @@ onMounted(async () => {
   gap: 14px;
   padding: 14px 16px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(212, 163, 115, 0.14);
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .summary-row span {
@@ -689,8 +752,8 @@ onMounted(async () => {
   min-width: 0;
   padding: 14px 16px;
   border-radius: 16px;
-  border: 1px solid rgba(212, 163, 115, 0.25);
-  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(212, 163, 115, 0.2);
+  background: rgba(255, 255, 255, 0.84);
   color: #5f4b3a;
   font-size: 0.95rem;
   outline: none;
@@ -702,8 +765,9 @@ onMounted(async () => {
   border-color: #D4A373;
   box-shadow:
     0 0 0 4px rgba(212, 163, 115, 0.15),
-    0 6px 12px rgba(212, 163, 115, 0.15);
+    0 6px 12px rgba(212, 163, 115, 0.12);
   transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .form-actions {
@@ -718,16 +782,32 @@ onMounted(async () => {
 }
 
 .cita-card {
+  position: relative;
+  overflow: hidden;
   border-radius: 22px;
   padding: 18px;
-  background: rgba(254, 250, 224, 0.7);
-  border: 1px solid rgba(212, 163, 115, 0.18);
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   display: grid;
   gap: 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.05);
 }
 
 .cita-card.muted {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.card-glow {
+  position: absolute;
+  top: -34px;
+  right: -16px;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.12);
+  filter: blur(18px);
+  pointer-events: none;
 }
 
 .cita-top {
@@ -763,6 +843,10 @@ onMounted(async () => {
 .cita-meta div {
   display: grid;
   gap: 4px;
+  padding: 0.85rem 0.95rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .cita-meta dt {
@@ -818,24 +902,27 @@ onMounted(async () => {
 
 .alert.error {
   margin-bottom: 14px;
-  background: rgba(255, 228, 228, 0.95);
+  background: rgba(255, 228, 228, 0.86);
   color: #9d3e3e;
+  border: 1px solid rgba(161, 68, 68, 0.14);
 }
 
 .alert.success {
   margin-bottom: 14px;
-  background: rgba(204, 213, 174, 0.38);
+  background: rgba(204, 213, 174, 0.34);
   color: #436132;
+  border: 1px solid rgba(169, 184, 130, 0.16);
 }
 
 .empty-state {
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.22);
   color: #7b6a58;
   border: 1px dashed rgba(212, 163, 115, 0.28);
+  backdrop-filter: blur(10px);
 }
 
 .empty-state.loading {
-  background: rgba(250, 237, 205, 0.55);
+  background: rgba(250, 237, 205, 0.34);
 }
 
 .wide {
@@ -854,34 +941,47 @@ onMounted(async () => {
 }
 
 @media (max-width: 1250px) {
-  .perfil-layout {
+  .content-grid {
     grid-template-columns: 1fr;
   }
 
-  .content-grid {
+  .hero-strip {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
   .perfil-page {
-    padding: 16px;
+    padding: 0;
   }
 
-  .perfil-content {
-    padding: 18px;
+  .hero-strip,
+  .content-area {
+    width: min(100% - 28px, 1440px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-strip {
+    padding-top: 28px;
+    gap: 18px;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-stats,
+  .grid,
+  .cita-meta,
+  .form-actions {
+    grid-template-columns: 1fr;
   }
 
   .hero-card,
   .content-card {
     padding: 18px;
     border-radius: 22px;
-  }
-
-  .grid,
-  .cita-meta,
-  .form-actions {
-    grid-template-columns: 1fr;
   }
 
   .top-actions,
@@ -908,7 +1008,7 @@ onMounted(async () => {
     margin-top: 10px;
   }
 
-  .hero-copy h2 {
+  .hero-copy-block h2 {
     font-size: 1.5rem;
   }
 }
