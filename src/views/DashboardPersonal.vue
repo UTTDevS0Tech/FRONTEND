@@ -29,7 +29,7 @@ function irVerCitasPendientes() {
     <section class="hero-strip">
       <div class="hero-copy">
         <span class="panel-tag">Panel de Personal</span>
-        <h1>Dashboard</h1>
+        <h1>Bienvenid@</h1>
         <p>
           Gestiona las acciones principales de recepción desde una vista más clara,
           moderna y cómoda para tu flujo de trabajo.
@@ -37,11 +37,6 @@ function irVerCitasPendientes() {
       </div>
 
       <div class="hero-stats">
-        <article class="stat-card">
-          <strong>2</strong>
-          <span>Acciones rápidas disponibles</span>
-        </article>
-
         <article class="stat-card">
           <strong>Recepción</strong>
           <span>Acceso central para la agenda del día</span>
@@ -81,11 +76,17 @@ function irVerCitasPendientes() {
 
           <div class="actions-grid">
             <button class="action-card" @click="irCrearCitaEscritorio">
+              <div class="action-icon-wrap">
+                <img src="@/assets/agenda1.svg" alt="" aria-hidden="true" class="action-icon" />
+              </div>
               <strong>Crear Cita de Escritorio</strong>
               <span>Registra nuevas citas para clientes directamente desde recepción.</span>
             </button>
 
             <button class="action-card secondary" @click="irVerCitasPendientes">
+              <div class="action-icon-wrap">
+                <img src="@/assets/consulta1.svg" alt="" aria-hidden="true" class="action-icon" />
+              </div>
               <strong>Ver Citas Pendientes</strong>
               <span>Consulta las citas próximas y mantén el control de la agenda.</span>
             </button>
@@ -413,6 +414,9 @@ function irVerCitasPendientes() {
   cursor: pointer;
   box-shadow: 0 18px 30px rgba(212, 163, 115, 0.24);
   transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .action-card:hover {
@@ -424,6 +428,28 @@ function irVerCitasPendientes() {
 .action-card.secondary {
   background: linear-gradient(135deg, #CCD5AE, #b7c290);
   color: #5f4b3a;
+}
+
+.action-icon-wrap {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.action-card.secondary .action-icon-wrap {
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.action-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .action-card strong {

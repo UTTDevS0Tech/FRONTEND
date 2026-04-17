@@ -87,45 +87,80 @@ async function guardarCita(payload: FormularioCitaEscritorio) {
 function limpiarFormulario() {
   modeloFormulario.value = crearFormularioVacio()
 }
-
 </script>
 
 <template>
   <main class="citas-page">
-    <section class="citas-shell">
-      <div class="citas-layout">
-        <aside class="citas-sidebar">
-          <span class="panel-tag">Recepción</span>
-          <h1>Cita de escritorio</h1>
-          <p>
-            Registra nuevas citas desde recepción de forma rápida y ordenada.
-          </p>
+    <div class="page-gradient"></div>
+    <div class="page-pattern"></div>
+    <div class="page-glow glow-1"></div>
+    <div class="page-glow glow-2"></div>
 
-          <div class="sidebar-stats">
-            <div class="stat-card">
+    <section class="hero-strip">
+      <div class="hero-copy">
+        <span class="panel-tag">Recepción</span>
+        <h1>Cita de escritorio</h1>
+        <p>
+          Registra nuevas citas desde recepción de forma rápida, clara y ordenada
+          dentro de un flujo cómodo para el personal.
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <article class="stat-card">
+          <strong>{{ clienteStore.clientes.length }}</strong>
+          <span>Clientes disponibles</span>
+        </article>
+
+        <article class="stat-card">
+          <strong>{{ personalStore.personales.length }}</strong>
+          <span>Personal disponible</span>
+        </article>
+
+        <article class="stat-card wide">
+          <strong>{{ tipoServicioStore.tipoServicios.length }}</strong>
+          <span>Servicios disponibles</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-area">
+      <div class="top-actions">
+        <router-link to="/dashboard/personal" class="back-btn">
+          ← Volver al dashboard
+        </router-link>
+      </div>
+
+      <div class="content-grid">
+        <aside class="side-panel">
+          <div class="side-card">
+            <span class="section-tag">Nueva cita</span>
+            <h2>Organiza la agenda</h2>
+            <p>
+              Captura los datos del cliente, selecciona al personal disponible y
+              agrega los servicios necesarios para crear la cita.
+            </p>
+          </div>
+
+          <div class="mini-stats">
+            <article class="mini-stat">
               <strong>{{ clienteStore.clientes.length }}</strong>
-              <span>Clientes disponibles</span>
-            </div>
+              <span>Clientes</span>
+            </article>
 
-            <div class="stat-card">
+            <article class="mini-stat">
               <strong>{{ personalStore.personales.length }}</strong>
-              <span>Personal disponible</span>
-            </div>
+              <span>Personal</span>
+            </article>
 
-            <div class="stat-card">
+            <article class="mini-stat">
               <strong>{{ tipoServicioStore.tipoServicios.length }}</strong>
-              <span>Servicios disponibles</span>
-            </div>
+              <span>Servicios</span>
+            </article>
           </div>
         </aside>
 
-        <section class="citas-content">
-          <div class="top-actions">
-            <router-link to="/dashboard/personal" class="back-btn">
-              ← Volver al dashboard
-            </router-link>
-          </div>
-
+        <section class="main-panel">
           <div class="header">
             <h2>Nueva cita de escritorio</h2>
             <p>Completa la información para registrar la cita.</p>
@@ -153,8 +188,10 @@ function limpiarFormulario() {
 
           <div class="card form-card">
             <div class="card-header">
-              <h3>Formulario de cita</h3>
-              <span>Captura los datos necesarios</span>
+              <div>
+                <h3>Formulario de cita</h3>
+                <span>Captura los datos necesarios</span>
+              </div>
             </div>
 
             <CitaEscritorioForm
@@ -184,98 +221,149 @@ function limpiarFormulario() {
 }
 
 .citas-page {
+  position: relative;
   width: 100%;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 22px;
-  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
+  padding: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(204, 213, 174, 0.95), transparent 22%),
+    radial-gradient(circle at 85% 20%, rgba(233, 237, 201, 0.72), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(212, 163, 115, 0.18), transparent 22%),
+    linear-gradient(145deg, #fefae0 0%, #f7f1de 42%, #e9edc9 100%);
   color: #5f4b3a;
 }
 
-.citas-shell {
-  width: min(1680px, 100%);
+.page-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.page-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.18), transparent 60%);
+  pointer-events: none;
+}
+
+.page-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(46px);
+  pointer-events: none;
+}
+
+.glow-1 {
+  top: 80px;
+  left: -100px;
+  width: 260px;
+  height: 260px;
+  background: rgba(212, 163, 115, 0.12);
+}
+
+.glow-2 {
+  right: -120px;
+  bottom: 120px;
+  width: 320px;
+  height: 320px;
+  background: rgba(204, 213, 174, 0.32);
+}
+
+.hero-strip {
+  position: relative;
+  z-index: 1;
+  width: min(1480px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 22px;
   animation: pageEnter 0.8s ease;
 }
 
-.citas-layout {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  min-height: 780px;
-  border-radius: 30px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
-  backdrop-filter: blur(16px);
-}
-
-.citas-sidebar {
-  padding: 34px 24px;
-  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+.hero-copy {
+  padding: 18px 0;
 }
 
 .panel-tag {
   display: inline-block;
   width: fit-content;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   padding: 10px 18px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.38);
   color: #6d5844;
   font-weight: 800;
   font-size: 0.95rem;
+  backdrop-filter: blur(8px);
 }
 
-.citas-sidebar h1 {
+.hero-copy h1 {
   margin: 0 0 16px;
-  font-size: 2.3rem;
-  line-height: 1.05;
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  line-height: 0.98;
   color: #5f4b3a;
 }
 
-.citas-sidebar p {
-  margin: 0 0 24px;
+.hero-copy p {
+  margin: 0;
+  max-width: 760px;
   color: #7b6a58;
-  line-height: 1.7;
-  font-size: 0.95rem;
+  line-height: 1.8;
+  font-size: 1rem;
 }
 
-.sidebar-stats {
+.hero-stats {
   display: grid;
-  gap: 18px;
-  margin-top: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-self: end;
 }
 
 .stat-card {
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+  padding: 22px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.stat-card:last-child,
+.stat-card.wide {
+  background: rgba(204, 213, 174, 0.34);
+  border: 1px solid rgba(169, 184, 130, 0.22);
 }
 
 .stat-card strong {
   display: block;
   margin-bottom: 8px;
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   color: #5f4b3a;
 }
 
 .stat-card span {
   color: #7b6a58;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
-.citas-content {
-  padding: 24px 28px;
-  background: rgba(254, 250, 224, 0.88);
+.content-area {
+  position: relative;
+  z-index: 1;
+  width: min(1480px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 10px 0 48px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  overflow: hidden;
+  gap: 18px;
 }
 
 .top-actions {
@@ -298,14 +386,89 @@ function limpiarFormulario() {
   text-decoration: none;
   transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
   background: rgba(204, 213, 174, 0.55);
-  color: #5f4b3a;
+  color: #556246;
+  border: 1px solid rgba(169, 184, 130, 0.2);
   box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  backdrop-filter: blur(8px);
 }
 
 .back-btn:hover {
   transform: translateY(-2px);
   background: rgba(204, 213, 174, 0.78);
   box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.62fr) minmax(0, 1.38fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.side-panel,
+.main-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.side-card,
+.card {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(12px);
+}
+
+.side-card h2 {
+  margin: 0 0 10px;
+  font-size: 1.9rem;
+  color: #5f4b3a;
+}
+
+.side-card p {
+  margin: 0;
+  color: #7b6a58;
+  line-height: 1.8;
+}
+
+.section-tag {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.16);
+  color: #8d633c;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.mini-stats {
+  display: grid;
+  gap: 14px;
+}
+
+.mini-stat {
+  padding: 18px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(233, 237, 201, 0.32) 0%, rgba(255, 255, 255, 0.18) 100%);
+  border: 1px solid rgba(204, 213, 174, 0.2);
+  box-shadow: 0 10px 22px rgba(92, 75, 59, 0.06);
+}
+
+.mini-stat strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.7rem;
+  color: #5f4b3a;
+}
+
+.mini-stat span {
+  color: #6d7d55;
+  font-weight: 700;
 }
 
 .header {
@@ -325,16 +488,8 @@ function limpiarFormulario() {
   font-size: 0.95rem;
 }
 
-.card {
-  background: rgba(255, 255, 255, 0.62);
-  border-radius: 28px;
-  padding: 24px;
-  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
-  border: 1px solid rgba(236, 231, 216, 0.7);
-}
-
 .form-card {
-  min-height: 620px;
+  min-height: auto;
 }
 
 .card-header {
@@ -347,7 +502,7 @@ function limpiarFormulario() {
 }
 
 .card-header h3 {
-  margin: 0;
+  margin: 0 0 4px;
   font-size: 1.35rem;
   color: #5f4b3a;
 }
@@ -360,8 +515,8 @@ function limpiarFormulario() {
 
 .alert {
   padding: 0.95rem 1rem;
-  border-radius: 12px;
-  font-weight: 600;
+  border-radius: 14px;
+  font-weight: 700;
 }
 
 .alert.error {
@@ -388,18 +543,41 @@ function limpiarFormulario() {
 }
 
 @media (max-width: 1250px) {
-  .citas-layout {
+  .hero-strip,
+  .content-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 768px) {
-  .citas-page {
-    padding: 1rem;
+@media (max-width: 900px) {
+  .hero-strip,
+  .content-area {
+    width: min(100% - 28px, 1480px);
+    margin-left: auto;
+    margin-right: auto;
   }
 
+  .hero-strip {
+    padding-top: 28px;
+    gap: 18px;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .side-card,
   .card {
-    padding: 1rem;
+    padding: 18px;
+    border-radius: 22px;
   }
 
   .header h2 {

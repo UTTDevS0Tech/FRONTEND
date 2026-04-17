@@ -1,35 +1,21 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import CitaEscritorioForm from '@/components/CitaEscritorioForm.vue'
+import { useTipoServiciosStore } from '@/stores/tipoServicios'
+import { useCitaEscritorioStore } from '@/stores/citaEscritorio'
+import { useClienteStore } from '@/stores/cliente'
+import { usePersonalStore } from '@/stores/personal'
 import type {
-  ClienteOption,
-  PersonalOption,
   FormularioCitaEscritorio,
-  FormularioDetalleCita,
+  CitaEscritorioPayload,
 } from '@/types/citaEscritorio'
-import type { TipoServicio } from '@/types'
 
-const props = defineProps<{
-  servicios: TipoServicio[]
-  personales: PersonalOption[]
-  clientes: ClienteOption[]
-  modelo?: FormularioCitaEscritorio | null
-  editando?: boolean
-  permitirEditarCliente?: boolean
-  mostrarBotonEditarCliente?: boolean
-  loading?: boolean
-}>()
-
-const emit = defineEmits<{
-  (e: 'submit', payload: FormularioCitaEscritorio): void
-  (e: 'edit-client'): void
-}>()
-
-function crearDetalleVacio(): FormularioDetalleCita {
-  return {
-    servicio_id: null,
-    subtotal: 0,
-  }
-}
+const citaStore = useCitaEscritorioStore()
+const clienteStore = useClienteStore()
+const personalStore = usePersonalStore()
+const tipoServicioStore = useTipoServiciosStore()
+const route = useRoute()
 
 function crearFormularioVacio(): FormularioCitaEscritorio {
   return {
@@ -39,179 +25,157 @@ function crearFormularioVacio(): FormularioCitaEscritorio {
     fecha_c: '',
     estado: 'pendiente',
     cliente_id: null,
-    detalles: [crearDetalleVacio()],
+    detalles: [
+      {
+        servicio_id: null,
+        subtotal: 0,
+      },
+    ],
   }
 }
 
-const formulario = reactive<FormularioCitaEscritorio>(crearFormularioVacio())
+const modeloFormulario = ref<FormularioCitaEscritorio>(crearFormularioVacio())
 
-watch(
-  () => props.modelo,
-  (nuevo) => {
-    if (!nuevo) {
-      Object.assign(formulario, crearFormularioVacio())
-      return
-    }
+onMounted(async () => {
+  await Promise.all([
+    citaStore.obtenerCitas(),
+    clienteStore.obtenerClientes(),
+    personalStore.obtenerPersonales(),
+    tipoServicioStore.obtenerTiposServicio(),
+  ])
 
-    formulario.total = nuevo.total
-    formulario.personal_id = nuevo.personal_id
-    formulario.hora_c = nuevo.hora_c
-    formulario.fecha_c = nuevo.fecha_c
-    formulario.estado = nuevo.estado
-    formulario.cliente_id = nuevo.cliente_id
-    formulario.detalles = nuevo.detalles.length
-      ? nuevo.detalles.map((detalle) => ({
-          servicio_id: detalle.servicio_id,
-          subtotal: detalle.subtotal,
-        }))
-      : [crearDetalleVacio()]
-  },
-  { immediate: true, deep: true }
-)
+  const clienteId = Number(route.query.cliente_id)
 
-function agregarDetalle() {
-  if (formulario.detalles.length >= 3) return
-  formulario.detalles.push(crearDetalleVacio())
-}
-
-function eliminarDetalle(index: number) {
-  if (formulario.detalles.length === 1) return
-  formulario.detalles.splice(index, 1)
-}
-
-function actualizarSubtotal(index: number) {
-  const detalle = formulario.detalles[index]
-  if (!detalle) return
-
-  const servicio = props.servicios.find((s) => s.id === detalle.servicio_id)
-  detalle.subtotal = servicio ? Number(servicio.precio) : 0
-}
-
-const totalCalculado = computed(() => {
-  return formulario.detalles.reduce((acumulado, detalle) => {
-    return acumulado + Number(detalle.subtotal || 0)
-  }, 0)
+  if (!Number.isNaN(clienteId) && clienteId > 0) {
+    modeloFormulario.value.cliente_id = clienteId
+  }
 })
 
-watch(
-  totalCalculado,
-  (nuevoTotal) => {
-    formulario.total = nuevoTotal
-  },
-  { immediate: true }
-)
+async function guardarCita(payload: FormularioCitaEscritorio) {
+  citaStore.limpiarMensajes()
 
-function enviarFormulario() {
-  emit('submit', {
-    total: formulario.total,
-    personal_id: formulario.personal_id,
-    hora_c: formulario.hora_c,
-    fecha_c: formulario.fecha_c,
-    estado: formulario.estado,
-    cliente_id: formulario.cliente_id,
-    detalles: formulario.detalles.map((detalle) => ({
-      servicio_id: detalle.servicio_id,
+  if (payload.personal_id === null || payload.cliente_id === null) {
+    citaStore.error = 'Selecciona cliente y personal'
+    return
+  }
+
+  const detallesValidos = payload.detalles
+    .filter((detalle) => detalle.servicio_id !== null)
+    .map((detalle) => ({
+      servicio_id: Number(detalle.servicio_id),
       subtotal: Number(detalle.subtotal),
-    })),
-  })
+    }))
+
+  const payloadFinal: CitaEscritorioPayload = {
+    total: Number(payload.total),
+    personal_id: Number(payload.personal_id),
+    hora_c: payload.hora_c,
+    fecha_c: payload.fecha_c,
+    estado: payload.estado,
+    cliente_id: Number(payload.cliente_id),
+    detalles: detallesValidos,
+  }
+
+  try {
+    await citaStore.crearCita(payloadFinal)
+    limpiarFormulario()
+  } catch (error) {
+    console.error('Error al guardar cita:', error)
+  }
 }
+
+function limpiarFormulario() {
+  modeloFormulario.value = crearFormularioVacio()
+}
+
 </script>
 
 <template>
-  <form class="cita-form" @submit.prevent="enviarFormulario">
-    <div class="grid">
+  <main class="citas-page">
+    <section class="citas-shell">
+      <div class="citas-layout">
+        <aside class="citas-sidebar">
+          <span class="panel-tag">Recepción</span>
+          <h1>Cita de escritorio</h1>
+          <p>
+            Registra nuevas citas desde recepción de forma rápida y ordenada.
+          </p>
 
-      <div class="field">
-        <label>Cliente</label>
-        <div class="cliente-field">
-          <select v-if="permitirEditarCliente" v-model="formulario.cliente_id" required>
-            <option :value="null" disabled>Selecciona cliente</option>
-            <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
-              {{ cliente.nombre }}
-            </option>
-          </select>
-          <input
-            v-else
-            type="text"
-            :value="clientes.find((c) => c.id === formulario.cliente_id)?.nombre || 'Cliente seleccionado'"
-            disabled
-          />
-          <button
-            v-if="mostrarBotonEditarCliente"
-            type="button"
-            class="btn edit-client-btn"
-            @click="emit('edit-client')"
-          >
-            Editar
-          </button>
-        </div>
+          <div class="sidebar-stats">
+            <div class="stat-card">
+              <strong>{{ clienteStore.clientes.length }}</strong>
+              <span>Clientes disponibles</span>
+            </div>
+
+            <div class="stat-card">
+              <strong>{{ personalStore.personales.length }}</strong>
+              <span>Personal disponible</span>
+            </div>
+
+            <div class="stat-card">
+              <strong>{{ tipoServicioStore.tipoServicios.length }}</strong>
+              <span>Servicios disponibles</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="citas-content">
+          <div class="top-actions">
+            <router-link to="/dashboard/personal" class="back-btn">
+              ← Volver al dashboard
+            </router-link>
+          </div>
+
+          <div class="header">
+            <h2>Nueva cita de escritorio</h2>
+            <p>Completa la información para registrar la cita.</p>
+          </div>
+
+          <div v-if="citaStore.error" class="alert error">
+            {{ citaStore.error }}
+          </div>
+
+          <div v-if="citaStore.mensaje" class="alert success">
+            {{ citaStore.mensaje }}
+          </div>
+
+          <div v-if="clienteStore.error" class="alert error">
+            {{ clienteStore.error }}
+          </div>
+
+          <div v-if="personalStore.error" class="alert error">
+            {{ personalStore.error }}
+          </div>
+
+          <div v-if="tipoServicioStore.error" class="alert error">
+            {{ tipoServicioStore.error }}
+          </div>
+
+          <div class="card form-card">
+            <div class="card-header">
+              <h3>Formulario de cita</h3>
+              <span>Captura los datos necesarios</span>
+            </div>
+
+            <CitaEscritorioForm
+              :modelo="modeloFormulario"
+              :editando="false"
+              :loading="
+                citaStore.loading ||
+                clienteStore.loading ||
+                personalStore.loading ||
+                tipoServicioStore.cargando
+              "
+              :clientes="clienteStore.clientes"
+              :personales="personalStore.personales"
+              :servicios="tipoServicioStore.tipoServicios"
+              @submit="guardarCita"
+            />
+          </div>
+        </section>
       </div>
-
-      <div class="field">
-        <label>Personal</label>
-        <select v-model="formulario.personal_id" required>
-          <option :value="null" disabled>Selecciona personal</option>
-          <option v-for="persona in personales" :key="persona.id" :value="persona.id">
-            {{ persona.nombre }}
-          </option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label>Fecha</label>
-        <input v-model="formulario.fecha_c" type="date" required />
-      </div>
-
-      <div class="field">
-        <label>Hora</label>
-        <input v-model="formulario.hora_c" type="time" required />
-      </div>
-    </div>
-
-    <div class="detalles">
-      <div class="detalles-header">
-        <h3>Servicios</h3>
-       <button type="button" class= "btn primary" @click="agregarDetalle" :disabled="formulario.detalles.length >= 3"> Agregar servicio </button>
-      </div>
-
-      <span v-if="formulario.detalles.length >= 3" style="font-size: 0.9rem; opacity: 0.7;"> Máximo 3 servicios </span>
-
-      <div
-        v-for="(detalle, index) in formulario.detalles"
-        :key="index"
-        class="detalle-row"
-      >
-        <select
-          v-model="detalle.servicio_id"
-          @change="actualizarSubtotal(index)"
-          required
-        >
-          <option :value="null" disabled>Selecciona un servicio</option>
-        <option
-        v-for="servicio in servicios"
-        :key="servicio.id"
-        :value="servicio.id"
-        :disabled="!servicio.activo"
-        :class="{ 'opcion-inactiva': !servicio.activo }"
-          >
-     {{ servicio.nombre }} - ${{ servicio.precio }}{{ !servicio.activo ? ' (No disponible)' : '' }}
-        </option>
-        </select>
-
-        <button type="button" class="btn remove-btn" @click="eliminarDetalle(index)">
-          Quitar
-        </button>
-      </div>
-    </div>
-
-    <div class="total-box">
-      <strong>Total: ${{ totalCalculado }}</strong>
-    </div>
-
-    <button type="submit" class="submit-btn" :disabled="loading">
-      {{ editando ? 'Actualizar cita' : 'Guardar cita' }}
-    </button>
-  </form>
+    </section>
+  </main>
 </template>
 
 <style scoped>
@@ -219,209 +183,227 @@ function enviarFormulario() {
   box-sizing: border-box;
 }
 
-.cita-form {
+.citas-page {
+  width: 100%;
+  min-height: 100vh;
   display: grid;
-  gap: 1rem;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.field {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.cliente-field {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-}
-
-.field label,
-.detalles-header h3 {
+  place-items: center;
+  padding: 22px;
+  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
   color: #5f4b3a;
-  font-weight: 800;
 }
 
-.detalles {
+.citas-shell {
+  width: min(1680px, 100%);
+  animation: pageEnter 0.8s ease;
+}
+
+.citas-layout {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: 270px 1fr;
+  min-height: 780px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
+  backdrop-filter: blur(16px);
 }
 
-.detalles-header {
+.citas-sidebar {
+  padding: 34px 24px;
+  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.panel-tag {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 24px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d5844;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.citas-sidebar h1 {
+  margin: 0 0 16px;
+  font-size: 2.3rem;
+  line-height: 1.05;
+  color: #5f4b3a;
+}
+
+.citas-sidebar p {
+  margin: 0 0 24px;
+  color: #7b6a58;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.sidebar-stats {
+  display: grid;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.stat-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.stat-card span {
+  color: #7b6a58;
+  font-weight: 600;
+}
+
+.citas-content {
+  padding: 24px 28px;
+  background: rgba(254, 250, 224, 0.88);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.back-btn {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  background: rgba(204, 213, 174, 0.55);
+  color: #5f4b3a;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(204, 213, 174, 0.78);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+}
+
+.header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #5f4b3a;
+}
+
+.header p {
+  margin: 0;
+  color: #8a7764;
+  font-size: 0.95rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(236, 231, 216, 0.7);
+}
+
+.form-card {
+  min-height: 620px;
+}
+
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
-.detalles-header h3 {
+.card-header h3 {
   margin: 0;
-  font-size: 1.05rem;
-}
-
-.detalle-row {
-  display: grid;
-  grid-template-columns: 2fr auto;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.total-box {
-  padding: 0.95rem 1rem;
-  border-radius: 16px;
-  background: rgba(204, 213, 174, 0.25);
+  font-size: 1.35rem;
   color: #5f4b3a;
-  font-size: 1.05rem;
 }
 
-input,
-select {
-  width: 100%;
-  min-width: 0;
-  padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(212, 163, 115, 0.25);
-  background: rgba(255, 255, 255, 0.95);
-  color: #5f4b3a;
-  font-size: 0.95rem;
-  outline: none;
-  transition: all 0.25s ease;
-  font-family: inherit;
-}
-
-input::placeholder {
-  color: #a08c7a;
-  font-weight: 500;
-}
-
-input:hover,
-select:hover {
-  border-color: rgba(212, 163, 115, 0.5);
-}
-
-input:focus,
-select:focus {
-  border-color: #D4A373;
-  box-shadow:
-    0 0 0 4px rgba(212, 163, 115, 0.15),
-    0 6px 12px rgba(212, 163, 115, 0.15);
-  transform: translateY(-1px);
-}
-
-input[disabled] {
-  background: rgba(255, 255, 255, 0.82);
-  color: #7a6858;
-  cursor: not-allowed;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 0.95rem 1rem;
-  border: none;
-  border-radius: 16px;
-  background: #D4A373 !important;
-  color: white !important;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25) !important;
-  transition: all 0.22s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #c89463 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
-}
-
-.submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.btn {
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  font-weight: 800;
-  font-size: 0.95rem;
-  transition: all 0.22s ease;
-  white-space: nowrap;
-}
-
-.btn.primary {
-  padding: 12px 18px;
-  background: linear-gradient(135deg, #D4A373, #bf8c5a);
-  color: white;
-  box-shadow: 0 14px 26px rgba(212, 163, 115, 0.25);
-}
-
-.btn.primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 30px rgba(212, 163, 115, 0.32);
-}
-
-.btn.primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-span {
+.card-header span {
   color: #8a7764;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
-@media (max-width: 900px) {
-  .grid {
+.alert {
+  padding: 0.95rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.alert.error {
+  background: rgba(255, 228, 228, 0.9);
+  color: #991b1b;
+  border: 1px solid rgba(245, 188, 188, 0.9);
+}
+
+.alert.success {
+  background: rgba(204, 213, 174, 0.35);
+  color: #3f5b2d;
+  border: 1px solid rgba(189, 232, 200, 0.8);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1250px) {
+  .citas-layout {
     grid-template-columns: 1fr;
   }
+}
 
-  .detalle-row {
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  .citas-page {
+    padding: 1rem;
   }
 
-  .detalles-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .card {
+    padding: 1rem;
   }
 
-  .btn.primary,
-  .submit-btn {
-    width: 100%;
+  .header h2 {
+    font-size: 1.5rem;
   }
-}
-
-.remove-btn {
-  padding: 12px 18px;
-  background: rgba(255, 226, 226, 0.95);
-  color: #ae4d4d;
-  box-shadow: 0 10px 20px rgba(174, 77, 77, 0.12);
-}
-
-.edit-client-btn {
-  padding: 12px 16px;
-  background: rgba(204, 213, 174, 0.55);
-  color: #4f5f38;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
-}
-
-.remove-btn:hover {
-  transform: translateY(-2px);
-}
-
-.edit-client-btn:hover {
-  transform: translateY(-2px);
-}
-
-option:disabled,
-.opcion-inactiva {
-  color: #b0a090;
-  background: #f5f0eb;
 }
 </style>
