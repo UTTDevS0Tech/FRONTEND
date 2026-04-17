@@ -24,7 +24,7 @@ function irAgenda(){
     <section class="hero-strip">
       <div class="hero-copy">
         <span class="panel-tag">Panel de Personal</span>
-        <h1>Dashboard</h1>
+        <h1>Bienvenid@</h1>
         <p>
           Consulta tus citas asignadas y mantén tu jornada organizada desde una
           vista clara, moderna y fácil de usar.
@@ -32,11 +32,6 @@ function irAgenda(){
       </div>
 
       <div class="hero-stats">
-        <article class="stat-card">
-          <strong>1</strong>
-          <span>Acción rápida disponible</span>
-        </article>
-
         <article class="stat-card">
           <strong>Estilista</strong>
           <span>Acceso directo a tus citas del día</span>

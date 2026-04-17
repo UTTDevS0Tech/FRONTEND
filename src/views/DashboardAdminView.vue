@@ -21,7 +21,7 @@ function cerrarSesion() {
     <section class="hero-strip">
       <div class="hero-copy">
         <span class="panel-tag">Panel de Administración</span>
-        <h1>Dashboard</h1>
+        <h1>Bienvenid@</h1>
         <p>
           Gestiona los módulos principales del sistema desde una vista más clara,
           moderna y cómoda para tu flujo administrativo.
@@ -29,11 +29,6 @@ function cerrarSesion() {
       </div>
 
       <div class="hero-stats">
-        <article class="stat-card">
-          <strong>4</strong>
-          <span>Accesos rápidos disponibles</span>
-        </article>
-
         <article class="stat-card">
           <strong>Admin</strong>
           <span>Control central del sistema Nova</span>
