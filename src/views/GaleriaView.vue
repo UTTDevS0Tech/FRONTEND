@@ -264,12 +264,14 @@ onUnmounted(() => {
           ✕
         </button>
 
-        <img
-          v-if="imagenSeleccionada.imagen_url"
-          :src="imagenSeleccionada.imagen_url"
-          :alt="imagenSeleccionada.titulo"
-          class="image-modal-img"
-        />
+        <div class="image-modal-media-wrap">
+          <img
+            v-if="imagenSeleccionada.imagen_url"
+            :src="imagenSeleccionada.imagen_url"
+            :alt="imagenSeleccionada.titulo"
+            class="image-modal-img"
+          />
+        </div>
 
         <div class="image-modal-info">
           <h4>{{ imagenSeleccionada.titulo }}</h4>
@@ -673,7 +675,7 @@ onUnmounted(() => {
 .image-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(45, 34, 24, 0.72);
+  background: rgba(45, 34, 24, 0.62);
   backdrop-filter: blur(10px);
   display: grid;
   place-items: center;
@@ -683,51 +685,77 @@ onUnmounted(() => {
 
 .image-modal-card {
   position: relative;
-  width: min(92vw, 960px);
+  width: min(92vw, 860px);
   max-height: 90vh;
-  padding: 18px 18px 14px;
+  padding: 20px;
   border-radius: 30px;
-  background: rgba(255, 250, 240, 0.98);
-  box-shadow: 0 28px 60px rgba(45, 34, 24, 0.3);
+  background: rgba(255, 251, 244, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow: 0 28px 60px rgba(45, 34, 24, 0.24);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  backdrop-filter: blur(14px);
+}
+
+.image-modal-media-wrap {
+  width: 100%;
+  max-height: 72vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(250, 237, 205, 0.45) 0%, rgba(255, 255, 255, 0.62) 100%);
+  overflow: hidden;
 }
 
 .image-modal-img {
   width: 100%;
-  max-height: 72vh;
+  max-height: 68vh;
   object-fit: contain;
-  border-radius: 22px;
-  background: rgba(250, 237, 205, 0.55);
+  border-radius: 18px;
+  display: block;
+}
+
+.image-modal-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 4px 2px;
 }
 
 .image-modal-info h4 {
   margin: 0;
   color: #5f4b3a;
   font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.5;
 }
 
 .image-modal-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 42px;
-  height: 42px;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
   border: none;
-  border-radius: 12px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 900;
-  background: rgba(255, 226, 226, 0.96);
+  background: rgba(255, 240, 240, 0.9);
   color: #a14444;
-  box-shadow: 0 10px 18px rgba(161, 68, 68, 0.12);
-  transition: transform 0.22s ease, background 0.22s ease;
+  box-shadow: 0 8px 18px rgba(161, 68, 68, 0.1);
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  display: grid;
+  place-items: center;
 }
 
 .image-modal-close:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 214, 214, 1);
+  transform: translateY(-2px) scale(1.03);
+  background: rgba(255, 228, 228, 1);
+  box-shadow: 0 12px 20px rgba(161, 68, 68, 0.14);
 }
 
 @keyframes spin {
@@ -808,12 +836,26 @@ onUnmounted(() => {
 
   .image-modal-card {
     width: 100%;
-    padding: 14px 14px 12px;
+    padding: 14px;
     border-radius: 24px;
+    gap: 10px;
+  }
+
+  .image-modal-media-wrap {
+    padding: 6px;
+    border-radius: 18px;
   }
 
   .image-modal-img {
-    border-radius: 18px;
+    max-height: 62vh;
+    border-radius: 14px;
+  }
+
+  .image-modal-close {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
   }
 }
 </style>
