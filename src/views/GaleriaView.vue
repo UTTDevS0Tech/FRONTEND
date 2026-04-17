@@ -251,33 +251,33 @@ onUnmounted(() => {
     </section>
 
     <div
-      v-if="imagenSeleccionada"
-      class="image-modal-overlay"
+  v-if="imagenSeleccionada"
+  class="image-modal-overlay"
+  @click="cerrarImagen"
+>
+  <div class="image-modal-card" @click.stop>
+    <button
+      type="button"
+      class="image-modal-close"
       @click="cerrarImagen"
     >
-      <div class="image-modal-card" @click.stop>
-        <button
-          type="button"
-          class="image-modal-close"
-          @click="cerrarImagen"
-        >
-          ✕
-        </button>
+      ✕
+    </button>
 
-        <div class="image-modal-media-wrap">
-          <img
-            v-if="imagenSeleccionada.imagen_url"
-            :src="imagenSeleccionada.imagen_url"
-            :alt="imagenSeleccionada.titulo"
-            class="image-modal-img"
-          />
-        </div>
-
-        <div class="image-modal-info">
-          <h4>{{ imagenSeleccionada.titulo }}</h4>
-        </div>
-      </div>
+    <div class="image-modal-media-wrap">
+      <img
+        v-if="imagenSeleccionada.imagen_url"
+        :src="imagenSeleccionada.imagen_url"
+        :alt="imagenSeleccionada.titulo"
+        class="image-modal-img"
+      />
     </div>
+
+    <div class="image-modal-info">
+      <h4>{{ imagenSeleccionada.titulo }}</h4>
+    </div>
+  </div>
+</div>
   </main>
 </template>
 
