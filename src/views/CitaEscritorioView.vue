@@ -102,7 +102,7 @@ function limpiarFormulario() {
         <h1>Cita de escritorio</h1>
         <p>
           Registra nuevas citas desde recepción de forma rápida, clara y ordenada
-          dentro de un flujo cómodo para el personal.
+          dentro de un flujo más visual y cómodo para el personal.
         </p>
       </div>
 
@@ -117,7 +117,7 @@ function limpiarFormulario() {
           <span>Personal disponible</span>
         </article>
 
-        <article class="stat-card wide">
+        <article class="stat-card">
           <strong>{{ tipoServicioStore.tipoServicios.length }}</strong>
           <span>Servicios disponibles</span>
         </article>
@@ -131,14 +131,14 @@ function limpiarFormulario() {
         </router-link>
       </div>
 
-      <div class="content-grid">
-        <aside class="side-panel">
-          <div class="side-card">
+      <div class="workspace">
+        <aside class="workspace-side">
+          <div class="info-card">
             <span class="section-tag">Nueva cita</span>
             <h2>Organiza la agenda</h2>
             <p>
               Captura los datos del cliente, selecciona al personal disponible y
-              agrega los servicios necesarios para crear la cita.
+              agrega los servicios necesarios para registrar la cita correctamente.
             </p>
           </div>
 
@@ -160,7 +160,7 @@ function limpiarFormulario() {
           </div>
         </aside>
 
-        <section class="main-panel">
+        <section class="workspace-main">
           <div class="header">
             <h2>Nueva cita de escritorio</h2>
             <p>Completa la información para registrar la cita.</p>
@@ -186,8 +186,8 @@ function limpiarFormulario() {
             {{ tipoServicioStore.error }}
           </div>
 
-          <div class="card form-card">
-            <div class="card-header">
+          <div class="form-shell">
+            <div class="form-shell-header">
               <div>
                 <h3>Formulario de cita</h3>
                 <span>Captura los datos necesarios</span>
@@ -283,7 +283,7 @@ function limpiarFormulario() {
   margin: 0 auto;
   padding: 48px 0 22px;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
   gap: 22px;
   animation: pageEnter 0.8s ease;
 }
@@ -322,7 +322,7 @@ function limpiarFormulario() {
 
 .hero-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   align-self: end;
 }
@@ -336,8 +336,7 @@ function limpiarFormulario() {
   backdrop-filter: blur(12px);
 }
 
-.stat-card:last-child,
-.stat-card.wide {
+.stat-card:nth-child(2) {
   background: rgba(204, 213, 174, 0.34);
   border: 1px solid rgba(169, 184, 130, 0.22);
 }
@@ -398,36 +397,36 @@ function limpiarFormulario() {
   box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
 }
 
-.content-grid {
+.workspace {
   display: grid;
-  grid-template-columns: minmax(280px, 0.62fr) minmax(0, 1.38fr);
+  grid-template-columns: minmax(280px, 0.58fr) minmax(0, 1.42fr);
   gap: 22px;
   align-items: start;
 }
 
-.side-panel,
-.main-panel {
+.workspace-side,
+.workspace-main {
   display: grid;
   gap: 18px;
 }
 
-.side-card,
-.card {
+.info-card,
+.form-shell {
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 28px;
+  border-radius: 30px;
   padding: 24px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.24);
   backdrop-filter: blur(12px);
 }
 
-.side-card h2 {
+.info-card h2 {
   margin: 0 0 10px;
   font-size: 1.9rem;
   color: #5f4b3a;
 }
 
-.side-card p {
+.info-card p {
   margin: 0;
   color: #7b6a58;
   line-height: 1.8;
@@ -488,11 +487,7 @@ function limpiarFormulario() {
   font-size: 0.95rem;
 }
 
-.form-card {
-  min-height: auto;
-}
-
-.card-header {
+.form-shell-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -501,13 +496,13 @@ function limpiarFormulario() {
   flex-wrap: wrap;
 }
 
-.card-header h3 {
+.form-shell-header h3 {
   margin: 0 0 4px;
   font-size: 1.35rem;
   color: #5f4b3a;
 }
 
-.card-header span {
+.form-shell-header span {
   color: #8a7764;
   font-weight: 700;
   font-size: 0.95rem;
@@ -544,7 +539,7 @@ function limpiarFormulario() {
 
 @media (max-width: 1250px) {
   .hero-strip,
-  .content-grid {
+  .workspace {
     grid-template-columns: 1fr;
   }
 
@@ -574,8 +569,8 @@ function limpiarFormulario() {
     grid-template-columns: 1fr;
   }
 
-  .side-card,
-  .card {
+  .info-card,
+  .form-shell {
     padding: 18px;
     border-radius: 22px;
   }
