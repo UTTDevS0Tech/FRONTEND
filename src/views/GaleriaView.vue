@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useApiGaleria } from '@/composables/useApiGaleria'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 
 
 //tipo de imagen (lo que viene del backend)
@@ -104,6 +104,10 @@ function manejarTecla(event: KeyboardEvent) {
   }
 }
 
+const totalImagenes = computed(() =>
+  categorias.value.reduce((acc, categoria) => acc + categoria.imagenes.length, 0)
+)
+
 
 //cuando carga el componente
 onMounted(() => {
@@ -121,122 +125,156 @@ onUnmounted(() => {
 
 <template>
   <main class="galeria-page">
-    <section class="galeria-shell">
-      <div class="galeria-layout">
-        <aside class="galeria-sidebar">
-          <span class="panel-tag">Cliente</span>
-          <h1>Galería</h1>
-          <p>
-            Explora algunos de nuestros trabajos más recientes organizados por categoría.
-            Inspírate y conoce un poco más de lo que podemos hacer por ti.
-          </p>
-        </aside>
+    <div class="page-gradient"></div>
+    <div class="page-pattern"></div>
+    <div class="page-glow glow-1"></div>
+    <div class="page-glow glow-2"></div>
 
-        <section class="galeria-content">
-          <div class="top-actions">
-            <router-link to="/dashboard/cliente" class="back-btn">
-              ← Volver a la página principal
-            </router-link>
+    <section class="hero-strip">
+      <div class="hero-copy">
+        <span class="panel-tag">Cliente</span>
+        <h1>Galería</h1>
+        <p>
+          Explora algunos de nuestros trabajos más recientes organizados por categoría.
+          Inspírate y conoce un poco más de lo que podemos hacer por ti.
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <article class="stat-card">
+          <strong>{{ categorias.length }}</strong>
+          <span>Categorías activas</span>
+        </article>
+
+        <article class="stat-card">
+          <strong>{{ totalImagenes }}</strong>
+          <span>Imágenes disponibles</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-area">
+      <div class="top-actions">
+        <router-link to="/dashboard/cliente" class="back-btn">
+          ← Volver a la página principal
+        </router-link>
+      </div>
+
+      <div class="page-header">
+        <h2>Nuestros trabajos</h2>
+        <p>
+          Recorre cada categoría y abre las imágenes para verlas con más detalle.
+        </p>
+      </div>
+
+      <div v-if="cargando" class="empty-state">
+        <div class="loader"></div>
+        <p>Cargando galería...</p>
+      </div>
+
+      <div v-else-if="error" class="empty-state error-state">
+        <h3>No se pudo cargar la galería</h3>
+        <p>{{ error }}</p>
+      </div>
+
+      <div v-else-if="!categorias.length" class="empty-state">
+        <h3>Aún no hay categorías disponibles</h3>
+        <p>Pronto podrás ver aquí nuestros trabajos más recientes.</p>
+      </div>
+
+      <div v-else class="categorias-stack">
+        <section
+          v-for="categoria in categorias"
+          :key="categoria.id"
+          class="categoria-card"
+        >
+          <div class="card-glow"></div>
+
+          <div class="categoria-header">
+            <div>
+              <h3>{{ categoria.nombre }}</h3>
+              <p>
+                {{ categoria.imagenes.length }}
+                {{ categoria.imagenes.length === 1 ? 'imagen' : 'imágenes' }}
+              </p>
+            </div>
           </div>
 
-          <div v-if="cargando" class="empty-state">
-            <div class="loader"></div>
-            <p>Cargando galería...</p>
-          </div>
-
-          <div v-else-if="error" class="empty-state error-state">
-            <h3>No se pudo cargar la galería</h3>
-            <p>{{ error }}</p>
-          </div>
-
-          <div v-else-if="!categorias.length" class="empty-state">
-            <h3>Aún no hay categorías disponibles</h3>
-            <p>Pronto podrás ver aquí nuestros trabajos más recientes.</p>
-          </div>
-
-          <div v-else class="categorias-stack">
-            <section
-              v-for="categoria in categorias"
-              :key="categoria.id"
-              class="categoria-card"
+          <div v-if="categoria.imagenes.length" class="galeria-carousel">
+            <button
+              type="button"
+              class="carousel-btn"
+              @click="scrollCategoria(categoria.id, 'left')"
             >
-              <div class="categoria-header">
-                <div>
-                  <h3>{{ categoria.nombre }}</h3>
-                  <p>
-                    {{ categoria.imagenes.length }}
-                    {{ categoria.imagenes.length === 1 ? 'imagen' : 'imágenes' }}
-                  </p>
-                </div>
-              </div>
-              <div v-if="categoria.imagenes.length" class="galeria-carousel">
-                <button
-                    type="button"
-                    class="carousel-btn"
-                    @click="scrollCategoria(categoria.id, 'left')"
-                >
-                    ‹
-                </button>
+              ‹
+            </button>
 
-                <div
-                    class="galeria-row"
-                    :ref="(el) => setCategoriaRef(categoria.id, el as HTMLDivElement | null)"
-                >
-                    <article
-                    v-for="imagen in categoria.imagenes"
-                    :key="imagen.id"
-                    class="imagen-card"
-                    @click="abrirImagen(imagen)"
-                    >
-                    <div class="imagen-frame">
-                        <img
-                        v-if="imagen.imagen_url"
-                        :src="imagen.imagen_url"
-                        :alt="imagen.titulo"
-                        />
-                        <div v-else class="sin-imagen">Sin imagen</div>
-                    </div>
-                    </article>
+            <div
+              class="galeria-row"
+              :ref="(el) => setCategoriaRef(categoria.id, el as HTMLDivElement | null)"
+            >
+              <article
+                v-for="imagen in categoria.imagenes"
+                :key="imagen.id"
+                class="imagen-card"
+                @click="abrirImagen(imagen)"
+              >
+                <div class="imagen-frame">
+                  <img
+                    v-if="imagen.imagen_url"
+                    :src="imagen.imagen_url"
+                    :alt="imagen.titulo"
+                  />
+                  <div v-else class="sin-imagen">Sin imagen</div>
                 </div>
 
-                <button
-                    type="button"
-                    class="carousel-btn"
-                    @click="scrollCategoria(categoria.id, 'right')"
-                >
-                    ›
-                </button>
-             </div>
-            </section>
+                <div class="imagen-info">
+                  <h4>{{ imagen.titulo }}</h4>
+                </div>
+              </article>
+            </div>
+
+            <button
+              type="button"
+              class="carousel-btn"
+              @click="scrollCategoria(categoria.id, 'right')"
+            >
+              ›
+            </button>
+          </div>
+
+          <div v-else class="empty-category">
+            <p>No hay imágenes disponibles en esta categoría por el momento.</p>
           </div>
         </section>
       </div>
     </section>
+
     <div
-        v-if="imagenSeleccionada"
-        class="image-modal-overlay"
-        @click="cerrarImagen"
+      v-if="imagenSeleccionada"
+      class="image-modal-overlay"
+      @click="cerrarImagen"
+    >
+      <div class="image-modal-card" @click.stop>
+        <button
+          type="button"
+          class="image-modal-close"
+          @click="cerrarImagen"
         >
-        <div class="image-modal-card" @click.stop>
-            <button
-            type="button"
-            class="image-modal-close"
-            @click="cerrarImagen"
-            >
-            ✕
-            </button>
+          ✕
+        </button>
 
-            <img
-            v-if="imagenSeleccionada.imagen_url"
-            :src="imagenSeleccionada.imagen_url"
-            :alt="imagenSeleccionada.titulo"
-            class="image-modal-img"
-            />
+        <img
+          v-if="imagenSeleccionada.imagen_url"
+          :src="imagenSeleccionada.imagen_url"
+          :alt="imagenSeleccionada.titulo"
+          class="image-modal-img"
+        />
 
-            <div class="image-modal-info">
-            <h4>{{ imagenSeleccionada.titulo }}</h4>
-            </div>
+        <div class="image-modal-info">
+          <h4>{{ imagenSeleccionada.titulo }}</h4>
         </div>
+      </div>
     </div>
   </main>
 </template>
@@ -247,98 +285,152 @@ onUnmounted(() => {
 }
 
 .galeria-page {
+  position: relative;
   width: 100%;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 22px;
-  background: linear-gradient(135deg, #fefae0 0%, #faedcd 58%, #e9edc9 100%);
+  padding: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(204, 213, 174, 0.95), transparent 22%),
+    radial-gradient(circle at 85% 20%, rgba(233, 237, 201, 0.72), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(212, 163, 115, 0.18), transparent 22%),
+    linear-gradient(145deg, #fefae0 0%, #f7f1de 42%, #e9edc9 100%);
   color: #5f4b3a;
 }
 
-.galeria-shell {
-  width: min(1680px, 100%);
+.page-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.page-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.18), transparent 60%);
+  pointer-events: none;
+}
+
+.page-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(46px);
+  pointer-events: none;
+}
+
+.glow-1 {
+  top: 80px;
+  left: -100px;
+  width: 260px;
+  height: 260px;
+  background: rgba(212, 163, 115, 0.12);
+}
+
+.glow-2 {
+  right: -120px;
+  bottom: 120px;
+  width: 320px;
+  height: 320px;
+  background: rgba(204, 213, 174, 0.32);
+}
+
+.hero-strip {
+  position: relative;
+  z-index: 1;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 22px;
   animation: pageEnter 0.8s ease;
 }
 
-.galeria-layout {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  min-height: 780px;
-  border-radius: 30px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow: 0 22px 60px rgba(92, 75, 59, 0.14);
-  backdrop-filter: blur(16px);
-}
-
-.galeria-sidebar {
-  padding: 34px 24px;
-  background: linear-gradient(180deg, #ccd5ae 0%, #e9edc9 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+.hero-copy {
+  padding: 18px 0;
 }
 
 .panel-tag {
   display: inline-block;
   width: fit-content;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   padding: 10px 18px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.38);
   color: #6d5844;
   font-weight: 800;
   font-size: 0.95rem;
+  backdrop-filter: blur(8px);
 }
 
-.galeria-sidebar h1 {
+.hero-copy h1 {
   margin: 0 0 16px;
-  font-size: 2.3rem;
-  line-height: 1.05;
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  line-height: 0.98;
   color: #5f4b3a;
 }
 
-.galeria-sidebar p {
-  margin: 0 0 24px;
+.hero-copy p {
+  margin: 0;
+  max-width: 720px;
   color: #7b6a58;
-  line-height: 1.7;
-  font-size: 0.95rem;
+  line-height: 1.8;
+  font-size: 1rem;
 }
 
-.sidebar-stats {
+.hero-stats {
   display: grid;
-  gap: 18px;
-  margin-top: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-self: end;
 }
 
 .stat-card {
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 10px 24px rgba(92, 75, 59, 0.08);
+  padding: 22px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.stat-card:first-child {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.stat-card:last-child {
+  background: rgba(204, 213, 174, 0.34);
+  border: 1px solid rgba(169, 184, 130, 0.22);
 }
 
 .stat-card strong {
   display: block;
   margin-bottom: 8px;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #5f4b3a;
 }
 
 .stat-card span {
   color: #7b6a58;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
-.galeria-content {
-  padding: 24px 28px;
-  background: rgba(254, 250, 224, 0.88);
+.content-area {
+  position: relative;
+  z-index: 1;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 10px 0 48px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  overflow: hidden;
+  gap: 18px;
 }
 
 .top-actions {
@@ -359,66 +451,92 @@ onUnmounted(() => {
   font-weight: 800;
   font-size: 0.95rem;
   text-decoration: none;
-  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   background: rgba(204, 213, 174, 0.55);
-  color: #5f4b3a;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  color: #556246;
+  border: 1px solid rgba(169, 184, 130, 0.2);
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.06);
+  backdrop-filter: blur(8px);
 }
 
 .back-btn:hover {
   transform: translateY(-2px);
   background: rgba(204, 213, 174, 0.78);
-  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.1);
 }
 
 .page-header {
   display: grid;
   gap: 0.35rem;
+  margin-bottom: 4px;
 }
 
 .page-header h2 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #5f4b3a;
 }
 
 .page-header p {
   margin: 0;
   color: #8a7764;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .categorias-stack {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
 }
 
 .categoria-card,
 .empty-state {
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 28px;
-  border: 1px solid rgba(236, 231, 216, 0.7);
-  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 14px 30px rgba(92, 75, 59, 0.07);
+  backdrop-filter: blur(12px);
 }
 
 .categoria-card {
+  position: relative;
+  overflow: hidden;
   padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.categoria-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 38px rgba(92, 75, 59, 0.1);
+  border-color: rgba(212, 163, 115, 0.22);
+}
+
+.card-glow {
+  position: absolute;
+  top: -36px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.14);
+  filter: blur(18px);
+  pointer-events: none;
 }
 
 .categoria-header h3 {
   margin: 0 0 6px;
   color: #5f4b3a;
-  font-size: 1.4rem;
+  font-size: 1.45rem;
 }
 
 .categoria-header p {
   margin: 0;
-  color: #8a7764;
-  font-weight: 700;
+  color: #6d7d55;
+  font-weight: 800;
 }
 
 .galeria-carousel {
@@ -442,48 +560,26 @@ onUnmounted(() => {
 }
 
 .imagen-card {
-  flex: 0 0 180px;
+  cursor: pointer;
+  flex: 0 0 210px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: transform 0.24s ease;
+}
+
+.imagen-card:hover {
+  transform: translateY(-4px);
 }
 
 .imagen-frame {
   width: 100%;
   aspect-ratio: 1 / 1;
-  max-height: 190px;
-  border-radius: 22px;
+  max-height: 220px;
+  border-radius: 24px;
   overflow: hidden;
-  background: rgba(250, 237, 205, 0.8);
-  box-shadow: 0 12px 24px rgba(92, 75, 59, 0.08);
-}
-
-.carousel-btn {
-  width: 46px;
-  height: 46px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(212, 163, 115, 0.18);
-  color: #8d633c;
-  font-size: 1.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
-  transition: transform 0.22s ease, background 0.22s ease;
-}
-
-.carousel-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(212, 163, 115, 0.28);
-}
-
-.imagen-frame {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  max-height: 200px;
-  border-radius: 22px;
-  overflow: hidden;
-  background: rgba(250, 237, 205, 0.8);
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: 0 12px 24px rgba(92, 75, 59, 0.08);
 }
 
@@ -492,17 +588,22 @@ onUnmounted(() => {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s ease;
+  transition: transform 0.32s ease;
 }
 
 .imagen-card:hover .imagen-frame img {
-  transform: scale(1.03);
+  transform: scale(1.04);
+}
+
+.imagen-info {
+  padding: 0 4px;
 }
 
 .imagen-info h4 {
   margin: 0;
   color: #5f4b3a;
-  font-size: 1rem;
+  font-size: 0.98rem;
+  line-height: 1.4;
 }
 
 .sin-imagen {
@@ -512,6 +613,27 @@ onUnmounted(() => {
   place-items: center;
   color: #8a7764;
   font-weight: 700;
+}
+
+.carousel-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  color: #8d633c;
+  font-size: 1.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(92, 75, 59, 0.08);
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  backdrop-filter: blur(8px);
+}
+
+.carousel-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 14px 24px rgba(92, 75, 59, 0.12);
 }
 
 .empty-state {
@@ -531,7 +653,7 @@ onUnmounted(() => {
 }
 
 .error-state {
-  background: rgba(255, 244, 244, 0.9);
+  background: rgba(255, 244, 244, 0.6);
 }
 
 .empty-category {
@@ -548,58 +670,11 @@ onUnmounted(() => {
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 1250px) {
-  .galeria-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .galeria-page {
-    padding: 16px;
-  }
-
-  .galeria-content {
-    padding: 18px;
-  }
-
-  .categoria-card,
-  .empty-state {
-    padding: 18px;
-    border-radius: 22px;
-  }
-
-  .page-header h2 {
-    font-size: 1.5rem;
-  }
-}
-
-.imagen-card {
-  cursor: pointer;
-}
-
 .image-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(45, 34, 24, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(45, 34, 24, 0.72);
+  backdrop-filter: blur(10px);
   display: grid;
   place-items: center;
   padding: 24px;
@@ -608,10 +683,10 @@ onUnmounted(() => {
 
 .image-modal-card {
   position: relative;
-  width: min(92vw, 900px);
+  width: min(92vw, 960px);
   max-height: 90vh;
   padding: 18px 18px 14px;
-  border-radius: 28px;
+  border-radius: 30px;
   background: rgba(255, 250, 240, 0.98);
   box-shadow: 0 28px 60px rgba(45, 34, 24, 0.3);
   display: flex;
@@ -623,7 +698,7 @@ onUnmounted(() => {
   width: 100%;
   max-height: 72vh;
   object-fit: contain;
-  border-radius: 20px;
+  border-radius: 22px;
   background: rgba(250, 237, 205, 0.55);
 }
 
@@ -653,5 +728,92 @@ onUnmounted(() => {
 .image-modal-close:hover {
   transform: translateY(-2px);
   background: rgba(255, 214, 214, 1);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1080px) {
+  .hero-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .galeria-carousel {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .galeria-page {
+    padding: 0;
+  }
+
+  .hero-strip,
+  .content-area {
+    width: min(100% - 28px, 1440px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-strip {
+    padding-top: 28px;
+    gap: 18px;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .categoria-card,
+  .empty-state {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .imagen-card {
+    flex-basis: 180px;
+  }
+
+  .image-modal-card {
+    width: 100%;
+    padding: 14px 14px 12px;
+    border-radius: 24px;
+  }
+
+  .image-modal-img {
+    border-radius: 18px;
+  }
 }
 </style>
