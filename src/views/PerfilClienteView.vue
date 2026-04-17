@@ -162,18 +162,6 @@ onMounted(async () => {
           tu historial organizado desde una sola pantalla.
         </p>
       </div>
-
-      <div class="hero-stats">
-        <article class="stat-card">
-          <strong>{{ perfilStore.citasPendientes.length }}</strong>
-          <span>Citas pendientes</span>
-        </article>
-
-        <article class="stat-card">
-          <strong>{{ perfilStore.citasPasadas.length }}</strong>
-          <span>Citas pasadas</span>
-        </article>
-      </div>
     </section>
 
     <section class="content-area">

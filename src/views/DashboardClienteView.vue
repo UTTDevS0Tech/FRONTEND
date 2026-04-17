@@ -158,10 +158,11 @@ onUnmounted(() => {
 
 <template>
   <main class="client-home">
+    <div class="page-gradient"></div>
+    <div class="page-pattern"></div>
     <div class="page-glow glow-1"></div>
     <div class="page-glow glow-2"></div>
     <div class="page-glow glow-3"></div>
-    <div class="page-pattern"></div>
 
     <header class="top-nav">
       <div class="brand">
@@ -229,6 +230,8 @@ onUnmounted(() => {
             :key="`pendiente-${cita.id}`"
             class="cita-card"
           >
+            <div class="card-glow"></div>
+
             <div class="cita-top">
               <div>
                 <h3>Cita #{{ cita.id }}</h3>
@@ -345,11 +348,20 @@ onUnmounted(() => {
   min-height: 100vh;
   background:
     radial-gradient(circle at top left, rgba(233, 237, 201, 0.9), transparent 26%),
+    radial-gradient(circle at 82% 18%, rgba(204, 213, 174, 0.34), transparent 18%),
     radial-gradient(circle at bottom right, rgba(212, 163, 115, 0.18), transparent 24%),
     linear-gradient(180deg, #fefae0 0%, #fbf5e9 46%, #f6edde 100%);
   color: #5f4b3a;
   overflow-x: hidden;
   animation: pageFade 0.8s ease;
+}
+
+.page-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+  pointer-events: none;
 }
 
 .page-glow {
@@ -373,7 +385,7 @@ onUnmounted(() => {
   top: 1080px;
   width: 320px;
   height: 320px;
-  background: rgba(204, 213, 174, 0.2);
+  background: rgba(204, 213, 174, 0.22);
 }
 
 .glow-3 {
@@ -381,7 +393,7 @@ onUnmounted(() => {
   top: 920px;
   width: 220px;
   height: 220px;
-  background: rgba(250, 237, 205, 0.4);
+  background: rgba(250, 237, 205, 0.34);
 }
 
 .page-pattern {
@@ -401,8 +413,8 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 3.2rem;
-  background: rgba(254, 250, 224, 0.96);
-  border-bottom: 1px solid rgba(212, 163, 115, 0.15);
+  background: rgba(254, 250, 224, 0.94);
+  border-bottom: 1px solid rgba(212, 163, 115, 0.14);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -422,7 +434,7 @@ onUnmounted(() => {
 }
 
 .brand img:hover {
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
 .nav-links {
@@ -436,13 +448,13 @@ onUnmounted(() => {
   color: #5f4b3a;
   text-decoration: none;
   font-weight: 800;
-  padding: 0.7rem 1rem;
+  padding: 0.72rem 1rem;
   border-radius: 999px;
   transition: 0.25s ease;
 }
 
 .nav-links a:hover {
-  background: rgba(212, 163, 115, 0.14);
+  background: rgba(212, 163, 115, 0.12);
   transform: translateY(-2px);
 }
 
@@ -458,7 +470,7 @@ onUnmounted(() => {
   color: #a14444;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.10);
+  box-shadow: 0 10px 20px rgba(161, 68, 68, 0.1);
   transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
@@ -564,15 +576,15 @@ onUnmounted(() => {
 .pending-section {
   position: relative;
   z-index: 1;
-  padding: 3rem 3rem 1rem;
+  padding: 3.2rem 3rem 1rem;
   background: transparent;
 }
 
 .pending-shell {
   width: min(1480px, 100%);
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 30px;
   padding: 24px;
   box-shadow: 0 14px 30px rgba(92, 75, 59, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.22);
@@ -594,14 +606,14 @@ onUnmounted(() => {
 }
 
 .pending-head h2 {
-  font-size: 1.8rem;
+  font-size: 1.85rem;
   color: #5f4b3a;
 }
 
 .pending-head p {
   color: #8a7764;
   line-height: 1.6;
-  max-width: 420px;
+  max-width: 430px;
 }
 
 .section-tag {
@@ -624,6 +636,8 @@ onUnmounted(() => {
 }
 
 .cita-card {
+  position: relative;
+  overflow: hidden;
   border-radius: 22px;
   padding: 18px;
   background: rgba(255, 255, 255, 0.18);
@@ -639,6 +653,18 @@ onUnmounted(() => {
   transform: translateY(-4px);
   box-shadow: 0 18px 30px rgba(92, 75, 59, 0.08);
   border-color: rgba(212, 163, 115, 0.22);
+}
+
+.card-glow {
+  position: absolute;
+  top: -34px;
+  right: -16px;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.12);
+  filter: blur(18px);
+  pointer-events: none;
 }
 
 .cita-top {
@@ -805,7 +831,7 @@ onUnmounted(() => {
 .gallery-card {
   border-radius: 26px;
   overflow: hidden;
-  box-shadow: 0 16px 30px rgba(92, 75, 59, 0.10);
+  box-shadow: 0 16px 30px rgba(92, 75, 59, 0.1);
   background: rgba(255, 255, 255, 0.14);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   aspect-ratio: 3 / 4;
