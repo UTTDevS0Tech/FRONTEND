@@ -283,4 +283,4 @@ const totalPersonales = computed(
     font-size: 1.5rem;
   }
 }
-</style>
+</style>  

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useCitaStore } from '@/stores/cita'
 import { useRouter } from 'vue-router'
 import { loadStripe } from '@stripe/stripe-js'
@@ -14,6 +14,9 @@ const modalTerminosAbierto = ref(false)
 const stripe = ref<any>(null)
 const cardElement = ref<any>(null)
 const cargandoProceso = ref(false)
+
+const ivaCita = computed(() => citaStore.totalCita * 0.16)
+const totalConIva = computed(() => citaStore.totalCita + ivaCita.value)
 
 
 
@@ -200,8 +203,16 @@ function cerrarTerminos() {
 
    <div class="total-box" v-show="citaStore.nuevaCita.detalle_cita.length > 0">
   <div class="total-row">
+    <span>Subtotal:</span>
+    <strong>${{ citaStore.totalCita.toFixed(2) }}</strong>
+  </div>
+  <div class="total-row">
+    <span>IVA (16%):</span>
+    <strong>${{ ivaCita.toFixed(2) }}</strong>
+  </div>
+  <div class="total-row">
     <span>Total:</span>
-    <strong>${{ citaStore.totalCita }}</strong>
+    <strong>${{ totalConIva.toFixed(2) }}</strong>
   </div>
   <div class="stripe-container-wrap">
     <label class="pago-label">Datos de tarjeta bancaria</label>
